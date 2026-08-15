@@ -117,18 +117,12 @@ export const TopNav: React.FC = () => {
           </Dock>
         </div>
 
-        {/* Right: User Profile Menu + Infinite Menu + Action Button */}
-        <div className="flex items-center gap-2.5">
-          {/* User Profile Avatar / Sign In */}
-          <UserProfileMenu />
-
-          {/* React Bits Infinite Menu */}
-          <InfiniteMenu />
-
+        {/* Right: Upload Board Action Button + Infinite Menu + User Profile Menu */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
           {/* Upload Board Capsule Action Button */}
           <button
             onClick={handleUploadClick}
-            className="group relative px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 border border-cyan-400/40 hover:border-cyan-400 text-white text-xs font-mono font-semibold shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_28px_rgba(6,182,212,0.45)] hover:scale-105 transition-all flex items-center gap-2 cursor-pointer"
+            className="group relative px-2.5 sm:px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 border border-cyan-400/40 hover:border-cyan-400 text-white text-xs font-mono font-semibold shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_28px_rgba(6,182,212,0.45)] hover:scale-105 transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer"
           >
             <div className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 group-hover:bg-cyan-500/30 transition-all shrink-0">
               <Eye className="w-3.5 h-3.5" />
@@ -136,6 +130,12 @@ export const TopNav: React.FC = () => {
             <span className="hidden sm:inline">Upload Board</span>
             <ChevronRight className="w-3 h-3 text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
           </button>
+
+          {/* React Bits Infinite Menu */}
+          <InfiniteMenu />
+
+          {/* User Profile Avatar / Sign In (On Far Right for Clean Dropdown Alignment) */}
+          <UserProfileMenu />
         </div>
       </div>
     </header>

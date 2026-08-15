@@ -17,7 +17,7 @@ export const ScholarLogoButton: React.FC<ScholarLogoButtonProps> = ({
       onClick={onClick || (() => window.scrollTo({ top: 0, behavior: "smooth" }))}
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.97 }}
-      className={`group relative inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 border border-white/[0.1] shadow-[0_8px_32px_0_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 hover:border-white/25 hover:shadow-[0_0_20px_-3px_rgba(6,182,212,0.3)] cursor-pointer select-none ${className}`}
+      className={`group relative inline-flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 border border-white/[0.1] shadow-[0_8px_32px_0_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 hover:border-white/25 hover:shadow-[0_0_20px_-3px_rgba(6,182,212,0.3)] cursor-pointer select-none ${className}`}
     >
       {/* Top Specular Edge Line */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />

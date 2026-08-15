@@ -85,7 +85,7 @@ export const UserProfileMenu: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className="absolute right-0 top-12 z-50 w-72 rounded-3xl backdrop-blur-3xl bg-[#0a0b16]/95 border border-white/[0.15] shadow-[0_20px_60px_rgba(0,0,0,0.85)] p-4 overflow-hidden"
+            className="absolute right-0 top-12 z-50 w-[calc(100vw-2rem)] max-w-xs sm:w-72 rounded-3xl backdrop-blur-3xl bg-[#0a0b16]/95 border border-white/[0.15] shadow-[0_20px_60px_rgba(0,0,0,0.85)] p-4 overflow-hidden"
           >
             {/* Top Specular Line */}
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
