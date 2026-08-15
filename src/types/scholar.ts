@@ -9,6 +9,7 @@ export interface UserProfile {
   completedCredits: number;
   totalRequiredCredits: number;
   isOnboarded: boolean;
+  avatarId: number; // 1-8 mapped to SVG avatar options
   createdAt: string;
 }
 

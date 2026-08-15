@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useScholarStore } from "@/store/useScholarStore";
+import { AvatarDisplay } from "@/components/auth/AvatarPicker";
 
 export const UserProfileMenu: React.FC = () => {
   const { user, openAuthModal, openOnboarding, logout, resetAllData } =
@@ -62,9 +63,7 @@ export const UserProfileMenu: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-2.5 py-1 rounded-full backdrop-blur-3xl bg-[#08080f]/92 border border-white/[0.1] hover:border-white/25 shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all hover:scale-105"
       >
-        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 via-sky-500 to-indigo-600 flex items-center justify-center text-[10px] font-bold text-black font-mono shadow-inner">
-          {initials}
-        </div>
+        <AvatarDisplay avatarId={user.avatarId || 1} size={24} />
         <div className="text-left hidden sm:block">
           <span className="text-xs font-bold text-white block leading-none truncate max-w-[90px]">
             {user.name.split(" ")[0]}
@@ -93,9 +92,7 @@ export const UserProfileMenu: React.FC = () => {
             {/* Profile Info Header */}
             <div className="pb-3 mb-3 border-b border-white/[0.08]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-400 to-indigo-600 flex items-center justify-center font-bold text-black font-mono text-sm shadow-inner">
-                  {initials}
-                </div>
+                <AvatarDisplay avatarId={user.avatarId || 1} size={40} className="rounded-2xl" />
                 <div className="min-w-0">
                   <span className="text-sm font-bold text-white block truncate">
                     {user.name}

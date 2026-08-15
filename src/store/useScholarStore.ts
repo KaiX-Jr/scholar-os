@@ -270,6 +270,7 @@ export const useScholarStore = create<ScholarStore>()(
             completedCredits: data.cloudData?.user?.completedCredits || 0,
             totalRequiredCredits: data.cloudData?.user?.totalRequiredCredits || 128,
             isOnboarded: data.cloudData?.user?.isOnboarded || false,
+            avatarId: data.cloudData?.user?.avatarId || 1,
             createdAt: data.user.createdAt,
           };
 
@@ -309,6 +310,7 @@ export const useScholarStore = create<ScholarStore>()(
             completedCredits: 0,
             totalRequiredCredits: 128,
             isOnboarded: false,
+            avatarId: 1,
             createdAt: data.user.createdAt,
           };
           set({
@@ -344,6 +346,7 @@ export const useScholarStore = create<ScholarStore>()(
             completedCredits: data.cloudData?.user?.completedCredits || 0,
             totalRequiredCredits: data.cloudData?.user?.totalRequiredCredits || 128,
             isOnboarded: data.cloudData?.user?.isOnboarded || false,
+            avatarId: data.cloudData?.user?.avatarId || 1,
             createdAt: data.user.createdAt,
           };
 
@@ -412,6 +415,7 @@ export const useScholarStore = create<ScholarStore>()(
           completedCredits: 0,
           totalRequiredCredits: 120,
           isOnboarded: true,
+          avatarId: currentUser?.avatarId || 1,
           createdAt: currentUser?.createdAt || new Date().toISOString(),
         };
 

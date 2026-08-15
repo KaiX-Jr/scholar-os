@@ -13,6 +13,7 @@ import {
 import { useScholarStore } from "@/store/useScholarStore";
 import { MagicCard } from "@/components/ui/MagicCard";
 import { BorderBeam } from "@/components/ui/BorderBeam";
+import { AvatarPicker } from "@/components/auth/AvatarPicker";
 
 // Extend the Window interface for Google Identity Services
 declare global {
@@ -30,7 +31,7 @@ declare global {
 }
 
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, closeAuthModal, login, signup, loginWithGoogle } = useScholarStore();
+  const { isAuthModalOpen, closeAuthModal, login, signup, loginWithGoogle, updateUserProfile } = useScholarStore();
   const [tab, setTab] = useState<"signin" | "signup">("signup");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,6 +39,7 @@ export const AuthModal: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [selectedAvatarId, setSelectedAvatarId] = useState(1);
 
   // Google Sign-In callback
   const handleGoogleCallback = useCallback(async (response: { credential: string }) => {
@@ -130,6 +132,10 @@ export const AuthModal: React.FC = () => {
         return;
       }
       result = await signup(name, email, password);
+      // Set the selected avatar after signup
+      if (!result?.error) {
+        updateUserProfile({ avatarId: selectedAvatarId });
+      }
     } else {
       result = await login(email, password);
     }
@@ -287,22 +293,32 @@ export const AuthModal: React.FC = () => {
               )}
 
               {tab === "signup" && (
-                <div>
-                  <label className="text-[11px] font-mono text-slate-300 uppercase tracking-wide block mb-1.5">
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      required
-                      placeholder="Alex Vance"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-black/50 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400/60 font-mono transition-colors"
-                    />
+                <>
+                  {/* Avatar Picker */}
+                  <div>
+                    <label className="text-[11px] font-mono text-slate-300 uppercase tracking-wide block mb-3 text-center">
+                      Choose Your Avatar
+                    </label>
+                    <AvatarPicker selectedId={selectedAvatarId} onSelect={setSelectedAvatarId} />
                   </div>
-                </div>
+
+                  <div>
+                    <label className="text-[11px] font-mono text-slate-300 uppercase tracking-wide block mb-1.5">
+                      Full Name
+                    </label>
+                    <div className="relative">
+                      <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        required
+                        placeholder="Alex Vance"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400/60 font-mono transition-colors"
+                      />
+                    </div>
+                  </div>
+                </>
               )}
 
               <div>
