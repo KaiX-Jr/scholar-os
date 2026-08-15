@@ -92,12 +92,10 @@ export const CgpaProgressRing: React.FC = () => {
         {activeTab === "overview" ? (
           <div className="flex flex-col sm:flex-row items-center gap-6 py-2">
             {/* Immersive Holographic Circular Progress Gauge */}
+            {/* Immersive Holographic Circular Progress Gauge */}
             <div className="relative flex items-center justify-center shrink-0">
               {/* Ambient Circular Glow */}
-              <div className="pointer-events-none absolute inset-0 rounded-full blur-xl opacity-30 bg-gradient-to-br from-indigo-500 to-purple-600" />
-
-              {/* Frosted Circular Lens */}
-              <div className="absolute inset-1 rounded-full bg-[#0a0b16]/70 backdrop-blur-md border border-white/[0.08]" />
+              <div className="pointer-events-none absolute inset-0 rounded-full blur-xl opacity-25 bg-gradient-to-br from-indigo-500 to-purple-600" />
 
               <svg height={radius * 2} width={radius * 2} className="-rotate-90 relative z-10 overflow-visible">
                 <defs>
@@ -106,10 +104,6 @@ export const CgpaProgressRing: React.FC = () => {
                     <stop offset="50%" stopColor="#8b5cf6" />
                     <stop offset="100%" stopColor="#a855f7" />
                   </linearGradient>
-                  <filter id="cgpa-glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="4" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                  </filter>
                 </defs>
 
                 {/* Background Track */}
@@ -135,21 +129,6 @@ export const CgpaProgressRing: React.FC = () => {
                   cy={radius}
                 />
 
-                {/* Current CGPA Glow Ring */}
-                <circle
-                  stroke="url(#cgpaGradient)"
-                  fill="transparent"
-                  strokeWidth={stroke + 2}
-                  strokeDasharray={`${circumference} ${circumference}`}
-                  style={{ strokeDashoffset }}
-                  strokeLinecap="round"
-                  r={normalizedRadius}
-                  cx={radius}
-                  cy={radius}
-                  opacity={0.4}
-                  filter="url(#cgpa-glow)"
-                />
-
                 {/* Current CGPA Active Arc */}
                 <circle
                   stroke="url(#cgpaGradient)"
@@ -157,7 +136,7 @@ export const CgpaProgressRing: React.FC = () => {
                   strokeWidth={stroke}
                   strokeDasharray={`${circumference} ${circumference}`}
                   style={{ strokeDashoffset }}
-                  strokeLinecap="round"
+                  strokeLinecap={currentPercent >= 99.5 ? "butt" : "round"}
                   r={normalizedRadius}
                   cx={radius}
                   cy={radius}
@@ -166,7 +145,7 @@ export const CgpaProgressRing: React.FC = () => {
               </svg>
 
               {/* Center Text Metrics */}
-              <div className="absolute z-20 flex flex-col items-center justify-center text-center select-none">
+              <div className="absolute z-20 flex flex-col items-center justify-center text-center select-none pointer-events-none">
                 <span className="text-2xl font-mono font-extrabold text-white tracking-tight leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                   {currentCgpa.toFixed(2)}
                 </span>
