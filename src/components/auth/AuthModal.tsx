@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -14,14 +14,96 @@ import { useScholarStore } from "@/store/useScholarStore";
 import { MagicCard } from "@/components/ui/MagicCard";
 import { BorderBeam } from "@/components/ui/BorderBeam";
 
+// Extend the Window interface for Google Identity Services
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: Record<string, unknown>) => void;
+          renderButton: (element: HTMLElement, config: Record<string, unknown>) => void;
+          prompt: () => void;
+        };
+      };
+    };
+  }
+}
+
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, closeAuthModal, login, signup } = useScholarStore();
+  const { isAuthModalOpen, closeAuthModal, login, signup, loginWithGoogle } = useScholarStore();
   const [tab, setTab] = useState<"signin" | "signup">("signup");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Google Sign-In callback
+  const handleGoogleCallback = useCallback(async (response: { credential: string }) => {
+    setError(null);
+    setIsGoogleLoading(true);
+    const result = await loginWithGoogle(response.credential);
+    setIsGoogleLoading(false);
+    if (result?.error) setError(result.error);
+  }, [loginWithGoogle]);
+
+  // Initialize Google Identity Services when modal opens
+  useEffect(() => {
+    if (!isAuthModalOpen) return;
+
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) return;
+
+    const initGoogle = () => {
+      if (window.google?.accounts?.id) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleGoogleCallback,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        // Render the button into our container
+        const btnContainer = document.getElementById("google-signin-btn");
+        if (btnContainer) {
+          // Clear any previous button render
+          btnContainer.innerHTML = "";
+          window.google.accounts.id.renderButton(btnContainer, {
+            theme: "filled_black",
+            size: "large",
+            width: "100%",
+            shape: "pill",
+            text: "continue_with",
+            logo_alignment: "left",
+          });
+        }
+      }
+    };
+
+    // Check if the Google script is already loaded
+    if (window.google?.accounts?.id) {
+      initGoogle();
+    } else {
+      // Load the Google Identity Services script dynamically
+      const existingScript = document.getElementById("google-gsi-script");
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.id = "google-gsi-script";
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          // Small delay to ensure google.accounts.id is ready
+          setTimeout(initGoogle, 100);
+        };
+        document.head.appendChild(script);
+      } else {
+        // Script exists but may not have loaded yet
+        setTimeout(initGoogle, 200);
+      }
+    }
+  }, [isAuthModalOpen, handleGoogleCallback]);
 
   if (!isAuthModalOpen) return null;
 
@@ -135,6 +217,32 @@ export const AuthModal: React.FC = () => {
                   ? "Start your zero-state academic workspace with custom courses & tracking."
                   : "Log in to continue your milestone sprints and habit streaks."}
               </p>
+            </div>
+
+            {/* Google Sign-In Button */}
+            <div className="relative z-10 mb-4">
+              {isGoogleLoading ? (
+                <div className="w-full py-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-2 text-xs text-slate-300">
+                  <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                  </svg>
+                  <span>Signing in with Google...</span>
+                </div>
+              ) : (
+                <div
+                  id="google-signin-btn"
+                  className="flex items-center justify-center [&>div]:!w-full"
+                  style={{ minHeight: 44 }}
+                />
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 mb-4 relative z-10">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+              <span className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">or use email</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
             </div>
 
             {/* Tab Switcher */}

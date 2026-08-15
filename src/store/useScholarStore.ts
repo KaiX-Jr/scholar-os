@@ -63,6 +63,7 @@ interface ScholarStore {
   closeOnboarding: () => void;
   login: (email: string, password: string) => Promise<{ error?: string }>;
   signup: (name: string, email: string, password: string) => Promise<{ error?: string }>;
+  loginWithGoogle: (credential: string) => Promise<{ error?: string }>;
   logout: () => void;
   updateUserProfile: (updates: Partial<UserProfile>) => void;
   completeOnboarding: (data: OnboardingData) => void;
@@ -239,6 +240,7 @@ export const useScholarStore = create<ScholarStore>()(
               courses: cloudData.courses ?? [],
               assignments: cloudData.assignments ?? [],
               habitStreaks: cloudData.habitStreaks ?? get().habitStreaks,
+              pomodoro: cloudData.pomodoro ? { ...cloudData.pomodoro, isRunning: false } : get().pomodoro,
             });
           }
         } catch {
@@ -314,6 +316,46 @@ export const useScholarStore = create<ScholarStore>()(
             user: newUser,
             isAuthModalOpen: false,
             isOnboardingOpen: true,
+          });
+          return {};
+        } catch {
+          return { error: "Connection error. Please check your internet." };
+        }
+      },
+
+      loginWithGoogle: async (credential: string) => {
+        try {
+          const res = await fetch("/api/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ credential }),
+          });
+          const data = await res.json();
+          if (!res.ok) return { error: data.error };
+
+          const profile: UserProfile = {
+            id: data.user.id,
+            name: data.user.name,
+            email: data.user.email,
+            university: data.cloudData?.user?.university || "",
+            semester: data.cloudData?.user?.semester || "Semester 1",
+            targetCgpa: data.cloudData?.user?.targetCgpa || 3.9,
+            currentCgpa: data.cloudData?.user?.currentCgpa || 0,
+            completedCredits: data.cloudData?.user?.completedCredits || 0,
+            totalRequiredCredits: data.cloudData?.user?.totalRequiredCredits || 128,
+            isOnboarded: data.cloudData?.user?.isOnboarded || false,
+            createdAt: data.user.createdAt,
+          };
+
+          set({
+            jwtToken: data.token,
+            user: profile,
+            isAuthModalOpen: false,
+            isOnboardingOpen: !profile.isOnboarded,
+            courses: data.cloudData?.courses ?? [],
+            assignments: data.cloudData?.assignments ?? [],
+            habitStreaks: data.cloudData?.habitStreaks ?? get().habitStreaks,
+            pomodoro: data.cloudData?.pomodoro ? { ...data.cloudData.pomodoro, isRunning: false } : get().pomodoro,
           });
           return {};
         } catch {
@@ -751,3 +793,28 @@ export const useScholarStore = create<ScholarStore>()(
     }
   )
 );
+
+// ─── Auto-Sync Subscriber ───────────────────────────────────────────
+// Watches for meaningful state changes and auto-pushes to cloud.
+// This is the critical bridge that was missing — without it, data only
+// lived in localStorage and never reached Redis.
+let _prevSyncSnapshot: string | null = null;
+
+useScholarStore.subscribe((state) => {
+  // Only sync if user is logged in
+  if (!state.jwtToken || !state.user) return;
+
+  // Build a snapshot of syncable data to detect real changes
+  const snapshot = JSON.stringify({
+    user: state.user,
+    courses: state.courses,
+    assignments: state.assignments,
+    habitStreaks: state.habitStreaks,
+    pomodoro: { ...state.pomodoro, isRunning: false, remainingSeconds: 0 },
+  });
+
+  if (_prevSyncSnapshot !== null && snapshot !== _prevSyncSnapshot) {
+    state.scheduleSyncToCloud();
+  }
+  _prevSyncSnapshot = snapshot;
+});
