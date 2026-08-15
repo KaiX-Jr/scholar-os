@@ -228,12 +228,15 @@ export const useScholarStore = create<ScholarStore>()(
       closeOnboarding: () => set({ isOnboardingOpen: false }),
       openDailyProfessor: () => set({ isDailyProfessorOpen: true }),
       closeDailyProfessor: () => set({ isDailyProfessorOpen: false }),
-      setDailyOralQuestion: (question) => set({ dailyOralQuestion: question }),
+      setDailyOralQuestion: (question) => {
+        set({ dailyOralQuestion: question });
+        get().scheduleSyncToCloud();
+      },
 
 
       // Cloud Sync
       syncToCloud: async () => {
-        const { jwtToken, user, courses, assignments, habitStreaks, pomodoro, boardHistory } = get();
+        const { jwtToken, user, courses, assignments, habitStreaks, pomodoro, boardHistory, dailyOralQuestion, activeBoardResult } = get();
         if (!jwtToken || !user) return;
         set({ syncStatus: "syncing" });
         try {
@@ -243,7 +246,7 @@ export const useScholarStore = create<ScholarStore>()(
               "Content-Type": "application/json",
               Authorization: `Bearer ${jwtToken}`,
             },
-            body: JSON.stringify({ user, courses, assignments, habitStreaks, pomodoro, boardHistory }),
+            body: JSON.stringify({ user, courses, assignments, habitStreaks, pomodoro, boardHistory, dailyOralQuestion, activeBoardResult }),
           });
           set({ syncStatus: "idle" });
         } catch {
@@ -253,7 +256,7 @@ export const useScholarStore = create<ScholarStore>()(
 
       scheduleSyncToCloud: () => {
         if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
-        syncDebounceTimer = setTimeout(() => get().syncToCloud(), 3000);
+        syncDebounceTimer = setTimeout(() => get().syncToCloud(), 1500);
       },
 
       pullFromCloud: async () => {
@@ -277,6 +280,7 @@ export const useScholarStore = create<ScholarStore>()(
               activeBoardResult: activeBoard ? activeBoard : get().activeBoardResult,
               activeImageUri: activeBoard?.imageUri ?? get().activeImageUri,
               flashcards: activeBoard?.flashcards ?? get().flashcards,
+              dailyOralQuestion: cloudData.dailyOralQuestion ?? get().dailyOralQuestion,
             });
           }
         } catch {
@@ -326,6 +330,7 @@ export const useScholarStore = create<ScholarStore>()(
             activeBoardResult: activeBoard ? activeBoard : get().activeBoardResult,
             activeImageUri: activeBoard?.imageUri ?? get().activeImageUri,
             flashcards: activeBoard?.flashcards ?? get().flashcards,
+            dailyOralQuestion: data.cloudData?.dailyOralQuestion ?? get().dailyOralQuestion,
           });
           return {};
         } catch {
@@ -410,6 +415,7 @@ export const useScholarStore = create<ScholarStore>()(
             activeBoardResult: activeBoard ? activeBoard : get().activeBoardResult,
             activeImageUri: activeBoard?.imageUri ?? get().activeImageUri,
             flashcards: activeBoard?.flashcards ?? get().flashcards,
+            dailyOralQuestion: data.cloudData?.dailyOralQuestion ?? get().dailyOralQuestion,
           });
           return {};
         } catch {

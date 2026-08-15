@@ -141,7 +141,7 @@ export const DailyProfessorOralCheckin: React.FC = () => {
           name: c.courseName,
         }));
 
-        const recentBoards = boardHistory.slice(0, 3).map((b) => ({
+        const recentBoards = boardHistory.slice(0, 5).map((b) => ({
           topicTitle: b.topicTitle,
           summary: b.summary,
           keyFormulas: b.keyFormulas,
