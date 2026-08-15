@@ -359,6 +359,24 @@ export const AvatarPicker: React.FC<AvatarPickerProps> = ({
         </div>
       </div>
 
+      {/* Avatar name — fades with selection */}
+      <AnimatePresence mode="wait">
+        <motion.span
+          animate={{ opacity: 1 }}
+          className="text-[10px] text-slate-400 uppercase font-mono tracking-[0.14em]"
+          exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          key={selectedAvatar.id}
+          transition={
+            shouldReduceMotion
+              ? { duration: 0 }
+              : { duration: 0.16, ease: "easeOut" }
+          }
+        >
+          {selectedAvatar.alt}
+        </motion.span>
+      </AnimatePresence>
+
       {/* Thumbnail strip */}
       <motion.div
         animate="animate"
