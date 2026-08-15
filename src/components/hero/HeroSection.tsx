@@ -100,7 +100,7 @@ export const HeroSection: React.FC = () => {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="mt-6 text-base sm:text-lg text-slate-300/90 max-w-2xl font-normal leading-relaxed"
         >
-          Seamlessly ingest chalkboard photos into structured LaTeX theorems, numbered step-by-step derivations, active recall flashcards, and real-time streaming Q&A.
+          Turn classroom blackboard photos into organized notes, track your assignments & attendance, and build consistent daily study habits.
         </motion.p>
 
         {/* CTA Actions */}
@@ -118,7 +118,7 @@ export const HeroSection: React.FC = () => {
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             <Eye className="relative z-10 w-4 h-4" />
             <span className="relative z-10 font-semibold tracking-wide">
-              Launch Board-to-Study Studio
+              Scan Blackboard
             </span>
           </button>
 
@@ -127,7 +127,7 @@ export const HeroSection: React.FC = () => {
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-medium text-sm text-slate-200 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:scale-[1.02]"
           >
             <GraduationCap className="w-4 h-4 text-indigo-400" />
-            Academic Command Center
+            Explore Dashboard
           </button>
         </motion.div>
 

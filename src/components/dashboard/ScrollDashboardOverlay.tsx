@@ -103,7 +103,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-4 sm:mt-6 text-sm sm:text-lg text-slate-200 max-w-2xl leading-relaxed px-2 sm:px-0"
           >
-            Transform complex lecture chalkboards into structured LaTeX derivations, track milestone pipelines, and cultivate deep work focus with precision optical OCR.
+            Turn classroom blackboard photos into organized study notes, stay on top of your assignments and attendance, and build daily study habits.
           </motion.p>
 
           {/* CTA Action Buttons */}
@@ -117,7 +117,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
               onClick={() => scrollTo("academic")}
               className="py-3.5 sm:py-4 px-7 sm:px-8 text-sm font-bold w-full sm:w-auto"
             >
-              <span>Explore Milestones</span>
+              <span>Explore Dashboard</span>
               <ArrowRight className="w-4 h-4" />
             </PulsatingButton>
 
@@ -125,7 +125,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
               onClick={handleOpticalClick}
               className="py-3 sm:py-3.5 px-6 sm:px-7 w-full sm:w-auto"
             >
-              {user ? "Open Optical Studio" : "Try Optical Studio"}
+              {user ? "Scan Blackboard" : "Try Board Scanner"}
             </InteractiveHoverButton>
           </motion.div>
         </div>
