@@ -60,6 +60,17 @@ export const OnboardingWizard: React.FC = () => {
   // Error validation state
   const [error, setError] = useState<string | null>(null);
 
+  // Sync state with user profile whenever modal opens or user profile updates
+  React.useEffect(() => {
+    if (isOnboardingOpen && user) {
+      if (user.name && !name) setName(user.name);
+      if (user.university && !university) setUniversity(user.university);
+      if (user.semester) setSemester(user.semester);
+      if (user.targetCgpa) setTargetCgpa(user.targetCgpa);
+      if (user.isOnboarded) setStep(2);
+    }
+  }, [isOnboardingOpen, user]);
+
   if (!isOnboardingOpen) return null;
 
   const handleAddCourse = (code: string, cName: string, credits: number) => {
@@ -112,14 +123,12 @@ export const OnboardingWizard: React.FC = () => {
   const handleNext = () => {
     setError(null);
     if (step === 1) {
-      if (!name.trim()) {
+      const activeName = name.trim() || user?.name || "";
+      if (!activeName) {
         setError("Please enter your name.");
         return;
       }
-      if (!university.trim()) {
-        setError("Please enter your college/university name.");
-        return;
-      }
+      if (!name.trim() && activeName) setName(activeName);
       setStep(2);
     } else if (step === 2) {
       if (courses.length === 0) {
