@@ -39,8 +39,13 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
   }, []);
 
   const scrollToBottom = useCallback((force = false) => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
     if (force || !isUserScrolledUp.current) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      el.scrollTo({
+        top: el.scrollHeight,
+        behavior: "smooth",
+      });
     }
   }, []);
 
