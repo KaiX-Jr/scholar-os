@@ -1,329 +1,170 @@
-# 🎓 Scholar OS — The Cognitive Operating System for Scholars
+# 🎓 Scholar OS — The Cognitive Operating System for Students & Scholars
 
 <div align="center">
 
-![Scholar OS Banner](https://img.shields.io/badge/Scholar%20OS-Cognitive%20Operating%20System-00f2fe?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMjAuNSA3VjE3TDEyIDIyTDMuNSAxN1Y3TDEyIDJaIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMGYyZmUiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==)
+![Scholar OS](https://img.shields.io/badge/Scholar%20OS-Cognitive%20Operating%20System-00f2fe?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMjAuNSA3VjE3TDEyIDIyTDMuNSAxN1Y3TDEyIDJaIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMGYyZmUiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==)
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini_API-AI_Powered-4285F4?style=flat-square&logo=google)](https://ai.google.dev/)
-[![Upstash Redis](https://img.shields.io/badge/Upstash_Redis-Cloud_Sync-00E599?style=flat-square&logo=redis)](https://upstash.com/)
+[![Cloud Sync](https://img.shields.io/badge/Cloud_Sync-Instant_Cross--Device-00E599?style=flat-square)](https://scholar-os.vercel.app)
 [![Google OAuth](https://img.shields.io/badge/Google_OAuth-Sign_In-EA4335?style=flat-square&logo=google)](https://developers.google.com/identity)
-[![Zustand](https://img.shields.io/badge/Zustand-State_Manager-FF6B35?style=flat-square)](https://zustand-demo.pmnd.rs/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-Animations-0055FF?style=flat-square&logo=framer)](https://www.framer.com/motion/)
-[![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
-**A next-generation, full-stack academic productivity operating system combining optical board-to-study AI extraction, real-time cross-device cloud sync, smart attendance tracking, milestone pipelines, habit streak heatmaps, and deep work focus synthesis — all rendered in a liquid-glass obsidian design language.**
+**An all-in-one intelligent workspace that turns classroom blackboard photos into structured notes, tracks attendance and deadlines, monitors academic goals, and fosters consistent study habits.**
 
-[🚀 Live Deployment](https://scholar-os.vercel.app) · [⚙️ Tech Stack](#-technology-stack) · [🛠 Installation & Setup](#-installation--setup) · [📱 Zero-State Philosophy](#-zero-state-philosophy)
+[🚀 Experience Scholar OS](https://scholar-os.vercel.app) · [✨ Core Capabilities](#-what-scholar-os-can-do) · [🎯 Purpose & Vision](#-purpose--vision) · [💡 Use Cases](#-real-world-use-cases)
 
 </div>
 
 ---
 
-## ✨ What is Scholar OS?
+## 🌟 What is Scholar OS?
 
-**Scholar OS** is a premium, zero-state academic workspace built for university scholars and students who want complete mastery over their academic trajectory. It starts completely empty on Day 0 and organically adapts to your exact college subjects, attendance records, study milestones, and habit streaks.
+**Scholar OS** is a unified academic workspace designed for university scholars, researchers, and students who want complete control over their academic life. 
 
-Every metric in your workspace is 100% verified and synchronized across all your devices (desktop, laptop, tablet, mobile) via a reactive cloud sync engine.
+University education moves fast. Between fast-paced lectures where professors fill blackboards with complex equations, strict attendance policies, overlapping assignment deadlines, and the struggle to maintain daily study consistency, students often find themselves juggling multiple fragmented tools.
 
----
-
-## 🔑 Core Features & Architectures
-
-### 📸 Board-to-Study Optical OCR Studio & Saved Board Shelf
-> *Powered by Google Gemini 2.0 Flash Vision API & Upstash Serverless Redis*
-
-- **Photograph-to-Notes Pipeline**: Upload or drag-drop chalkboard or whiteboard snapshots from live university lectures.
-- **In-Browser Classroom Camera Capture**: Take real-time high-resolution snaps of lecture boards directly from your device camera.
-- **Interactive Subject & Course Tagging**: Intercepts uploads with a sleek modal dropdown to tag boards to your enrolled courses (`[CS301]`, `[MATH201]`, etc.) or custom subjects.
-- **Curriculum-Grounded Multimodal AI**: Gemini 2.0 Flash extracts handwritten derivations, proofs, diagrams, and formulas tailored to your course syllabus.
-- **LaTeX & Markdown Formatting**: Generates clean, structured lecture notes, derivation breakdowns, key takeaways, and flashcards with instant KaTeX math rendering.
-- **Lecture History & Saved Boards Shelf**:
-  - Kokonut UI / Magic UI `BorderBeam` animated horizontal carousel.
-  - One-click switching between past saved lecture boards.
-  - Distinct course badges and **Subject Filter Bar** (`All`, `[PHYS301]`, `[CS420]`, etc.) to filter boards by course.
-  - 100% synchronized across all your devices via Cloud Redis.
-- **3D Flip-Card Active Recall Deck**: Interactive spaced repetition deck with 3-column mobile-responsive rating grid (`Again`, `Hard`, `Good`, `Easy`) and keyboard controls (`Space` to flip, `←` / `→` to navigate).
-- **Contextual Study Chat Assistant**: Ask clarifying questions, request proof explanations, and solve practice problems dynamically grounded in the active board notes and LaTeX formulas.
-- **Pre-Loaded Sample Library**: Interactive demonstrations covering Quantum Mechanics, Deep Neural Networks, and Fourier Analysis.
+**Scholar OS brings everything together into a single, cohesive operating system:**
+- Instant transformation of physical classroom chalkboard and whiteboard photos into structured study notes and mathematical derivations.
+- Intelligent attendance management that calculates exactly how many classes you can safely skip or must attend to stay above mandatory thresholds.
+- Coursework tracking that keeps assignments, midterms, and project deliverables organized.
+- Daily habit heatmaps and deep focus sessions that help build long-term academic discipline.
+- Real-time cloud synchronization ensuring your notes and data are instantly accessible across your phone, tablet, and laptop.
 
 ---
 
-### ☁️ Real-Time Cross-Device Cloud Sync
-> *Powered by Upstash Serverless Redis & Reactive Zustand Subscriptions*
+## 🎯 Purpose & Vision
 
-- **Instant Cross-Device Parity**: Log in from your laptop, tablet, or phone — your enrolled courses, attendance records, milestone tasks, habit heatmaps, avatar selections, and **saved lecture boards** immediately sync in real time.
-- **Debounced Auto-Sync Engine**: State mutations automatically trigger non-blocking cloud delta synchronization.
-- **Zero Data Loss Guarantee**: Local storage persistence acts as an offline cache with instant Redis cloud reconciliation on reconnection.
+Traditional student apps are often fragmented note-takers, simple to-do lists, or generic habit trackers that don't understand the realities of university life.
 
----
+Scholar OS was built around three core principles:
 
-### 🔐 Google OAuth & React Bits Specular Button
-- **One-Tap Google Sign-In**: Integrated with Google Identity Services (GSI) and server-side token verification.
-- **React Bits Specular Button**: Interactive glass-style Google authentication button with cursor-tracking specular rim light and dynamic ambient glare.
-- **Custom Academic Email Authentication**: Secure password hashing with JWT session tokens.
+1. **Classroom-to-Study Continuity**: Lectures happen in real time on physical blackboards. Scholar OS bridges the physical classroom and digital study space by converting quick phone snapshots into beautiful LaTeX notes, numbered derivations, and active recall study decks in seconds.
+2. **Zero-State Personalization**: Your workspace belongs entirely to you. Scholar OS does not flood your dashboard with dummy courses or mock data. You start fresh on Day 0, configuring your exact university curriculum, semester timeline, and target honors tier.
+3. **Academic Well-being & Balance**: Success in academia isn't just about grades; it's about consistency, attendance safety, deep focus, and avoiding burnout. Scholar OS provides actionable metrics and focus tools to keep you in control of your daily routine.
 
 ---
 
-### 👤 Kokonut UI Profile Dropdown & Avatar System
-- **Signature Bending Line Indicator**: Smooth SVG indicator responding dynamically to hover and dropdown toggle states.
-- **Multi-Color Gradient Halo Ring**: Elegant purple-to-orange glowing ring surrounding the user's avatar.
-- **Academic Status Badges**: Real-time display of current Campus/University, Semester, and Target CGPA.
-- **Procedural SVG Avatar Picker**: 4 unique SVG avatar faces with animated selection glow stage and thumbnail checkmark selectors, synced to your account.
-- **Quick Controls**: One-click *Manage Enrolled Courses*, *Reset Workspace to Zero State*, and *Sign Out*.
+## 🚀 What Scholar OS Can Do
+
+### 📸 1. AI Blackboard-to-Study Studio
+*Turn messy classroom chalkboard photos into structured revision materials in seconds.*
+
+- **Photo & Camera Ingestion**: Upload an existing photo from your gallery or snap a high-resolution photo directly during live lectures using your device camera.
+- **Subject & Course Grounding**: Tag snapshots to your enrolled subjects (`[CS301] Data Structures`, `[MATH201] Linear Algebra`, etc.) so the AI understands the exact academic syllabus context.
+- **Structured Lecture Notes**: Automatically generates clear headings, key concepts, bullet summaries, and highlighted takeaways.
+- **Step-by-Step Derivations**: Extracts complex mathematical formulas, scientific proofs, and algorithms, rendering them with clean KaTeX typesetting.
+- **Active Recall Flashcards**: Converts lecture concepts into interactive study cards with spaced-repetition difficulty ratings (`Again`, `Hard`, `Good`, `Easy`).
+- **Interactive Lecture Q&A**: A contextual AI study assistant that lets you ask questions, request simpler explanations, or generate practice questions based directly on the captured board.
+- **Saved Lecture History Shelf**: Access all your saved boards anytime, with subject filter pills to quickly review notes before exams.
 
 ---
 
-### 📊 CGPA Trajectory & Honors Projection Ring
-- **Holographic Circular Gauge**: Ultra-smooth progress meter tracking cumulative CGPA toward a 4.00 honors target.
-- **Remaining Term GPA Projection**: Automatically calculates the average GPA required across remaining terms to reach your target honors degree tier.
-- **Historical Semester Record**: Clean visual breakdown of past semester GPAs and credit load.
-- **Degree Progress Meter**: Real-time percentage tracking toward degree completion.
+### 🎓 2. Course Attendance & Bunk Simulator
+*Never lose eligibility for exams or fall below mandatory attendance requirements.*
+
+- **Multi-Course Tracking**: Track attendance individually for all your enrolled courses with credits, lecture codes, and weekly schedules.
+- **One-Tap Class Logging**: Record daily class outcomes with single-tap actions for `Present`, `Absent`, or `Class Cancelled`.
+- **Smart 75% Threshold Analytics**:
+  - **Safe Zone**: Calculates the exact number of future lectures you can safely skip while staying comfortably above 75%.
+  - **Deficit Recovery Calculator**: Computes the exact streak of consecutive classes you must attend to recover from attendance dips.
+- **Instant Status Indicators**: Clear color badges highlight whether you are safely in good standing or need to attend upcoming sessions.
 
 ---
 
-### 🎓 Course Attendance Tracker & Bunk Simulator
-> *Tailored for mandatory minimum attendance policies (75% threshold)*
+### 📈 3. CGPA Benchmark & Academic Trajectory
+*Visual roadmaps to reach your target honors degree and GPA goals.*
 
-- **Unlimited Course Management**: Add courses with custom course codes, names, credits, and weekly class schedules.
-- **One-Tap Class Logging**: Mark daily classes as `Present (+1 attended, +1 total)`, `Absent (+1 total)`, or `Class Cancelled`.
-- **Smart Bunk Calculator**:
-  - *Safe Zone*: Calculates exactly how many upcoming lectures you can safely skip without dropping below 75%.
-  - *Deficit Zone*: Computes the exact number of consecutive classes you must attend to recover your attendance status.
-- **Color-Coded Status Badges**: Instant visual indicators for `🟢 Safe` and `🔴 Low Attendance Warning`.
+- **Target Honors Dial**: A holographic progress ring displaying your cumulative CGPA alongside your target benchmark.
+- **Required GPA Projection**: Dynamically computes the average GPA you need to achieve across remaining semesters to graduate with your desired honors tier.
+- **Semester History**: Track your historical semester-by-semester performance and academic momentum.
 
 ---
 
-### 🌿 120-Day Academic Habit Consistency Heatmap
-- **GitHub-Style Contribution Grid**: 120-day heatmap tracking consistency in Deep Study, Problem Solving, and Reading.
-- **Interactive Multi-Level Logging**: Click any grid square to cycle intensity (`0 → 1 → 2 → 3 → 4`).
-- **Streak Velocity Engine**: Real-time active streak counters, longest streak record, and completion percentage.
+### 📋 4. Assignment Sprint & Milestone Board
+*Stay ahead of deadlines and project deliverables.*
+
+- **Visual Kanban Columns**: Easily organize tasks through `Backlog`, `In Progress`, `Under Review`, and `Completed`.
+- **Urgency & Priority Tags**: Color-coded urgency levels (`Urgent`, `High`, `Medium`, `Low`) to prioritize what matters most today.
+- **Course Associations**: Link each assignment directly to its respective course for clear academic tracking.
 
 ---
 
-### ⏱️ Deep Work Focus Synthesizer (Pomodoro Engine)
-- **Three Mode Intervals**: `Focus (25m)`, `Short Break (5m)`, `Long Break (15m)` with automatic mode progression.
-- **Binaural Ambience Synthesizer**: Generates real-time audio tones using Web Audio API oscillators:
-  - *Brown Noise, Alpha Waves (10Hz), Rain Ambience, Coding Flow, Silence*.
-- **Live Frequency Spectrum Visualizer**: Animated canvas audio visualizer reflecting active audio frequencies.
+### 🌿 5. 120-Day Habit Consistency Heatmap
+*Build sustainable daily study routines and maintain momentum.*
+
+- **Multi-Category Habit Tracking**: Monitor daily progress across **Deep Study**, **Coding & Problem Solving**, **Classroom Attendance**, and **Hydration & Health**.
+- **120-Day Contribution Grid**: A visual heatmap celebrating your daily dedication and study streaks.
+- **Quick One-Tap Check-In**: Instant toggle switch to log today's progress for any category.
+- **Streak Records**: Track active continuous streaks and celebrate your longest historical consistency milestones.
 
 ---
 
-### ✅ Milestone & Assignment Sprint Kanban
-- **Drag-and-Drop Workflow**: Move tasks across `Backlog → In Progress → Review → Done`.
-- **Priority Urgency Badges**: Encoded color tags for `Urgent`, `High`, `Medium`, and `Low` priority deadlines.
-- **Course Linking**: Tag assignments directly to enrolled college courses.
+### ⏱️ 6. Deep Work Focus Studio
+*Enter a distraction-free flow state during intense revision sessions.*
+
+- **Pomodoro Workflow**: Structured intervals for `Focus (25m)`, `Short Break (5m)`, and `Long Break (15m)` with automated interval progression.
+- **Built-in Binaural Audio Synthesizer**: Web-native sound generator creating focus-enhancing ambient audio:
+  - *Alpha Waves (10 Hz)* for calm clarity and retention.
+  - *Brown Noise* for deep concentration and blocking background chatter.
+  - *Rain Ambience* for soothing study sessions.
+  - *Coding Flow Tones* for analytical problem solving.
+- **Live Frequency Audio Visualizer**: A responsive visualizer that moves in sync with the generated soundwaves.
 
 ---
 
-## 🎨 Design System & Aesthetics
+### ☁️ 7. Instant Cloud Sync Across All Devices
+*Seamless continuity between your phone, tablet, and computer.*
 
-Scholar OS is designed with an **Obsidian Liquid-Glass** aesthetic:
-
-| Component | Design Pattern |
-|---|---|
-| **Atmosphere** | React Bits multi-layer fluid Aurora mesh background |
-| **Cursor** | Magnetic liquid cursor with spring inertia physics & click ripples |
-| **Lighting** | Magic UI Border Beam neon lasers + Specular cursor highlights |
-| **Dials** | Immersive holographic glass dials with native SVG glow filters |
-| **Navigation** | macOS-style magnifying dock with spring hover physics |
-| **Buttons** | React Bits Specular Buttons & obsidian capsule pills |
+- **Real-Time Cross-Device Parity**: Snap a chalkboard photo on your phone during class; open your laptop at the library and find your notes, flashcards, and attendance records already synchronized.
+- **Offline-Ready Resilience**: Works offline with local caching and reconciles updates when internet connectivity resumes.
+- **Modern One-Tap Sign-In**: Quick access via Google Sign-In or academic email with customizable scholar profiles.
 
 ---
 
-## 🧠 Technology Stack
+## 💡 Real-World Use Cases
 
-| Layer | Technology |
-|---|---|
-| **Framework** | Next.js 16.3 (App Router, Turbopack) |
-| **Language** | TypeScript 5 |
-| **Styling** | Tailwind CSS 3.4 + Vanilla CSS Variables |
-| **Cloud Database** | Upstash Serverless Redis (REST API) |
-| **State Management** | Zustand with reactive auto-sync subscriptions |
-| **AI / Multimodal Vision** | Google Gemini API (`gemini-2.0-flash-exp`) |
-| **Authentication** | Google Identity Services OAuth + JWT Session Tokens |
-| **Animations** | Framer Motion 11 |
-| **Math Typesetting** | KaTeX |
-| **Audio Engine** | Web Audio API (OscillatorNode & AudioContext) |
-| **UI Components** | React Bits, Kokonut UI, Magic UI |
-| **Icons** | Lucide React |
-| **Deployment** | Vercel |
+| Persona | Scenario | How Scholar OS Helps |
+|---|---|---|
+| **Undergraduate Student** | Rushing between lectures with strict 75% attendance rules | Uses the **Bunk Simulator** to track attendance safety and snaps lecture boards to get clean KaTeX notes before midterms. |
+| **Engineering & Math Major** | Complex multi-board mathematical proofs written quickly by professors | Uses the **Blackboard Scanner** to extract step-by-step numbered derivations and creates active recall flashcards. |
+| **Graduate & Honors Scholar** | Balancing research, coursework deadlines, and GPA requirements | Uses the **CGPA Trajectory Ring** to project required term GPAs and manages project milestones on the **Assignment Board**. |
+| **Self-Paced Learner** | Building consistent daily coding and study habits | Uses the **120-Day Heatmap** and **Deep Work Pomodoro Synthesizer** with binaural alpha waves to stay in the zone. |
 
 ---
 
-## 📁 Project Structure
+## 📱 The Zero-State Philosophy
 
-```
-src/
-├── app/
-│   ├── page.tsx                    # Main OS Dashboard entry
-│   ├── globals.css                 # Obsidian dark tokens & animations
-│   ├── layout.tsx                  # Root metadata & font configurations
-│   └── api/
-│       ├── analyze-board/          # Gemini Vision multimodal OCR endpoint
-│       ├── auth/
-│       │   ├── google/             # Google OAuth token verification
-│       │   ├── login/              # Email/password authentication
-│       │   └── register/           # New scholar account registration
-│       ├── chat/                   # Board-contextual AI chat endpoint
-│       ├── concierge/              # Scholar OS AI assistant endpoint
-│       └── sync/                   # Upstash Redis push/pull cloud synchronization
-├── components/
-│   ├── academic/
-│   │   ├── AcademicCommandCenter.tsx   # Layout container
-│   │   ├── AssignmentKanban.tsx        # Drag-and-drop assignment sprint board
-│   │   ├── AttendanceTracker.tsx       # 75% threshold attendance + bunk simulator
-│   │   └── CgpaProgressRing.tsx        # Holographic CGPA trajectory dial
-│   ├── auth/
-│   │   ├── AuthModal.tsx               # Sign in / Sign up modal with Google OAuth
-│   │   ├── AvatarPicker.tsx            # Kokonut UI SVG procedural avatar picker
-│   │   └── OnboardingWizard.tsx        # 3-step zero-state onboarding wizard
-│   ├── canvas/
-│   │   └── ScrollCanvasSequence.tsx    # 250-frame 4K scroll sequence background
-│   ├── dashboard/
-│   │   └── ScrollDashboardOverlay.tsx  # Hero showcase + metric dials
-│   ├── habits/
-│   │   ├── AppleActivityCard.tsx       # Kokonut UI concentric activity rings
-│   │   ├── HabitStreakHeatmap.tsx      # 120-day habit contribution heatmap
-│   │   ├── PomodoroTimer.tsx           # Deep work focus timer + Web Audio synth
-│   │   └── AudioVisualizer.tsx         # Live Web Audio frequency visualizer
-│   ├── navigation/
-│   │   ├── TopNav.tsx                  # Floating glass navigation pill
-│   │   └── UserProfileMenu.tsx         # Kokonut UI profile dropdown with bending line
-│   ├── vision/
-│   │   ├── BoardToStudyStudio.tsx      # Main OCR workspace
-│   │   ├── BoardHistoryShelf.tsx       # Kokonut UI lecture history & saved board carousel
-│   │   ├── ActiveRecallFlashcards.tsx  # 3D active recall flip deck
-│   │   ├── ContextualChatDrawer.tsx    # Chalkboard AI chat interface
-│   │   ├── DerivationBreakdown.tsx     # Step-by-step mathematical proofs
-│   │   ├── StructuredNotesViewer.tsx   # KaTeX formatted lecture notes
-│   │   ├── SampleBoardsLibrary.ts      # Preloaded sample board library
-│   │   └── HighResImageViewer.tsx      # Pan & zoom board image viewer with course selector
-│   └── ui/
-│       ├── SpecularButton.tsx          # React Bits cursor-tracking specular button
-│       ├── CircularProgress.tsx        # Immersive holographic progress dial
-│       ├── MagicCard.tsx               # Cursor spotlight card with Border Beam
-│       ├── BorderBeam.tsx              # Rotating neon laser border
-│       ├── AnimatedShinyText.tsx       # Shimmer headline typography
-│       ├── AuroraBackground.tsx        # Ambient fluid Aurora mesh layer
-│       ├── LiquidCursor.tsx            # Trailing magnetic cursor
-│       ├── Dock.tsx                    # macOS spring magnification dock
-│       ├── KokonutToggle.tsx           # Spring toggle switch
-│       └── Badge.tsx                   # Status indicator badges
-├── store/
-│   └── useScholarStore.ts              # Zustand global store + reactive Redis sync
-├── types/
-│   └── scholar.ts                      # TypeScript interfaces & domain types
-├── hooks/
-│   ├── useBoardAnalysis.ts             # Multimodal board analysis hook
-│   └── useSoundSynth.ts               # Web Audio binaural frequency generator
-└── lib/
-    ├── gemini.ts                       # Google Gemini API client
-    ├── redis.ts                        # Upstash Redis client configuration
-    └── utils.ts                        # Styling utilities
-```
+Scholar OS is designed to be your genuine personal companion, not a static template filled with placeholder text.
 
----
-
-## ⚡ Installation & Setup
-
-### Prerequisites
-- Node.js 18+ installed
-- A free [Google Gemini API Key](https://aistudio.google.com/app/apikey)
-- A free [Upstash Redis Database](https://upstash.com/)
-- (Optional) A [Google Cloud OAuth Client ID](https://console.cloud.google.com/apis/credentials) for Google Sign-In
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/KaiX-Jr/scholar-os.git
-cd scholar-os
-```
-
-### 2. Install Dependencies
-```bash
-npm install
-```
-
-### 3. Configure Environment Variables
-Create a `.env.local` file in the root directory:
-```env
-# Google Gemini API
-NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-
-# Upstash Redis (For cross-device cloud sync)
-UPSTASH_REDIS_REST_URL=https://your-database.upstash.io
-UPSTASH_REDIS_REST_TOKEN=your_upstash_token_here
-
-# Google OAuth (For Google Sign-In)
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_oauth_client_id.apps.googleusercontent.com
-```
-
-### 4. Launch Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 5. Build for Production
-```bash
-npm run build
-npm start
-```
-
----
-
-## 🚀 Deployment (Vercel)
-
-Deploy your own Scholar OS instance with a single click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/KaiX-Jr/scholar-os)
-
-### Manual Setup on Vercel:
-1. Push your repository to GitHub.
-2. Import the repository into [Vercel Dashboard](https://vercel.com/new).
-3. In **Settings → Environment Variables**, add:
-   - `GEMINI_API_KEY`
-   - `UPSTASH_REDIS_REST_URL`
-   - `UPSTASH_REDIS_REST_TOKEN`
-   - `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
-4. Click **Deploy**.
-
----
-
-## 📱 Zero-State Philosophy
-
-Scholar OS is strictly zero-state. There are **no dummy courses, mock grades, or placeholder logs**. When a new scholar creates an account:
-
-- 📚 **Courses**: Blank → configured via the 3-step Onboarding Wizard.
-- 📆 **Attendance**: Starts at `0/0` until you log your first class.
-- 🌿 **Habit Heatmap**: All 120 squares start blank.
-- 📋 **Kanban**: Empty sprint board awaiting your actual deadlines.
-- 📈 **CGPA Gauge**: Reflects your entered target honors tier.
+When you start:
+- 📚 **Courses**: Blank canvas ready for your exact subject codes and weekly schedules.
+- 📆 **Attendance**: Starts at `0/0` — every record is genuine and logged by you.
+- 🌿 **Habits**: A clean 120-day grid awaiting your real consistency journey.
+- 📋 **Assignments**: Ready for your actual course deadlines.
 
 ---
 
 ## 🔒 Security & Privacy
 
-- **Data Privacy**: Academic notes, courses, and habit records belong solely to the user.
-- **Secure Cloud Sync**: Cross-device synchronization is encrypted via HTTPS and secured with Upstash Redis tokens.
-- **Authentication**: Passwords are securely hashed; Google OAuth authentication is validated directly against Google's public token authority.
+- **Data Ownership**: Your academic notes, coursework data, and habit history belong entirely to you.
+- **Secure Cloud Synchronization**: Cross-device communications are fully encrypted over HTTPS.
+- **Protected Authentication**: Seamless Google OAuth verification and secure credential hashing.
 
 ---
 
 ## 📄 License
 
-[MIT](LICENSE) © [KaiX-Jr](https://github.com/KaiX-Jr) — Free to use, fork, and build upon.
+This project is licensed under the [MIT License](LICENSE) — free to use, share, and build upon for students and educators everywhere.
 
 ---
 
 <div align="center">
 
-**Crafted with 🧠 for students and scholars worldwide.**
+**Built with 🧠 to empower scholars and students worldwide.**
 
-[![GitHub stars](https://img.shields.io/github/stars/KaiX-Jr/scholar-os?style=social)](https://github.com/KaiX-Jr/scholar-os/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/KaiX-Jr/scholar-os?style=social)](https://github.com/KaiX-Jr/scholar-os/network)
+[⭐ Star on GitHub](https://github.com/KaiX-Jr/scholar-os) · [🚀 Launch Scholar OS](https://scholar-os.vercel.app)
 
 </div>
