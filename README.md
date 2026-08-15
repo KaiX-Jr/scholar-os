@@ -8,13 +8,13 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini_API-AI_Powered-4285F4?style=flat-square&logo=google)](https://ai.google.dev/)
-[![Cloud Sync](https://img.shields.io/badge/Cloud_Sync-Instant_Cross--Device-00E599?style=flat-square)](https://scholar-os.vercel.app)
+[![Cloud Sync](https://img.shields.io/badge/Cloud_Sync-Instant_Cross--Device-00E599?style=flat-square)](https://scholardashboard.vercel.app)
 [![Google OAuth](https://img.shields.io/badge/Google_OAuth-Sign_In-EA4335?style=flat-square&logo=google)](https://developers.google.com/identity)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
-**An all-in-one intelligent workspace that turns classroom blackboard photos into structured notes, tracks attendance and deadlines, monitors academic goals, and fosters consistent study habits.**
+**An all-in-one intelligent workspace that turns classroom blackboard photos into structured notes, tests your daily recall with an AI Professor, tracks attendance and deadlines, monitors 10.0 CGPA honors benchmarks, and fosters deep focus study habits.**
 
-[🚀 Experience Scholar OS](https://scholar-os.vercel.app) · [✨ Core Capabilities](#-what-scholar-os-can-do) · [🎯 Purpose & Vision](#-purpose--vision) · [💡 Use Cases](#-real-world-use-cases)
+[🚀 Experience Scholar OS](https://scholardashboard.vercel.app) · [✨ Core Capabilities](#-what-scholar-os-can-do) · [🎯 Purpose & Vision](#-purpose--vision) · [💡 Use Cases](#-real-world-use-cases)
 
 </div>
 
@@ -24,14 +24,15 @@
 
 **Scholar OS** is a unified academic workspace designed for university scholars, researchers, and students who want complete control over their academic life. 
 
-University education moves fast. Between fast-paced lectures where professors fill blackboards with complex equations, strict attendance policies, overlapping assignment deadlines, and the struggle to maintain daily study consistency, students often find themselves juggling multiple fragmented tools.
+University education moves fast. Between fast-paced lectures where professors fill blackboards with complex equations, strict 75% attendance policies, overlapping assignment deadlines, and the struggle to maintain daily study consistency, students often find themselves juggling multiple fragmented tools.
 
 **Scholar OS brings everything together into a single, cohesive operating system:**
-- Instant transformation of physical classroom chalkboard and whiteboard photos into structured study notes and mathematical derivations.
-- Intelligent attendance management that calculates exactly how many classes you can safely skip or must attend to stay above mandatory thresholds.
-- Coursework tracking that keeps assignments, midterms, and project deliverables organized.
-- Daily habit heatmaps and deep focus sessions that help build long-term academic discipline.
-- Real-time cloud synchronization ensuring your notes and data are instantly accessible across your phone, tablet, and laptop.
+- **AI Blackboard Scanner**: Instant transformation of physical classroom chalkboard and whiteboard photos into structured study notes, numbered derivations, and interactive flashcards.
+- **Daily AI Concept Quiz & Flashcards**: Automatic daily concept challenges grounded in your recent lecture boards and enrolled courses, with real-time grading, speech synthesis, KaTeX math parsing, and interactive memory flashcards.
+- **Intelligent Attendance Tracker & Bunk Simulator**: Calculates exactly how many classes you can safely skip or must attend to stay above mandatory thresholds, with genuine zero-state tracking.
+- **10.0 Honors CGPA Benchmark System**: Standardized on the 10.0 CGPA scale with real-time trajectory forecasting and semester milestone history.
+- **Cognitive Habit Heatmap & Focus Studio**: 120-day contribution matrix and built-in binaural audio synthesizer for deep work sessions.
+- **Instant Cloud Sync**: Real-time cross-device parity across mobile phones, tablets, laptops, and desktops.
 
 ---
 
@@ -42,14 +43,31 @@ Traditional student apps are often fragmented note-takers, simple to-do lists, o
 Scholar OS was built around three core principles:
 
 1. **Classroom-to-Study Continuity**: Lectures happen in real time on physical blackboards. Scholar OS bridges the physical classroom and digital study space by converting quick phone snapshots into beautiful LaTeX notes, numbered derivations, and active recall study decks in seconds.
-2. **Zero-State Personalization**: Your workspace belongs entirely to you. Scholar OS does not flood your dashboard with dummy courses or mock data. You start fresh on Day 0, configuring your exact university curriculum, semester timeline, and target honors tier.
-3. **Academic Well-being & Balance**: Success in academia isn't just about grades; it's about consistency, attendance safety, deep focus, and avoiding burnout. Scholar OS provides actionable metrics and focus tools to keep you in control of your daily routine.
+2. **Active Daily Recall & Cognitive Reinforcement**: Learning isn't passive note-taking; it's active retrieval. The built-in AI Quiz asks a tailored daily question every morning, reinforcing neural pathways and automatically updating your study habit heatmap.
+3. **Zero-State Personalization**: Your workspace belongs entirely to you. Scholar OS does not flood your dashboard with dummy courses or mock data. You start fresh on Day 0, configuring your exact university curriculum, semester timeline, and target 10.0 honors tier.
+4. **Academic Well-being & Balance**: Success in academia isn't just about grades; it's about consistency, attendance safety, deep focus, and avoiding burnout. Scholar OS provides actionable metrics and focus tools to keep you in control of your daily routine.
 
 ---
 
 ## 🚀 What Scholar OS Can Do
 
-### 📸 1. AI Blackboard-to-Study Studio
+### 🎯 1. Daily AI Quiz & Active Recall Studio
+*Reinforce high-order conceptual mastery with daily active recall challenges and interactive memory cards.*
+
+- **Syllabus & Blackboard Ingestion**: Scans your recent lecture board captures and enrolled course curriculum to synthesize a targeted daily concept question.
+- **Neural Speech Synthesis**: Optional audio voice assistant (`Voice ON/OFF`) that reads questions and feedback aloud.
+- **Dual Response Modes**: Answer via **Multiple Choice** or type a **Written Answer / Explanation** demonstrating your step-by-step reasoning.
+- **AI Real-Time Evaluation**: Powered by Google Gemini to grade conceptual depth, awarding letter grades (`A+` through `C`), explanations, and actionable takeaways.
+- **Interactive Memory Flashcard**: Flip between the question on the front and the detailed solution on the back to memorize challenging concepts instantly.
+- **Automatic Matrix Synchronization**:
+  - **Cognitive Habit Heatmap**: Automatically marks today's study block with `+3.0 hrs` study momentum upon completion.
+  - **Honors CGPA Boost**: Automatically increments your current CGPA trajectory by `+0.03` mastery points on the 10.0 scale.
+  - **Binaural Deep Work Launcher**: One-click action to launch straight into a 25-minute focused study sprint.
+- **Fully Responsive Modal**: Features a sticky header with a prominent close button, background scroll lock, and smooth scrollable layout optimized for mobile smartphones, tablets, and desktops.
+
+---
+
+### 📸 2. AI Blackboard-to-Study Studio
 *Turn messy classroom chalkboard photos into structured revision materials in seconds.*
 
 - **Photo & Camera Ingestion**: Upload an existing photo from your gallery or snap a high-resolution photo directly during live lectures using your device camera.
@@ -62,9 +80,10 @@ Scholar OS was built around three core principles:
 
 ---
 
-### 🎓 2. Course Attendance & Bunk Simulator
+### 🎓 3. Course Attendance & Bunk Simulator
 *Never lose eligibility for exams or fall below mandatory attendance requirements.*
 
+- **Zero-State Precision**: When no attendance is logged yet, the gauge accurately displays `0%` / `Zero-State` with `"0 Classes Logged (75% Target)"` rather than premature threshold cleared messages.
 - **Multi-Course Tracking**: Track attendance individually for all your enrolled courses with credits, lecture codes, and weekly schedules.
 - **One-Tap Class Logging**: Record daily class outcomes with single-tap actions for `Present`, `Absent`, or `Class Cancelled`.
 - **Smart 75% Threshold Analytics**:
@@ -74,16 +93,16 @@ Scholar OS was built around three core principles:
 
 ---
 
-### 📈 3. CGPA Benchmark & Academic Trajectory
-*Visual roadmaps to reach your target honors degree and GPA goals.*
+### 📈 4. 10.0 CGPA Benchmark & Academic Trajectory
+*Standardized on the 10.0 Honors CGPA scale (IEM / Indian University standard).*
 
-- **Target Honors Dial**: A holographic progress ring displaying your cumulative CGPA alongside your target benchmark.
+- **Target Honors Dial**: A holographic progress ring displaying your cumulative CGPA alongside your target benchmark on the 10.0 scale (`/ 10.00`).
 - **Required GPA Projection**: Dynamically computes the average GPA you need to achieve across remaining semesters to graduate with your desired honors tier.
 - **Semester History**: Track your historical semester-by-semester performance and academic momentum.
 
 ---
 
-### 📋 4. Assignment Sprint & Milestone Board
+### 📋 5. Assignment Sprint & Milestone Board
 *Stay ahead of deadlines and project deliverables.*
 
 - **Visual Kanban Columns**: Easily organize tasks through `Backlog`, `In Progress`, `Under Review`, and `Completed`.
@@ -92,7 +111,7 @@ Scholar OS was built around three core principles:
 
 ---
 
-### 🌿 5. 120-Day Habit Consistency Heatmap
+### 🌿 6. 120-Day Habit Consistency Heatmap
 *Build sustainable daily study routines and maintain momentum.*
 
 - **Multi-Category Habit Tracking**: Monitor daily progress across **Deep Study**, **Coding & Problem Solving**, **Classroom Attendance**, and **Hydration & Health**.
@@ -102,7 +121,7 @@ Scholar OS was built around three core principles:
 
 ---
 
-### ⏱️ 6. Deep Work Focus Studio
+### ⏱️ 7. Deep Work Focus Studio
 *Enter a distraction-free flow state during intense revision sessions.*
 
 - **Pomodoro Workflow**: Structured intervals for `Focus (25m)`, `Short Break (5m)`, and `Long Break (15m)` with automated interval progression.
@@ -115,12 +134,21 @@ Scholar OS was built around three core principles:
 
 ---
 
-### ☁️ 7. Instant Cloud Sync Across All Devices
+### ☁️ 8. Instant Cloud Sync Across All Devices
 *Seamless continuity between your phone, tablet, and computer.*
 
 - **Real-Time Cross-Device Parity**: Snap a chalkboard photo on your phone during class; open your laptop at the library and find your notes, flashcards, and attendance records already synchronized.
 - **Offline-Ready Resilience**: Works offline with local caching and reconciles updates when internet connectivity resumes.
 - **Modern One-Tap Sign-In**: Quick access via Google Sign-In or academic email with customizable scholar profiles.
+
+---
+
+## 📱 Cross-Platform Responsive Architecture
+
+Scholar OS is designed from the ground up for seamless responsive viewing across all device form factors:
+- 📱 **Mobile Phones**: Touch-friendly floating bottom navigation, compact headers, full-width swipeable cards, and sticky modal headers with quick-close buttons.
+- 📱 **Tablets & iPads**: Multi-column split views for lecture notes, derivations, and habit matrices.
+- 💻 **Laptops & Desktops**: Immersive multi-column HUD with holographic dials and instant keyboard shortcuts.
 
 ---
 
@@ -130,7 +158,7 @@ Scholar OS was built around three core principles:
 |---|---|---|
 | **Undergraduate Student** | Rushing between lectures with strict 75% attendance rules | Uses the **Bunk Simulator** to track attendance safety and snaps lecture boards to get clean KaTeX notes before midterms. |
 | **Engineering & Math Major** | Complex multi-board mathematical proofs written quickly by professors | Uses the **Blackboard Scanner** to extract step-by-step numbered derivations and creates active recall flashcards. |
-| **Graduate & Honors Scholar** | Balancing research, coursework deadlines, and GPA requirements | Uses the **CGPA Trajectory Ring** to project required term GPAs and manages project milestones on the **Assignment Board**. |
+| **Honors Scholar** | Daily conceptual retention & 10.0 CGPA tracking | Completes the **AI Professor Oral Check-In** each morning to reinforce concepts, boost habit streaks, and track 10.0 CGPA milestones. |
 | **Self-Paced Learner** | Building consistent daily coding and study habits | Uses the **120-Day Heatmap** and **Deep Work Pomodoro Synthesizer** with binaural alpha waves to stay in the zone. |
 
 ---
@@ -165,6 +193,6 @@ This project is licensed under the [MIT License](LICENSE) — free to use, share
 
 **Built with 🧠 to empower scholars and students worldwide.**
 
-[⭐ Star on GitHub](https://github.com/KaiX-Jr/scholar-os) · [🚀 Launch Scholar OS](https://scholar-os.vercel.app)
+[⭐ Star on GitHub](https://github.com/KaiX-Jr/scholar-os) · [🚀 Launch Scholar OS](https://scholardashboard.vercel.app)
 
 </div>

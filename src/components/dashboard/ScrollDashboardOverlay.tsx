@@ -6,6 +6,7 @@ import { TopNav } from "@/components/navigation/TopNav";
 import { AcademicCommandCenter } from "@/components/academic/AcademicCommandCenter";
 import { BoardToStudyStudio } from "@/components/vision/BoardToStudyStudio";
 import { HabitProductivityMatrix } from "@/components/habits/HabitProductivityMatrix";
+import { DailyProfessorOralCheckin } from "@/components/tutor/DailyProfessorOralCheckin";
 import { AnimatedShinyText } from "@/components/ui/AnimatedShinyText";
 import { CircularProgress } from "@/components/ui/CircularProgress";
 import { BorderBeam } from "@/components/ui/BorderBeam";
@@ -48,12 +49,13 @@ export const ScrollDashboardOverlay: React.FC = () => {
   const totalClasses = courses.reduce((acc, c) => acc + c.total, 0);
   const totalAttended = courses.reduce((acc, c) => acc + c.attended, 0);
   const overallAttendancePct =
-    totalClasses > 0 ? (totalAttended / totalClasses) * 100 : 100;
-  const isAttendanceSafe = overallAttendancePct >= 75;
+    totalClasses > 0 ? (totalAttended / totalClasses) * 100 : 0;
+  const isAttendanceSafe = totalClasses > 0 && overallAttendancePct >= 75;
 
-  const targetCgpa = user?.targetCgpa || 3.9;
-  const currentCgpa = user?.currentCgpa || 0;
-  const cgpaPercentage = (targetCgpa / 4.0) * 100;
+  const rawTarget = user?.targetCgpa || 9.0;
+  const targetCgpa = rawTarget <= 4.0 ? Number((rawTarget * 2.5).toFixed(2)) : rawTarget;
+  const maxCgpa = 10.0;
+  const cgpaPercentage = (targetCgpa / maxCgpa) * 100;
 
   return (
     <div className="relative w-full text-white">
@@ -177,7 +179,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
             <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs text-slate-300 font-mono">
               <span className="flex items-center gap-1.5">
                 <Award className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Honors Goal: {targetCgpa.toFixed(2)} / 4.00</span>
+                <span>Honors Goal: {targetCgpa.toFixed(2)} / 10.00</span>
               </span>
               <span className="text-indigo-300 font-semibold">
                 {courses.length} Active Courses
@@ -205,7 +207,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
                 <p className="text-xs text-slate-300 mt-1 max-w-xs">
                   {totalClasses > 0
                     ? `${totalAttended} of ${totalClasses} lectures logged`
-                    : "Daily class log ready for your enrolled courses"}
+                    : "0 classes recorded — Ready to log"}
                 </p>
               </div>
 
@@ -217,8 +219,8 @@ export const ScrollDashboardOverlay: React.FC = () => {
                 strokeWidth={7}
                 gradientFrom="#00f2fe"
                 gradientTo="#10b981"
-                label={`${Math.round(overallAttendancePct)}%`}
-                sublabel="Total"
+                label={totalClasses > 0 ? `${Math.round(overallAttendancePct)}%` : `0%`}
+                sublabel={totalClasses > 0 ? "Total" : "Zero-State"}
               />
             </div>
 
@@ -226,14 +228,32 @@ export const ScrollDashboardOverlay: React.FC = () => {
               <span className="flex items-center gap-1.5">
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    isAttendanceSafe ? "bg-emerald-400 animate-pulse" : "bg-rose-400 animate-ping"
+                    totalClasses === 0
+                      ? "bg-slate-400"
+                      : isAttendanceSafe
+                      ? "bg-emerald-400 animate-pulse"
+                      : "bg-rose-400 animate-ping"
                   }`}
                 />
-                <span className={isAttendanceSafe ? "text-emerald-300 font-semibold" : "text-rose-300 font-semibold"}>
-                  {isAttendanceSafe ? "75% Threshold Cleared" : "Attendance Deficit Alert"}
+                <span
+                  className={
+                    totalClasses === 0
+                      ? "text-slate-400 font-semibold"
+                      : isAttendanceSafe
+                      ? "text-emerald-300 font-semibold"
+                      : "text-rose-300 font-semibold"
+                  }
+                >
+                  {totalClasses === 0
+                    ? "0 Classes Logged (75% Target)"
+                    : isAttendanceSafe
+                    ? "75% Threshold Cleared"
+                    : "Attendance Deficit Alert"}
                 </span>
               </span>
-              <span className="text-slate-400">Daily Logging Active</span>
+              <span className="text-slate-400">
+                {totalClasses > 0 ? "Daily Logging Active" : "No Attendance Data"}
+              </span>
             </div>
           </MagicCard>
         </motion.div>
@@ -264,6 +284,9 @@ export const ScrollDashboardOverlay: React.FC = () => {
           SECTION 4: COGNITIVE HABIT MATRIX & DEEP WORK
       ========================================================================== */}
       <HabitProductivityMatrix />
+
+      {/* Daily Professor Oral Check-In Studio Modal */}
+      <DailyProfessorOralCheckin />
 
       {/* =========================================================================
           SECTION 5: CLEAN FOOTER

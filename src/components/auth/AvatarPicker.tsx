@@ -1,12 +1,5 @@
 "use client";
 
-/**
- * @author: @dorianbaffier
- * @description: Avatar Picker from Kokonut UI
- * @website: https://kokonutui.com
- * @github: https://github.com/kokonut-labs/kokonutui
- */
-
 import { Check, User2 } from "lucide-react";
 import type { Variants } from "framer-motion";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";

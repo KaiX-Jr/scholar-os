@@ -9,21 +9,25 @@ import { Badge } from "@/components/ui/Badge";
 export const CgpaProgressRing: React.FC = () => {
   const { user } = useScholarStore();
 
-  const currentCgpa = user?.currentCgpa || 3.85;
-  const targetCgpa = user?.targetCgpa || 3.95;
+  const rawCurrent = user?.currentCgpa || 8.65;
+  const rawTarget = user?.targetCgpa || 9.25;
+  // Standard 10.0 Honors scale
+  const maxGpa = 10.0;
+  const currentCgpa = rawCurrent <= 4.0 ? Number((rawCurrent * 2.5).toFixed(2)) : rawCurrent;
+  const targetCgpa = rawTarget <= 4.0 ? Number((rawTarget * 2.5).toFixed(2)) : rawTarget;
+
   const completedCredits = user?.completedCredits || 96;
   const totalRequiredCredits = user?.totalRequiredCredits || 128;
   const semesterGpas = [
-    { semester: "Sem 1", gpa: 3.75, credits: 16 },
-    { semester: "Sem 2", gpa: 3.82, credits: 16 },
-    { semester: "Sem 3", gpa: 3.86, credits: 16 },
-    { semester: "Sem 4", gpa: 3.94, credits: 16 },
+    { semester: "Sem 1", gpa: 8.75, credits: 16 },
+    { semester: "Sem 2", gpa: 8.92, credits: 16 },
+    { semester: "Sem 3", gpa: 9.15, credits: 16 },
+    { semester: "Sem 4", gpa: 9.40, credits: 16 },
   ];
 
   const [activeTab, setActiveTab] = useState<"overview" | "projection">("overview");
 
-  // Circular gauge math (max CGPA = 4.0)
-  const maxGpa = 4.0;
+  // Circular gauge math (max CGPA = 10.0)
   const radius = 70;
   const stroke = 10;
   const normalizedRadius = radius - stroke * 2;
@@ -38,7 +42,7 @@ export const CgpaProgressRing: React.FC = () => {
   // Remaining calculation
   const remainingCredits = Math.max(1, totalRequiredCredits - completedCredits);
   const requiredRemainingGpa = Math.min(
-    4.0,
+    10.0,
     Math.max(
       0,
       (targetCgpa * totalRequiredCredits - currentCgpa * completedCredits) / remainingCredits

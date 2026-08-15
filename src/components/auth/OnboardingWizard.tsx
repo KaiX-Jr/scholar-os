@@ -37,7 +37,13 @@ export const OnboardingWizard: React.FC = () => {
   const [name, setName] = useState(user?.name || "");
   const [university, setUniversity] = useState(user?.university || "");
   const [semester, setSemester] = useState(user?.semester || "Semester 3");
-  const [targetCgpa, setTargetCgpa] = useState<number>(user?.targetCgpa || 3.9);
+  const [targetCgpa, setTargetCgpa] = useState<number>(
+    user?.targetCgpa
+      ? user.targetCgpa <= 4.0
+        ? Number((user.targetCgpa * 2.5).toFixed(2))
+        : user.targetCgpa
+      : 9.0
+  );
 
   // Step 2: Dynamic Courses State (pre-filled from store)
   const [courses, setCourses] = useState<OnboardingCourseInput[]>(
@@ -63,7 +69,13 @@ export const OnboardingWizard: React.FC = () => {
       if (user?.name) setName(user.name);
       if (user?.university) setUniversity(user.university);
       if (user?.semester) setSemester(user.semester);
-      if (user?.targetCgpa) setTargetCgpa(user.targetCgpa);
+      if (user?.targetCgpa) {
+        setTargetCgpa(
+          user.targetCgpa <= 4.0
+            ? Number((user.targetCgpa * 2.5).toFixed(2))
+            : user.targetCgpa
+        );
+      }
       if (user?.isOnboarded) setStep(2);
 
       if (storeCourses && storeCourses.length > 0) {
@@ -304,25 +316,26 @@ export const OnboardingWizard: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="text-[10px] font-mono text-slate-300 uppercase tracking-wide">
-                        Target CGPA Goal
+                        Target Honors CGPA Goal (10.0 Scale)
                       </label>
                       <span className="text-xs font-mono font-bold text-cyan-300">
-                        {targetCgpa.toFixed(2)}
+                        {targetCgpa.toFixed(2)} / 10.00
                       </span>
                     </div>
                     <input
                       type="range"
-                      min="3.0"
-                      max="4.0"
+                      min="6.0"
+                      max="10.0"
                       step="0.05"
                       value={targetCgpa}
                       onChange={(e) => setTargetCgpa(parseFloat(e.target.value))}
                       className="w-full h-2 bg-black/50 rounded-lg appearance-none cursor-pointer accent-cyan-400"
                     />
                     <div className="flex justify-between text-[9px] text-slate-500 font-mono mt-0.5">
-                      <span>3.00</span>
-                      <span>3.50</span>
-                      <span>4.00</span>
+                      <span>6.00</span>
+                      <span>7.50</span>
+                      <span>9.00</span>
+                      <span>10.00</span>
                     </div>
                   </div>
                 </div>

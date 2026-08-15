@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 const TOTAL_FRAMES = 250;
 
@@ -16,9 +16,6 @@ export const ScrollCanvasSequence: React.FC = () => {
   const targetFrameRef = useRef<number>(1);
   const currentFrameRef = useRef<number>(1);
   const animationFrameId = useRef<number | null>(null);
-
-  const [loadedCount, setLoadedCount] = useState<number>(0);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   // Draw frame with ultra-sharp object-fit: cover and high-quality smoothing
   const renderFrame = (frameIndex: number) => {
@@ -74,9 +71,8 @@ export const ScrollCanvasSequence: React.FC = () => {
     renderFrame(currentFrameRef.current);
   };
 
-  // Preload all frames on mount
+  // Preload all frames on mount in background
   useEffect(() => {
-    let count = 0;
     const preloadedImages: HTMLImageElement[] = [];
 
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
@@ -84,25 +80,10 @@ export const ScrollCanvasSequence: React.FC = () => {
       img.src = getFramePath(i);
 
       img.onload = () => {
-        count++;
-        setLoadedCount(count);
-
         // Render first frame as soon as it's ready
         if (i === 1) {
           resizeCanvas();
           renderFrame(1);
-        }
-
-        if (count === TOTAL_FRAMES) {
-          setIsLoaded(true);
-        }
-      };
-
-      img.onerror = () => {
-        count++;
-        setLoadedCount(count);
-        if (count === TOTAL_FRAMES) {
-          setIsLoaded(true);
         }
       };
 
@@ -168,47 +149,18 @@ export const ScrollCanvasSequence: React.FC = () => {
     };
   }, []);
 
-  const loadPercent = Math.round((loadedCount / TOTAL_FRAMES) * 100);
-
   return (
-    <>
-      {/* Fixed Sticky Background Canvas (z-0) */}
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 w-screen h-screen pointer-events-none z-0"
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
-          height: "100vh",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-
-      {/* Preloader Screen with Frosted Glass Styling */}
-      {!isLoaded && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#08080c]/90 backdrop-blur-md text-white select-none">
-          <div className="w-72 p-6 rounded-2xl backdrop-blur-2xl bg-white/[0.04] border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] space-y-4 text-center">
-            <div className="flex items-center justify-between text-xs font-mono text-slate-300">
-              <span className="tracking-wider">CACHING 2.5K FRAMES</span>
-              <span className="font-bold text-cyan-400">{loadPercent}%</span>
-            </div>
-
-            {/* Progress Bar Track */}
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden p-0.5">
-              <div
-                className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all duration-150 ease-out rounded-full shadow-[0_0_12px_rgba(6,182,212,0.6)]"
-                style={{ width: `${loadPercent}%` }}
-              />
-            </div>
-
-            <p className="text-[11px] font-mono text-slate-400">
-              {loadedCount} / {TOTAL_FRAMES} high-res frames in memory
-            </p>
-          </div>
-        </div>
-      )}
-    </>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-screen h-screen pointer-events-none z-0"
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100vw",
+        height: "100vh",
+        pointerEvents: "none",
+        zIndex: 0,
+      }}
+    />
   );
 };

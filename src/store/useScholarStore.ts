@@ -107,6 +107,14 @@ interface ScholarStore {
   loadBoardFromHistory: (id: string) => void;
   clearBoardHistory: () => void;
 
+  // Daily AI Professor Check-In
+  isDailyProfessorOpen: boolean;
+  dailyOralQuestion: import("@/types/scholar").DailyOralQuestion | null;
+  openDailyProfessor: () => void;
+  closeDailyProfessor: () => void;
+  setDailyOralQuestion: (question: import("@/types/scholar").DailyOralQuestion | null) => void;
+  recordDailyOralAnswer: (isCorrect: boolean, feedback: string, userAnswer: string, masteryScore?: number) => void;
+
   // Zero-State Factory Reset
   resetAllData: () => void;
 }
@@ -209,11 +217,19 @@ export const useScholarStore = create<ScholarStore>()(
       activeImageUri: null,
       boardHistory: [],
 
+      // Daily AI Professor State
+      isDailyProfessorOpen: false,
+      dailyOralQuestion: null,
+
       // Modal Controls
       openAuthModal: () => set({ isAuthModalOpen: true }),
       closeAuthModal: () => set({ isAuthModalOpen: false }),
       openOnboarding: () => set({ isOnboardingOpen: true }),
       closeOnboarding: () => set({ isOnboardingOpen: false }),
+      openDailyProfessor: () => set({ isDailyProfessorOpen: true }),
+      closeDailyProfessor: () => set({ isDailyProfessorOpen: false }),
+      setDailyOralQuestion: (question) => set({ dailyOralQuestion: question }),
+
 
       // Cloud Sync
       syncToCloud: async () => {
@@ -842,6 +858,49 @@ export const useScholarStore = create<ScholarStore>()(
         set({ boardHistory: [] });
       },
 
+      // Record Daily Oral Check-In & Update Habits + CGPA Mastery
+      recordDailyOralAnswer: (isCorrect, feedback, userAnswer, masteryScore = 95) => {
+        const todayStr = getLocalDateStr();
+        const currentQ = get().dailyOralQuestion;
+        if (currentQ) {
+          set({
+            dailyOralQuestion: {
+              ...currentQ,
+              isCompleted: true,
+              answeredCorrectly: isCorrect,
+              feedback,
+              userAnswer,
+              masteryScore,
+            },
+          });
+        }
+
+        // Auto-log today's Deep Study Habit Matrix
+        get().logHabit("study", todayStr, isCorrect ? 4 : 3, 3.0);
+
+        // Adjust academic momentum towards Target CGPA on 10.0 scale
+        const currentUser = get().user;
+        if (currentUser) {
+          const rawCurrent = currentUser.currentCgpa || 8.5;
+          const current = rawCurrent <= 4.0 ? rawCurrent * 2.5 : rawCurrent;
+          const rawTarget = currentUser.targetCgpa || 9.2;
+          const target = rawTarget <= 4.0 ? rawTarget * 2.5 : rawTarget;
+
+          const boost = isCorrect ? 0.03 : 0.01;
+          const newCurrent = Math.min(target, Number((current + boost).toFixed(2)));
+
+          set({
+            user: {
+              ...currentUser,
+              currentCgpa: newCurrent,
+            },
+          });
+        }
+
+        // Trigger debounced cloud synchronization
+        get().scheduleSyncToCloud();
+      },
+
       // Reset to pure Day 0 Zero-State
       resetAllData: () => {
         set({
@@ -905,6 +964,7 @@ export const useScholarStore = create<ScholarStore>()(
         assignments: state.assignments,
         habitStreaks: state.habitStreaks,
         boardHistory: state.boardHistory,
+        dailyOralQuestion: state.dailyOralQuestion,
         pomodoro: {
           ...state.pomodoro,
           isRunning: false,

@@ -109,3 +109,24 @@ export interface PomodoroSession {
   soundPreset: 'none' | 'binaural_alpha' | 'deep_theta' | 'rain_focus' | 'stellar_ambient';
   volume: number;
 }
+
+export interface DailyOralQuestion {
+  id: string;
+  courseCode: string;
+  courseName: string;
+  question: string;
+  topic: string;
+  sourceType: 'board' | 'syllabus';
+  options?: string[];
+  correctOptionIndex?: number;
+  sampleAnswer?: string;
+  explanation: string;
+  formula?: string;
+  date: string;
+  isCompleted?: boolean;
+  answeredCorrectly?: boolean;
+  userAnswer?: string;
+  feedback?: string;
+  masteryScore?: number;
+}
+

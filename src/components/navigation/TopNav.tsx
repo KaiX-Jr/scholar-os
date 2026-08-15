@@ -7,6 +7,7 @@ import {
   Activity,
   Timer,
   Home,
+  GraduationCap,
 } from "lucide-react";
 import { useScholarStore } from "@/store/useScholarStore";
 import { Dock, DockIcon, DockSeparator } from "@/components/ui/Dock";
@@ -15,7 +16,7 @@ import { ScholarLogoButton } from "@/components/ui/ScholarLogoButton";
 import { UserProfileMenu } from "@/components/navigation/UserProfileMenu";
 
 export const TopNav: React.FC = () => {
-  const { pomodoro } = useScholarStore();
+  const { pomodoro, openDailyProfessor, dailyOralQuestion } = useScholarStore();
   const [activeSection, setActiveSection] = useState<string>("hero");
 
   useEffect(() => {
@@ -105,11 +106,36 @@ export const TopNav: React.FC = () => {
                 )}
               </div>
             </DockIcon>
+            <DockSeparator />
+
+            <DockIcon
+              onClick={openDailyProfessor}
+              title="Daily AI Concept Quiz"
+            >
+              <div className="relative flex items-center justify-center">
+                <GraduationCap className="w-4 h-4 text-cyan-300" />
+                {(!dailyOralQuestion || !dailyOralQuestion.isCompleted) && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                )}
+              </div>
+            </DockIcon>
           </Dock>
         </div>
 
         {/* Right: Quick Navigation Menu + Kokonut UI User Profile */}
         <div className="shrink-0 flex items-center gap-2 sm:gap-3">
+          {/* Daily Quiz Pill Button (Mobile & Desktop) */}
+          <button
+            onClick={openDailyProfessor}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-semibold transition-all shadow-[0_0_15px_rgba(0,242,254,0.15)]"
+          >
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Daily AI Quiz</span>
+            {(!dailyOralQuestion || !dailyOralQuestion.isCompleted) && (
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+            )}
+          </button>
+
           {/* React Bits Infinite Menu */}
           <InfiniteMenu />
 
