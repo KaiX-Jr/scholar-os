@@ -196,45 +196,45 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
   return (
     <div className="relative flex flex-col h-full rounded-2xl bg-black/40 border border-white/[0.08] overflow-hidden">
       {/* Top Toolbar */}
-      <div className="flex items-center justify-between p-3 border-b border-white/[0.06] bg-white/[0.02] backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-white flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-cyan-400" />
-            Classroom Optical Feed
+      <div className="flex items-center justify-between gap-2 p-2.5 sm:p-3 border-b border-white/[0.06] bg-white/[0.02] backdrop-blur-md overflow-hidden">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0">
+          <span className="text-xs font-semibold text-white flex items-center gap-1.5 whitespace-nowrap">
+            <Layers className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <span className="hidden xs:inline">Classroom Feed</span>
           </span>
           {filters.invert && (
-            <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded border border-cyan-500/30">
-              Inverted Clarity
+            <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded border border-cyan-500/30 whitespace-nowrap shrink-0 font-mono">
+              Inverted
             </span>
           )}
         </div>
 
         {/* View Controls */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => handleZoom(0.25)}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all"
+            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all cursor-pointer shrink-0"
             title="Zoom In"
           >
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => handleZoom(-0.25)}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all"
+            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all cursor-pointer shrink-0"
             title="Zoom Out"
           >
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={resetFilters}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all"
+            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-all cursor-pointer shrink-0"
             title="Reset Pan & Zoom"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setShowFiltersMenu(!showFiltersMenu)}
-            className={`p-1.5 rounded-lg transition-all ${
+            className={`p-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
               showFiltersMenu
                 ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
                 : "bg-white/5 hover:bg-white/10 text-slate-300"
@@ -244,11 +244,11 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             <Sliders className="w-3.5 h-3.5" />
           </button>
 
-          <div className="w-px h-4 bg-white/10 mx-1" />
+          <div className="w-px h-4 bg-white/10 mx-0.5 sm:mx-1 shrink-0" />
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 text-xs flex items-center gap-1"
+            className="p-1.5 px-2 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 text-xs flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
             title="Upload custom photo"
           >
             <Upload className="w-3.5 h-3.5" />
@@ -257,7 +257,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
 
           <button
             onClick={startCamera}
-            className="p-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/20 text-xs flex items-center gap-1"
+            className="p-1.5 px-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/20 text-xs flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
             title="Capture camera photo"
           >
             <Camera className="w-3.5 h-3.5" />
