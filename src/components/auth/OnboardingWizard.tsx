@@ -15,6 +15,7 @@ import {
   Sparkles,
   School,
   Award,
+  X,
 } from "lucide-react";
 import { useScholarStore, OnboardingCourseInput } from "@/store/useScholarStore";
 
@@ -29,19 +30,29 @@ const POPULAR_COURSE_PRESETS = [
 ];
 
 export const OnboardingWizard: React.FC = () => {
-  const { user, isOnboardingOpen, closeOnboarding, completeOnboarding } =
+  const { user, courses: storeCourses, isOnboardingOpen, closeOnboarding, completeOnboarding } =
     useScholarStore();
 
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  // If already onboarded, default directly to Step 2 (Course Management)
+  const [step, setStep] = useState<1 | 2 | 3>(user?.isOnboarded ? 2 : 1);
 
-  // Step 1: Academic Profile State
+  // Step 1: Academic Profile State (pre-filled from store)
   const [name, setName] = useState(user?.name || "");
   const [university, setUniversity] = useState(user?.university || "");
   const [semester, setSemester] = useState(user?.semester || "Semester 3");
   const [targetCgpa, setTargetCgpa] = useState<number>(user?.targetCgpa || 3.9);
 
-  // Step 2: Dynamic Courses State
-  const [courses, setCourses] = useState<OnboardingCourseInput[]>([]);
+  // Step 2: Dynamic Courses State (pre-filled from store)
+  const [courses, setCourses] = useState<OnboardingCourseInput[]>(
+    storeCourses && storeCourses.length > 0
+      ? storeCourses.map((c) => ({
+          courseCode: c.courseCode,
+          courseName: c.courseName,
+          credits: c.credits,
+          schedule: c.schedule,
+        }))
+      : []
+  );
   const [newCode, setNewCode] = useState("");
   const [newName, setNewName] = useState("");
   const [newCredits, setNewCredits] = useState(4);
@@ -176,20 +187,32 @@ export const OnboardingWizard: React.FC = () => {
               </div>
             </div>
 
-            {/* Step Progress Pips */}
-            <div className="flex items-center gap-2">
-              {[1, 2, 3].map((s) => (
-                <div
-                  key={s}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    s === step
-                      ? "w-7 bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.8)]"
-                      : s < step
-                      ? "w-3 bg-indigo-500"
-                      : "w-2 bg-white/10"
-                  }`}
-                />
-              ))}
+            {/* Step Progress Pips & Close Button */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {[1, 2, 3].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setStep(s as any)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      s === step
+                        ? "w-7 bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.8)]"
+                        : s < step
+                        ? "w-3 bg-indigo-500"
+                        : "w-2 bg-white/10"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={closeOnboarding}
+                className="p-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white border border-white/10 transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
@@ -468,7 +491,7 @@ export const OnboardingWizard: React.FC = () => {
               onClick={handleNext}
               className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 via-sky-500 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-black font-extrabold text-xs font-mono uppercase tracking-wider shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
             >
-              <span>{step === 3 ? "Launch Workspace" : "Continue"}</span>
+              <span>{step === 3 ? (user?.isOnboarded ? "Save & Update Courses" : "Launch Workspace") : "Continue"}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
