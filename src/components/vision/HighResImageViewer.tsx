@@ -506,7 +506,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Quantum Chemistry, Computer Networks"
+                    placeholder="e.g. Artificial Intelligence, Operating Systems, DBMS, Calculus"
                     value={customSubjectName}
                     onChange={(e) => setCustomSubjectName(e.target.value)}
                     className="w-full bg-[#14172b] border border-white/15 focus:border-cyan-400 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"

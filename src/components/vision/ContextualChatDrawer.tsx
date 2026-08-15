@@ -10,18 +10,12 @@ interface ContextualChatDrawerProps {
   messages: ChatMessage[];
   isStreaming: boolean;
   onSendMessage: (text: string) => void;
-  suggestedQuestions?: string[];
 }
 
 export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
   messages,
   isStreaming,
   onSendMessage,
-  suggestedQuestions = [
-    "How does quantum tunneling through a finite barrier occur?",
-    "Can you derive the Heisenberg uncertainty relation from this wave equation?",
-    "Explain the physical intuition of probability flux vector J.",
-  ],
 }) => {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -80,7 +74,7 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
               dangerouslySetInnerHTML={{ __html: html }}
             />
           );
-        } catch (e) {
+        } catch {
           return <div key={`err-${index}`} className="font-mono text-xs">{part}</div>;
         }
       }
@@ -127,7 +121,7 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
               dangerouslySetInnerHTML={{ __html: html }}
             />
           );
-        } catch (e) {
+        } catch {
           return <span key={`inline-err-${sIdx}`}>${segment}$</span>;
         }
       }
@@ -152,8 +146,8 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
             <MessageSquare className="w-4 h-4 text-indigo-400" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-semibold text-white">Lecture Research Mentor</h3>
-            <p className="text-[11px] text-slate-400">Scoped to current board notes & equations</p>
+            <h3 className="text-xs sm:text-sm font-semibold text-white">AI Study Assistant</h3>
+            <p className="text-[11px] text-slate-400">Ask questions about your uploaded materials, concepts, or homework</p>
           </div>
         </div>
 
@@ -167,7 +161,7 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="relative flex-1 overflow-y-auto space-y-3 pr-1 max-h-[320px] min-h-[220px]"
+        className="relative flex-1 overflow-y-auto space-y-3 pr-1 max-h-[360px] min-h-[240px]"
       >
         {messages.map((msg) => {
           const isUser = msg.role === "user";
@@ -229,37 +223,20 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
         </div>
       )}
 
-      {/* Suggested Question Chips */}
-      {suggestedQuestions && suggestedQuestions.length > 0 && (
-        <div className="py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] text-slate-400 font-mono shrink-0">Prompts:</span>
-          {suggestedQuestions.map((q, qIdx) => (
-            <button
-              key={qIdx}
-              onClick={() => onSendMessage(q)}
-              disabled={isStreaming}
-              className="text-[11px] px-2.5 py-1 rounded-full bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 hover:text-cyan-300 border border-white/10 shrink-0 transition-all text-left"
-            >
-              {q.length > 42 ? q.slice(0, 42) + "..." : q}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Chat Input Bar */}
-      <form onSubmit={handleSubmit} className="pt-2 border-t border-white/[0.06] relative">
+      <form onSubmit={handleSubmit} className="pt-2.5 border-t border-white/[0.06] relative">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question about the board proof or physics..."
+          placeholder="Ask any question about this topic, notes, or homework..."
           disabled={isStreaming}
-          className="w-full pl-3 pr-10 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors"
+          className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-black/40 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors"
         />
         <button
           type="submit"
           disabled={!input.trim() || isStreaming}
-          className="absolute right-1.5 top-3.5 p-1 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 text-white disabled:opacity-30 transition-opacity"
+          className="absolute right-2 top-4 p-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 text-white disabled:opacity-30 transition-opacity"
         >
           <Send className="w-3.5 h-3.5" />
         </button>

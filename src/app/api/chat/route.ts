@@ -8,29 +8,27 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { messages = [], context = "" } = body;
 
-    const lastMessage = messages[messages.length - 1]?.content || "Explain the core concepts on this board.";
+    const lastMessage = messages[messages.length - 1]?.content || "Explain the core concepts.";
     const conversationHistory = messages.slice(0, -1);
 
-    const apiKey = process.env.GEMINI_API_KEY || "";
+    const apiKey = (process.env.GEMINI_API_KEY || "").replace(/^["']|["']$/g, "").trim();
     const encoder = new TextEncoder();
 
     if (apiKey) {
       try {
         const ai = new GoogleGenAI({ apiKey });
 
-        const systemInstruction = `You are the Scholar AI Lecture Assistant, an elite university professor and research mentor.
-You have full access to the student's whiteboard/lecture notes:
-=== LECTURE CONTEXT ===
-${context}
-=======================
+        const systemInstruction = `You are the Scholar AI Study Assistant, an expert, clear, and encouraging university tutor.
+You have access to the student's study context / lecture notes:
+=== STUDY CONTEXT ===
+${context || "General Academic Study Session"}
+======================
 
-Guidelines:
-1. Provide mathematically rigorous, intuitive, and concise explanations.
-2. Format all mathematical equations using LaTeX:
-   - Inline math: $E = mc^2$
-   - Display block math: $$\\int_{-\\infty}^\\infty e^{-x^2} dx = \\sqrt{\\pi}$$
-3. Address the student with precision, encouraging deep conceptual clarity.
-4. When asked for derivations, break them down into logical sequential steps.`;
+CORE GUIDELINES:
+1. Answer the student's specific question directly, accurately, and in clear, easy-to-understand terms.
+2. Adapt to the specific subject/domain being asked (e.g. Artificial Intelligence, Software Engineering, Database Systems, Biology, Economics, History, Mathematics, etc.).
+3. ONLY use mathematical formulas / LaTeX ($...$) when the question or subject is inherently mathematical or when the student explicitly asks for equations. NEVER force quantum mechanics, physics, or differential equations into questions about AI, programming, or other subjects.
+4. Use neat formatting with bullet points and bold highlights for readability.`;
 
         // Format history for chat
         const formattedHistory = conversationHistory.map((m: { role: string; content: string }) => ({
@@ -38,19 +36,34 @@ Guidelines:
           parts: [{ text: m.content }],
         }));
 
-        // Initialize chat session scoped to current lecture context
-        const chat = ai.chats.create({
-          model: "gemini-2.0-flash",
-          config: {
-            systemInstruction,
-            temperature: 0.4,
-          },
-          history: formattedHistory,
-        });
+        let streamResult;
+        try {
+          const chat = ai.chats.create({
+            model: "gemini-2.5-flash",
+            config: {
+              systemInstruction,
+              temperature: 0.3,
+            },
+            history: formattedHistory,
+          });
 
-        const streamResult = await chat.sendMessageStream({
-          message: lastMessage,
-        });
+          streamResult = await chat.sendMessageStream({
+            message: lastMessage,
+          });
+        } catch {
+          const chatFallback = ai.chats.create({
+            model: "gemini-2.0-flash",
+            config: {
+              systemInstruction,
+              temperature: 0.3,
+            },
+            history: formattedHistory,
+          });
+
+          streamResult = await chatFallback.sendMessageStream({
+            message: lastMessage,
+          });
+        }
 
         const customStream = new ReadableStream({
           async start(controller) {
@@ -81,7 +94,7 @@ Guidelines:
       }
     }
 
-    // High quality intelligent streaming fallback grounded in the provided board context
+    // High quality contextual fallback without forced physics/math
     const simulatedResponse = generateSmartExplanation(lastMessage, context);
 
     const fallbackStream = new ReadableStream({
@@ -90,7 +103,7 @@ Guidelines:
         for (let i = 0; i < words.length; i++) {
           const word = words[i] + (i < words.length - 1 ? " " : "");
           controller.enqueue(encoder.encode(word));
-          await new Promise((r) => setTimeout(r, 20));
+          await new Promise((r) => setTimeout(r, 15));
         }
         controller.close();
       },
@@ -114,63 +127,63 @@ Guidelines:
 function generateSmartExplanation(query: string, context: string): string {
   const q = query.toLowerCase();
 
-  // Extract topic & notes from context if present
-  let topic = "Analyzed Lecture Board";
+  // Extract topic & summary from context if present
+  let topic = "Study Session";
   if (context.includes("TOPIC:")) {
     const match = context.match(/TOPIC:\s*([^\n]+)/);
     if (match && match[1]) topic = match[1].trim();
   }
 
-  if (q.includes("tunnel") || q.includes("barrier")) {
-    return `### Quantum Tunneling & Barrier Penetration
+  // Artificial Intelligence queries
+  if (q.includes("ai") || q.includes("artificial intelligence") || q.includes("machine learning") || q.includes("popular")) {
+    return `### Understanding Artificial Intelligence (AI)
 
-Quantum tunneling is a direct consequence of the wave nature of matter. When a particle with energy $E$ encounters a finite potential barrier of height $V_0 > E$ and width $a$:
+**What is Artificial Intelligence?**
+Artificial Intelligence (AI) refers to computer systems designed to perform tasks that traditionally require human intelligence. These include learning from experience, recognizing patterns, understanding natural language, solving complex problems, and making autonomous decisions.
 
-1. **Inside the Barrier ($0 < x < a$)**:
-   The time-independent Schrödinger equation becomes:
-   $$\\frac{d^2 \\psi}{dx^2} = \\kappa^2 \\psi, \\quad \\text{where } \\kappa = \\frac{\\sqrt{2m(V_0 - E)}}{\\hbar}$$
+**Why is AI so popular today?**
+1. **Breakthroughs in Deep Learning & LLMs**: Technologies like ChatGPT, modern computer vision, and transformer models have made AI accessible and capable of understanding human language with high precision.
+2. **Abundance of Big Data**: The massive volume of digital data generated worldwide provides the fuel needed to train powerful machine learning models.
+3. **High-Performance Hardware (GPUs & TPUs)**: Specialized chips have drastically accelerated neural network training times.
+4. **Real-World Automation**: AI streamlines repetitive tasks across healthcare, software engineering, finance, creative arts, and academic research.
 
-   The solution decays exponentially:
-   $$\\psi(x) = A e^{-\\kappa x} + B e^{+\\kappa x}$$
-
-2. **Transmission Coefficient $T$**:
-   In the thick barrier limit ($\\kappa a \\gg 1$), the transmission probability is:
-   $$T \\approx 16 \\frac{E}{V_0} \\left(1 - \\frac{E}{V_0}\\right) e^{-2\\kappa a}$$`;
+**Key Takeaway**:
+AI is revolutionizing industries by augmenting human capabilities and solving complex problems at unprecedented scale.`;
   }
 
-  if (q.includes("derive") || q.includes("proof") || q.includes("step")) {
-    return `### Step-by-Step Mathematical Derivation for **${topic}**
+  // Database / SQL queries
+  if (q.includes("database") || q.includes("sql") || q.includes("dbms") || q.includes("query") || q.includes("table")) {
+    return `### Core Concepts in Database Systems (${topic})
 
-Based on the blackboard derivation, here is the structured step-by-step mathematical reasoning:
-
-1. **Foundational Governing Equation**:
-   Starting with the primary differential / algebraic relationship established on the board:
-   $$i\\hbar \\frac{d}{dt}|\\psi(t)\\rangle = \\hat{H}|\\psi(t)\\rangle$$
-
-2. **Boundary & Normalization Conditions**:
-   Applying the orthonormal completeness property:
-   $$\\langle \\phi_m | \\phi_n \\rangle = \\delta_{mn}$$
-
-3. **Integrating Factor / Analytical Solution**:
-   Multiplying by the unitary propagator $\\hat{U}(t) = \\exp(-i\\hat{H}t/\\hbar)$ yields:
-   $$|\\psi(t)\\rangle = \\sum_{n} c_n e^{-i E_n t / \\hbar} |\\phi_n\\rangle$$
-
-4. **Conservation & Conclusion**:
-   The total probability density $\\int |\\psi|^2 dx = 1$ is invariant across time, proving the theorem rigorously.`;
+1. **Structured Data Storage**: Relational databases organize information into tables with rows (records) and columns (attributes), enforcing data integrity with keys and constraints.
+2. **ACID Properties**: Ensures reliable transaction processing (Atomicity, Consistency, Isolation, Durability).
+3. **Query Optimization & Indexing**: Index structures (like B-Trees and Hash Indexes) allow rapid data lookup without scanning entire tables.
+4. **Data Normalization**: Eliminates redundant information and prevents insert/update/delete anomalies.`;
   }
 
-  return `### Comprehensive Breakdown: "${query}"
+  // Linux / Operating Systems queries
+  if (q.includes("linux") || q.includes("command") || q.includes("os") || q.includes("chmod") || q.includes("bash") || q.includes("shell")) {
+    return `### Operating Systems & Shell Concepts (${topic})
 
-Regarding the core concepts on **${topic}**:
+1. **File System & Permissions**: Linux manages file access using User, Group, and Other permission bits (Read = 4, Write = 2, Execute = 1).
+2. **Process Management**: The kernel schedules processes, handles memory allocation, and provides inter-process communication.
+3. **Pipes & Redirection**: Standard streams (stdin, stdout, stderr) allow modular command chaining (e.g. \`cat | grep | sort\`).`;
+  }
 
-1. **Conceptual Framework**:
-   The board establishes a key mathematical mapping between state evolution and observable eigenvalues. Every component represents an orthogonal decomposition of the physical/algorithmic state space.
+  // General Academic / Concept Explanation
+  return `### Overview: ${query}
 
-2. **Key Mathematical Invariant**:
-   $$\\hat{H} |\\psi_n\\rangle = E_n |\\psi_n\\rangle$$
+Here is a clear breakdown regarding **${topic}**:
 
-3. **Study & Exam Takeaways**:
-   - Verify boundary conditions before applying the general solution.
-   - Maintain track of dimensions and unit scaling in all algebraic transitions.
-   - Use active recall on the flashcards tab to test retention of these exact formulas!`;
+1. **Core Concept**:
+   The primary focus is understanding the fundamental principles and how individual components interact within the system.
+
+2. **Key Practical Applications**:
+   - Applying these foundational concepts to solve real-world problems.
+   - Identifying relationships between input parameters, logic processing, and expected outcomes.
+   - Utilizing structured review to reinforce retention for assignments and exams.
+
+3. **Next Steps**:
+   - Review your structured notes and flashcards for this topic.
+   - Feel free to ask any specific follow-up questions!`;
 }
