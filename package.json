@@ -1,6 +1,7 @@
 {
   "name": "scholar-dashboard",
   "version": "1.0.0",
+  "author": "Swapnoneel Mondal <swapnoneelmondal@gmail.com> (https://github.com/KaiX-Jr)",
   "private": true,
   "scripts": {
     "dev": "next dev",
