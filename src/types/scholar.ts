@@ -38,6 +38,16 @@ export interface BoardAnalysisResult {
   flashcards: Flashcard[];
   keyFormulas?: string[];
   suggestedQuestions?: string[];
+  courseCode?: string;
+  courseName?: string;
+}
+
+export interface SavedBoardAnalysis extends BoardAnalysisResult {
+  id: string;
+  imageUri?: string;
+  analyzedAt: string;
+  courseCode?: string;
+  courseName?: string;
 }
 
 export interface ChatMessage {

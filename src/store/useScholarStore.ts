@@ -9,6 +9,7 @@ import {
   HabitDay,
   HabitStreak,
   PomodoroSession,
+  SavedBoardAnalysis,
   UserProfile,
 } from "@/types/scholar";
 
@@ -55,6 +56,7 @@ interface ScholarStore {
   activeBoardResult: BoardAnalysisResult | null;
   flashcards: Flashcard[];
   activeImageUri: string | null;
+  boardHistory: SavedBoardAnalysis[];
 
   // Auth & Modal Actions
   openAuthModal: () => void;
@@ -100,6 +102,10 @@ interface ScholarStore {
   setActiveBoardResult: (result: BoardAnalysisResult | null) => void;
   setActiveImageUri: (uri: string | null) => void;
   updateFlashcardMastery: (id: string, level: Flashcard["masteryLevel"]) => void;
+  saveBoardToHistory: (result: BoardAnalysisResult, imageUri?: string) => void;
+  deleteBoardFromHistory: (id: string) => void;
+  loadBoardFromHistory: (id: string) => void;
+  clearBoardHistory: () => void;
 
   // Zero-State Factory Reset
   resetAllData: () => void;
@@ -194,6 +200,7 @@ export const useScholarStore = create<ScholarStore>()(
       activeBoardResult: null,
       flashcards: [],
       activeImageUri: null,
+      boardHistory: [],
 
       // Modal Controls
       openAuthModal: () => set({ isAuthModalOpen: true }),
@@ -203,7 +210,7 @@ export const useScholarStore = create<ScholarStore>()(
 
       // Cloud Sync
       syncToCloud: async () => {
-        const { jwtToken, user, courses, assignments, habitStreaks, pomodoro } = get();
+        const { jwtToken, user, courses, assignments, habitStreaks, pomodoro, boardHistory } = get();
         if (!jwtToken || !user) return;
         set({ syncStatus: "syncing" });
         try {
@@ -213,7 +220,7 @@ export const useScholarStore = create<ScholarStore>()(
               "Content-Type": "application/json",
               Authorization: `Bearer ${jwtToken}`,
             },
-            body: JSON.stringify({ user, courses, assignments, habitStreaks, pomodoro }),
+            body: JSON.stringify({ user, courses, assignments, habitStreaks, pomodoro, boardHistory }),
           });
           set({ syncStatus: "idle" });
         } catch {
@@ -241,6 +248,7 @@ export const useScholarStore = create<ScholarStore>()(
               assignments: cloudData.assignments ?? [],
               habitStreaks: cloudData.habitStreaks ?? get().habitStreaks,
               pomodoro: cloudData.pomodoro ? { ...cloudData.pomodoro, isRunning: false } : get().pomodoro,
+              boardHistory: cloudData.boardHistory ?? get().boardHistory,
             });
           }
         } catch {
@@ -274,6 +282,9 @@ export const useScholarStore = create<ScholarStore>()(
             createdAt: data.user.createdAt,
           };
 
+          const cloudBoards = data.cloudData?.boardHistory ?? [];
+          const activeBoard = cloudBoards.length > 0 ? cloudBoards[0] : null;
+
           set({
             jwtToken: data.token,
             user: profile,
@@ -282,6 +293,11 @@ export const useScholarStore = create<ScholarStore>()(
             courses: data.cloudData?.courses ?? [],
             assignments: data.cloudData?.assignments ?? [],
             habitStreaks: data.cloudData?.habitStreaks ?? get().habitStreaks,
+            pomodoro: data.cloudData?.pomodoro ? { ...data.cloudData.pomodoro, isRunning: false } : get().pomodoro,
+            boardHistory: cloudBoards,
+            activeBoardResult: activeBoard ? activeBoard : get().activeBoardResult,
+            activeImageUri: activeBoard?.imageUri ?? get().activeImageUri,
+            flashcards: activeBoard?.flashcards ?? get().flashcards,
           });
           return {};
         } catch {
@@ -350,6 +366,9 @@ export const useScholarStore = create<ScholarStore>()(
             createdAt: data.user.createdAt,
           };
 
+          const cloudBoards = data.cloudData?.boardHistory ?? [];
+          const activeBoard = cloudBoards.length > 0 ? cloudBoards[0] : null;
+
           set({
             jwtToken: data.token,
             user: profile,
@@ -359,6 +378,10 @@ export const useScholarStore = create<ScholarStore>()(
             assignments: data.cloudData?.assignments ?? [],
             habitStreaks: data.cloudData?.habitStreaks ?? get().habitStreaks,
             pomodoro: data.cloudData?.pomodoro ? { ...data.cloudData.pomodoro, isRunning: false } : get().pomodoro,
+            boardHistory: cloudBoards,
+            activeBoardResult: activeBoard ? activeBoard : get().activeBoardResult,
+            activeImageUri: activeBoard?.imageUri ?? get().activeImageUri,
+            flashcards: activeBoard?.flashcards ?? get().flashcards,
           });
           return {};
         } catch {
@@ -728,6 +751,63 @@ export const useScholarStore = create<ScholarStore>()(
         });
       },
 
+      saveBoardToHistory: (result, imageUri) => {
+        set((state) => {
+          // Check if already in history by matching topic or create unique ID
+          const existingIndex = state.boardHistory.findIndex(
+            (b) => b.topicTitle.toLowerCase() === result.topicTitle.toLowerCase()
+          );
+
+          const newSavedBoard: SavedBoardAnalysis = {
+            ...result,
+            id: `board-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            imageUri: imageUri || state.activeImageUri || undefined,
+            analyzedAt: new Date().toISOString(),
+          };
+
+          let updatedHistory: SavedBoardAnalysis[];
+          if (existingIndex >= 0) {
+            // Update existing entry with newer timestamp and data, move to top
+            updatedHistory = [
+              newSavedBoard,
+              ...state.boardHistory.filter((_, i) => i !== existingIndex),
+            ];
+          } else {
+            updatedHistory = [newSavedBoard, ...state.boardHistory];
+          }
+
+          // Keep up to 25 recent lecture boards
+          return {
+            boardHistory: updatedHistory.slice(0, 25),
+            activeBoardResult: result,
+            activeImageUri: imageUri || state.activeImageUri,
+            flashcards: result.flashcards || [],
+          };
+        });
+      },
+
+      deleteBoardFromHistory: (id) => {
+        set((state) => {
+          const filtered = state.boardHistory.filter((b) => b.id !== id);
+          return { boardHistory: filtered };
+        });
+      },
+
+      loadBoardFromHistory: (id) => {
+        const board = get().boardHistory.find((b) => b.id === id);
+        if (board) {
+          set({
+            activeBoardResult: board,
+            activeImageUri: board.imageUri || null,
+            flashcards: board.flashcards || [],
+          });
+        }
+      },
+
+      clearBoardHistory: () => {
+        set({ boardHistory: [] });
+      },
+
       // Reset to pure Day 0 Zero-State
       resetAllData: () => {
         set({
@@ -774,6 +854,7 @@ export const useScholarStore = create<ScholarStore>()(
           activeBoardResult: null,
           flashcards: [],
           activeImageUri: null,
+          boardHistory: [],
         });
         if (typeof window !== "undefined") {
           localStorage.removeItem("scholar_os_storage_v3");
@@ -789,6 +870,7 @@ export const useScholarStore = create<ScholarStore>()(
         courses: state.courses,
         assignments: state.assignments,
         habitStreaks: state.habitStreaks,
+        boardHistory: state.boardHistory,
         pomodoro: {
           ...state.pomodoro,
           isRunning: false,
@@ -814,6 +896,8 @@ useScholarStore.subscribe((state) => {
     courses: state.courses,
     assignments: state.assignments,
     habitStreaks: state.habitStreaks,
+    boardHistoryLength: state.boardHistory.length,
+    boardHistoryLatest: state.boardHistory[0]?.id,
     pomodoro: { ...state.pomodoro, isRunning: false, remainingSeconds: 0 },
   });
 

@@ -32,23 +32,29 @@ Every metric in your workspace is 100% verified and synchronized across all your
 
 ## 🔑 Core Features & Architectures
 
-### 📸 Board-to-Study Optical OCR Studio
-> *Powered by Google Gemini 2.0 Vision API*
+### 📸 Board-to-Study Optical OCR Studio & Saved Board Shelf
+> *Powered by Google Gemini 2.0 Flash Vision API & Upstash Serverless Redis*
 
 - **Photograph-to-Notes Pipeline**: Upload or drag-drop chalkboard or whiteboard snapshots from live university lectures.
-- **In-Browser Camera Capture**: Take real-time snaps of lecture boards directly from your device camera.
-- **Multimodal AI Extraction**: High-fidelity recognition of handwritten mathematical formulas, physics diagrams, proofs, and technical concepts.
+- **In-Browser Classroom Camera Capture**: Take real-time high-resolution snaps of lecture boards directly from your device camera.
+- **Interactive Subject & Course Tagging**: Intercepts uploads with a sleek modal dropdown to tag boards to your enrolled courses (`[CS301]`, `[MATH201]`, etc.) or custom subjects.
+- **Curriculum-Grounded Multimodal AI**: Gemini 2.0 Flash extracts handwritten derivations, proofs, diagrams, and formulas tailored to your course syllabus.
 - **LaTeX & Markdown Formatting**: Generates clean, structured lecture notes, derivation breakdowns, key takeaways, and flashcards with instant KaTeX math rendering.
-- **3D Flip-Card Active Recall Deck**: Interactive spaced repetition deck with keyboard controls (`Space` to flip, `←` / `→` to navigate).
-- **Contextual Study Chat Drawer**: Ask clarifying questions and solve practice problems directly referencing the uploaded chalkboard image.
-- **Pre-Loaded Sample Library**: Interactive demonstrations covering quantum mechanics, Fourier analysis, and multivariate calculus.
+- **Lecture History & Saved Boards Shelf**:
+  - Kokonut UI / Magic UI `BorderBeam` animated horizontal carousel.
+  - One-click switching between past saved lecture boards.
+  - Distinct course badges and **Subject Filter Bar** (`All`, `[PHYS301]`, `[CS420]`, etc.) to filter boards by course.
+  - 100% synchronized across all your devices via Cloud Redis.
+- **3D Flip-Card Active Recall Deck**: Interactive spaced repetition deck with 3-column mobile-responsive rating grid (`Again`, `Hard`, `Good`, `Easy`) and keyboard controls (`Space` to flip, `←` / `→` to navigate).
+- **Contextual Study Chat Assistant**: Ask clarifying questions, request proof explanations, and solve practice problems dynamically grounded in the active board notes and LaTeX formulas.
+- **Pre-Loaded Sample Library**: Interactive demonstrations covering Quantum Mechanics, Deep Neural Networks, and Fourier Analysis.
 
 ---
 
 ### ☁️ Real-Time Cross-Device Cloud Sync
 > *Powered by Upstash Serverless Redis & Reactive Zustand Subscriptions*
 
-- **Instant Cross-Device Parity**: Log in from your laptop, tablet, or phone — your enrolled courses, attendance records, milestone tasks, habit heatmaps, and avatar selections immediately sync in real time.
+- **Instant Cross-Device Parity**: Log in from your laptop, tablet, or phone — your enrolled courses, attendance records, milestone tasks, habit heatmaps, avatar selections, and **saved lecture boards** immediately sync in real time.
 - **Debounced Auto-Sync Engine**: State mutations automatically trigger non-blocking cloud delta synchronization.
 - **Zero Data Loss Guarantee**: Local storage persistence acts as an offline cache with instant Redis cloud reconciliation on reconnection.
 
@@ -188,12 +194,13 @@ src/
 │   │   └── UserProfileMenu.tsx         # Kokonut UI profile dropdown with bending line
 │   ├── vision/
 │   │   ├── BoardToStudyStudio.tsx      # Main OCR workspace
+│   │   ├── BoardHistoryShelf.tsx       # Kokonut UI lecture history & saved board carousel
 │   │   ├── ActiveRecallFlashcards.tsx  # 3D active recall flip deck
 │   │   ├── ContextualChatDrawer.tsx    # Chalkboard AI chat interface
 │   │   ├── DerivationBreakdown.tsx     # Step-by-step mathematical proofs
 │   │   ├── StructuredNotesViewer.tsx   # KaTeX formatted lecture notes
 │   │   ├── SampleBoardsLibrary.ts      # Preloaded sample board library
-│   │   └── HighResImageViewer.tsx      # Pan & zoom board image viewer
+│   │   └── HighResImageViewer.tsx      # Pan & zoom board image viewer with course selector
 │   └── ui/
 │       ├── SpecularButton.tsx          # React Bits cursor-tracking specular button
 │       ├── CircularProgress.tsx        # Immersive holographic progress dial

@@ -7,6 +7,7 @@ import { StructuredNotesViewer } from "@/components/vision/StructuredNotesViewer
 import { DerivationBreakdown } from "@/components/vision/DerivationBreakdown";
 import { ActiveRecallFlashcards } from "@/components/vision/ActiveRecallFlashcards";
 import { ContextualChatDrawer } from "@/components/vision/ContextualChatDrawer";
+import { BoardHistoryShelf } from "@/components/vision/BoardHistoryShelf";
 
 import { Badge } from "@/components/ui/Badge";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -26,11 +27,16 @@ export const BoardToStudyStudio: React.FC = () => {
   const {
     activeBoardResult,
     activeImageUri,
+    boardHistory,
     isAnalyzing,
     chatMessages,
     isChatStreaming,
     imageFilters,
     processImageFile,
+    loadSampleBoard,
+    selectBoardHistoryItem,
+    deleteBoardFromHistory,
+    clearBoardHistory,
     sendChatMessage,
     updateFilters,
     resetFilters,
@@ -74,6 +80,20 @@ export const BoardToStudyStudio: React.FC = () => {
           </p>
         </div>
 
+        {/* Lecture History & Saved Boards Shelf */}
+        <BoardHistoryShelf
+          history={boardHistory}
+          activeBoardId={
+            boardHistory.find(
+              (b) => b.topicTitle.toLowerCase() === activeBoardResult?.topicTitle?.toLowerCase()
+            )?.id
+          }
+          onSelectBoard={selectBoardHistoryItem}
+          onDeleteBoard={deleteBoardFromHistory}
+          onClearHistory={clearBoardHistory}
+          onLoadSample={loadSampleBoard}
+        />
+
         {/* Split Screen Workspace Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Pane: High-Res Interactive Image Viewer (5 cols on lg) */}
@@ -92,8 +112,8 @@ export const BoardToStudyStudio: React.FC = () => {
           <div className="lg:col-span-7 h-[540px] lg:h-[640px] flex flex-col">
             <GlassCard glowColor="cyan" className="p-3.5 sm:p-6 h-full flex flex-col">
               {/* Tab Header Bar */}
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 sm:pb-3 mb-3 sm:mb-4 shrink-0 overflow-x-auto custom-scrollbar">
-                <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-black/40 border border-white/[0.08]">
+              <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 sm:pb-3 mb-3 sm:mb-4 shrink-0 overflow-x-auto custom-scrollbar gap-2">
+                <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-black/40 border border-white/[0.08] shrink-0">
                   {tabs.map((t) => {
                     const Icon = t.icon;
                     const isActive = activeTab === t.id;
@@ -118,6 +138,17 @@ export const BoardToStudyStudio: React.FC = () => {
                     );
                   })}
                 </div>
+
+                {activeBoardResult?.courseCode && (
+                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono shrink-0">
+                    <span className="font-bold">[{activeBoardResult.courseCode}]</span>
+                    {activeBoardResult.courseName && (
+                      <span className="max-w-[140px] truncate text-slate-300 text-[10px]">
+                        {activeBoardResult.courseName}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Tab Contents */}

@@ -18,6 +18,11 @@ export function useBoardAnalysis() {
     setActiveBoardResult,
     activeImageUri,
     setActiveImageUri,
+    boardHistory,
+    saveBoardToHistory,
+    deleteBoardFromHistory,
+    loadBoardFromHistory: storeLoadBoardFromHistory,
+    clearBoardHistory,
   } = useScholarStore();
 
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
@@ -59,7 +64,7 @@ export function useBoardAnalysis() {
 
   // Process file upload (drag & drop or input)
   const processImageFile = useCallback(
-    async (file: File) => {
+    async (file: File, course?: { courseCode?: string; courseName?: string }) => {
       setIsAnalyzing(true);
       setErrorMessage(null);
 
@@ -81,6 +86,8 @@ export function useBoardAnalysis() {
           body: JSON.stringify({
             imageBase64: dataUrl,
             mimeType: file.type || "image/jpeg",
+            courseCode: course?.courseCode || "",
+            courseName: course?.courseName || "",
           }),
         });
 
@@ -89,14 +96,19 @@ export function useBoardAnalysis() {
         }
 
         const data: BoardAnalysisResult = await response.json();
+        if (course?.courseCode) data.courseCode = course.courseCode;
+        if (course?.courseName) data.courseName = course.courseName;
+
         setActiveBoardResult(data);
+        saveBoardToHistory(data, dataUrl);
 
         // Add intro message to chat
+        const courseTag = data.courseCode ? ` for **[${data.courseCode}] ${data.courseName || ""}**` : "";
         setChatMessages([
           {
             id: `msg-${Date.now()}`,
             role: "assistant",
-            content: `I've analyzed your board on **${data.topicTitle}**! You can explore the structured LaTeX notes, step-by-step derivations, or ask me any question below.`,
+            content: `I've analyzed your board on **${data.topicTitle}**${courseTag}! You can explore the structured LaTeX notes, step-by-step derivations, or ask me any question below.`,
             timestamp: "Just now",
           },
         ]);
@@ -107,7 +119,7 @@ export function useBoardAnalysis() {
         setIsAnalyzing(false);
       }
     },
-    [setActiveBoardResult, setActiveImageUri]
+    [setActiveBoardResult, setActiveImageUri, saveBoardToHistory]
   );
 
   // Load sample board instantly
@@ -115,6 +127,7 @@ export function useBoardAnalysis() {
     (sample: SampleBoard) => {
       setActiveImageUri(sample.thumbnailSvg);
       setActiveBoardResult(sample.presetAnalysis);
+      saveBoardToHistory(sample.presetAnalysis, sample.thumbnailSvg);
       resetFilters();
       setChatMessages([
         {
@@ -125,7 +138,27 @@ export function useBoardAnalysis() {
         },
       ]);
     },
-    [setActiveBoardResult, setActiveImageUri, resetFilters]
+    [setActiveBoardResult, setActiveImageUri, saveBoardToHistory, resetFilters]
+  );
+
+  // Switch to an existing board from history
+  const selectBoardHistoryItem = useCallback(
+    (id: string) => {
+      const board = boardHistory.find((b) => b.id === id);
+      if (board) {
+        storeLoadBoardFromHistory(id);
+        resetFilters();
+        setChatMessages([
+          {
+            id: `msg-${Date.now()}`,
+            role: "assistant",
+            content: `Restored lecture board: **${board.topicTitle}** (Analyzed on ${new Date(board.analyzedAt).toLocaleDateString()}). Ask any follow-up question!`,
+            timestamp: "Just now",
+          },
+        ]);
+      }
+    },
+    [boardHistory, storeLoadBoardFromHistory, resetFilters]
   );
 
   // Send question to streaming chat
@@ -228,6 +261,7 @@ export function useBoardAnalysis() {
   return {
     activeBoardResult,
     activeImageUri,
+    boardHistory,
     isAnalyzing,
     isChatStreaming,
     errorMessage,
@@ -237,6 +271,9 @@ export function useBoardAnalysis() {
     resetFilters,
     processImageFile,
     loadSampleBoard,
+    selectBoardHistoryItem,
+    deleteBoardFromHistory,
+    clearBoardHistory,
     sendChatMessage,
     sampleBoards: SAMPLE_BOARDS,
   };

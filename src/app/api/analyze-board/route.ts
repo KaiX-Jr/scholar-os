@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { imageBase64, mimeType = "image/jpeg" } = body;
+    const { imageBase64, mimeType = "image/jpeg", courseCode = "", courseName = "" } = body;
 
     if (!imageBase64) {
       return NextResponse.json(
@@ -24,7 +24,11 @@ export async function POST(req: NextRequest) {
       try {
         const ai = new GoogleGenAI({ apiKey });
 
-        const prompt = `You are an expert university professor and AI research scholar. Analyze this blackboard/whiteboard photo taken in an advanced university lecture.
+        const courseContextStr = courseCode || courseName
+          ? `\nAcademic Course Context: ${courseCode ? `[${courseCode}] ` : ""}${courseName}. Please ground the terminology and explanations in this course syllabus.`
+          : "";
+
+        const prompt = `You are an expert university professor and AI research scholar. Analyze this blackboard/whiteboard photo taken in an advanced university lecture.${courseContextStr}
 Extract all handwritten derivations, diagrams, mathematical formulas, and scientific concepts.
 
 Return ONLY a valid JSON object matching this exact schema:
@@ -63,7 +67,7 @@ Return ONLY a valid JSON object matching this exact schema:
 Ensure all LaTeX syntax is properly escaped for JSON and mathematically rigorous.`;
 
         const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
+          model: "gemini-2.0-flash",
           contents: [
             {
               role: "user",
@@ -88,6 +92,8 @@ Ensure all LaTeX syntax is properly escaped for JSON and mathematically rigorous
         const jsonMatch = rawText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const parsed = JSON.parse(jsonMatch[0]);
+          if (courseCode) parsed.courseCode = courseCode;
+          if (courseName) parsed.courseName = courseName;
           return NextResponse.json(parsed);
         }
       } catch (geminiError) {

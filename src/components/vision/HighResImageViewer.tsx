@@ -13,15 +13,19 @@ import {
   Camera,
   Layers,
   Sparkles,
+  BookOpen,
+  Check,
+  X,
 } from "lucide-react";
 import { ImageFilters } from "@/hooks/useBoardAnalysis";
+import { useScholarStore } from "@/store/useScholarStore";
 
 interface HighResImageViewerProps {
   imageUri: string | null;
   filters: ImageFilters;
   updateFilters: (updates: Partial<ImageFilters>) => void;
   resetFilters: () => void;
-  onFileUpload: (file: File) => void;
+  onFileUpload: (file: File, course?: { courseCode?: string; courseName?: string }) => void;
   isAnalyzing: boolean;
 }
 
@@ -33,6 +37,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
   onFileUpload,
   isAnalyzing,
 }) => {
+  const { courses } = useScholarStore();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -40,6 +45,67 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [showFiltersMenu, setShowFiltersMenu] = useState(false);
+
+  // Subject / Course tagging modal state
+  const [pendingUpload, setPendingUpload] = useState<{
+    file: File;
+    previewUrl: string;
+  } | null>(null);
+  const [selectedCourseCode, setSelectedCourseCode] = useState<string>("");
+  const [customSubjectName, setCustomSubjectName] = useState<string>("");
+
+  useEffect(() => {
+    if (courses.length > 0 && !selectedCourseCode) {
+      setSelectedCourseCode(courses[0].courseCode);
+    }
+  }, [courses, selectedCourseCode]);
+
+  const handleFileSelected = (file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    if (courses.length > 0) {
+      setSelectedCourseCode(courses[0].courseCode);
+    } else {
+      setSelectedCourseCode("__custom__");
+    }
+    setPendingUpload({ file, previewUrl });
+  };
+
+  const handleConfirmUpload = () => {
+    if (!pendingUpload) return;
+
+    let courseInfo: { courseCode?: string; courseName?: string } | undefined;
+
+    if (selectedCourseCode === "__custom__") {
+      courseInfo = {
+        courseCode: customSubjectName.trim().slice(0, 8).toUpperCase() || "GEN",
+        courseName: customSubjectName.trim() || "General / Self-Study",
+      };
+    } else if (selectedCourseCode === "__general__") {
+      courseInfo = {
+        courseCode: "GEN",
+        courseName: "General / Independent Study",
+      };
+    } else {
+      const match = courses.find((c) => c.courseCode === selectedCourseCode);
+      if (match) {
+        courseInfo = {
+          courseCode: match.courseCode,
+          courseName: match.courseName,
+        };
+      }
+    }
+
+    onFileUpload(pendingUpload.file, courseInfo);
+    URL.revokeObjectURL(pendingUpload.previewUrl);
+    setPendingUpload(null);
+  };
+
+  const handleCancelUpload = () => {
+    if (pendingUpload) {
+      URL.revokeObjectURL(pendingUpload.previewUrl);
+    }
+    setPendingUpload(null);
+  };
 
   const handleZoom = (delta: number) => {
     const newZoom = Math.min(3.5, Math.max(0.6, filters.zoom + delta));
@@ -98,7 +164,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
           const file = new File([blob], "classroom-snapshot.jpg", {
             type: "image/jpeg",
           });
-          onFileUpload(file);
+          handleFileSelected(file);
           stopCamera();
         }
       }, "image/jpeg");
@@ -118,7 +184,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      onFileUpload(e.dataTransfer.files[0]);
+      handleFileSelected(e.dataTransfer.files[0]);
     }
   };
 
@@ -198,7 +264,9 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             ref={fileInputRef}
             onChange={(e) => {
               if (e.target.files && e.target.files[0]) {
-                onFileUpload(e.target.files[0]);
+                handleFileSelected(e.target.files[0]);
+                // reset input so user can pick the same file again if needed
+                e.target.value = "";
               }
             }}
             accept="image/*"
@@ -351,6 +419,115 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
         <span className="font-mono">Zoom: {(filters.zoom * 100).toFixed(0)}%</span>
         <span>Drag to pan when zoomed • Double click to reset</span>
       </div>
+
+      {/* Course / Subject Tagging Modal Dialog */}
+      {pendingUpload && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-[#0e101f] border border-cyan-500/30 rounded-3xl p-5 sm:p-6 shadow-2xl shadow-cyan-500/10 overflow-hidden text-left">
+            {/* Decorative glow */}
+            <div className="absolute -top-12 -right-12 w-36 h-36 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                  <BookOpen className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-white tracking-wide">
+                    Assign Course / Subject
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Tag this blackboard to your course syllabus
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleCancelUpload}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Image Preview Thumbnail */}
+            <div className="relative h-32 w-full rounded-2xl overflow-hidden mb-4 border border-white/10 bg-black/50 flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={pendingUpload.previewUrl}
+                alt="Preview"
+                className="w-full h-full object-cover opacity-80"
+              />
+              <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/80 backdrop-blur-sm text-[10px] font-mono text-slate-300 border border-white/10">
+                {(pendingUpload.file.size / 1024).toFixed(0)} KB • {pendingUpload.file.type || "image/jpeg"}
+              </div>
+            </div>
+
+            {/* Subject Dropdown Selector */}
+            <div className="space-y-3 mb-6">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5 font-mono">
+                  SELECT SUBJECT / COURSE:
+                </label>
+                <select
+                  value={selectedCourseCode}
+                  onChange={(e) => setSelectedCourseCode(e.target.value)}
+                  className="w-full bg-[#14172b] border border-white/15 focus:border-cyan-400 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-all font-sans cursor-pointer"
+                >
+                  {courses.length > 0 && (
+                    <optgroup label="Your Enrolled Courses" className="bg-[#0e101f] text-slate-300">
+                      {courses.map((course) => (
+                        <option key={course.courseCode} value={course.courseCode} className="text-white">
+                          [{course.courseCode}] {course.courseName}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  <optgroup label="Other Options" className="bg-[#0e101f] text-slate-300">
+                    <option value="__custom__" className="text-cyan-300">+ Custom / Other Subject Name</option>
+                    <option value="__general__" className="text-slate-300">General / Self-Study</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              {/* Custom Subject Name Input */}
+              {(selectedCourseCode === "__custom__" || courses.length === 0) && (
+                <div className="animate-in fade-in slide-in-from-top-1 duration-150">
+                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                    Enter Subject or Course Title:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Quantum Chemistry, Computer Networks"
+                    value={customSubjectName}
+                    onChange={(e) => setCustomSubjectName(e.target.value)}
+                    className="w-full bg-[#14172b] border border-white/15 focus:border-cyan-400 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+                    autoFocus
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleCancelUpload}
+                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-medium transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmUpload}
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Start AI Analysis</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

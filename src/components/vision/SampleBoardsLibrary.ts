@@ -87,6 +87,8 @@ export const SAMPLE_BOARDS: SampleBoard[] = [
       "#38bdf8"
     ),
     presetAnalysis: {
+      courseCode: "PHYS301",
+      courseName: "Quantum Mechanics & Physics",
       topicTitle: "Time-Dependent Schrödinger Dynamics & Quantum Propagators",
       summary: "Rigorous treatment of wave function unitary evolution, Hamiltonian spectral decomposition into stationary eigenstates, and probability current conservation in Hilbert space.",
       structuredNotes: `### 1. Fundamental Postulate & Time Evolution
@@ -211,6 +213,8 @@ $$\\mathbf{J} = \\frac{\\hbar}{2mi} \\left( \\psi^* \\nabla \\psi - \\psi \\nabl
       "#a855f7"
     ),
     presetAnalysis: {
+      courseCode: "CS420",
+      courseName: "Deep Neural Networks & Machine Learning",
       topicTitle: "Matrix Calculus & Vectorized Backpropagation in Deep Networks",
       summary: "Complete mathematical derivation of error gradients via the multivariate chain rule, matrix Jacobians, and gradient tensor accumulation across multilayer perceptrons.",
       structuredNotes: `### 1. Forward Propagation Formulations
@@ -316,6 +320,8 @@ $$\\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{W}^{[l]}} = \\boldsymbol{\\d
       "#10b981"
     ),
     presetAnalysis: {
+      courseCode: "MATH310",
+      courseName: "Fourier Systems & Signal Analysis",
       topicTitle: "Continuous Fourier Transforms, Convolution & Plancherel Isometry",
       summary: "Theoretical breakdown of Fourier operator mappings between temporal and spectral domains, the Convolution Theorem, and spectral differentiation properties.",
       structuredNotes: `### 1. Forward and Inverse Fourier Transforms
