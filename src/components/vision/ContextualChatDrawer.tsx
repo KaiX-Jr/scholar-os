@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import katex from "katex";
 import { ChatMessage } from "@/types/scholar";
-import { Send, Bot, User, Sparkles, MessageSquare, CornerDownLeft } from "lucide-react";
+import { Send, Bot, User, Sparkles, MessageSquare, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 
 interface ContextualChatDrawerProps {
@@ -25,14 +25,29 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
 }) => {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const isUserScrolledUp = useRef(false);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // Track whether user has scrolled away from the bottom
+  const handleScroll = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    isUserScrolledUp.current = distanceFromBottom > 80;
+    setShowScrollButton(isUserScrolledUp.current);
+  }, []);
 
+  const scrollToBottom = useCallback((force = false) => {
+    if (force || !isUserScrolledUp.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
+  // Auto-scroll only when user is already at the bottom
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isStreaming]);
+  }, [messages, isStreaming, scrollToBottom]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,7 +159,11 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[320px] min-h-[220px]">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="relative flex-1 overflow-y-auto space-y-3 pr-1 max-h-[320px] min-h-[220px]"
+      >
         {messages.map((msg) => {
           const isUser = msg.role === "user";
 
@@ -191,6 +210,19 @@ export const ContextualChatDrawer: React.FC<ContextualChatDrawerProps> = ({
         })}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Scroll-to-bottom button — appears when user scrolls up during streaming */}
+      {showScrollButton && (
+        <div className="flex justify-center -mt-1 mb-1">
+          <button
+            onClick={() => scrollToBottom(true)}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[11px] font-mono hover:bg-cyan-500/30 transition-all animate-bounce"
+          >
+            <ChevronDown className="w-3 h-3" />
+            New reply below
+          </button>
+        </div>
+      )}
 
       {/* Suggested Question Chips */}
       {suggestedQuestions && suggestedQuestions.length > 0 && (

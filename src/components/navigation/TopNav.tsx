@@ -59,7 +59,6 @@ export const TopNav: React.FC = () => {
   };
 
   return (
-    <>
     <header className="fixed top-0 inset-x-0 z-50 transition-all duration-300 py-3.5 px-4 sm:px-6 lg:px-8 pointer-events-none">
       <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
         {/* Left: Magic UI Shiny Scholar Logo Button */}
@@ -140,66 +139,5 @@ export const TopNav: React.FC = () => {
         </div>
       </div>
     </header>
-
-    {/* Mobile Bottom Navigation Bar */}
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 backdrop-blur-3xl bg-[#080810]/90 border-t border-white/[0.1] px-2 pb-safe">
-      <div className="flex items-center justify-around py-2">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-            activeSection === "hero" ? "text-cyan-400" : "text-slate-400"
-          }`}
-        >
-          <Home className="w-5 h-5" />
-          <span className="text-[9px] font-mono uppercase tracking-wider">Home</span>
-        </button>
-
-        <button
-          onClick={() => scrollTo("academic")}
-          className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-            activeSection === "academic" ? "text-indigo-400" : "text-slate-400"
-          }`}
-        >
-          <CheckSquare className="w-5 h-5" />
-          <span className="text-[9px] font-mono uppercase tracking-wider">Academic</span>
-        </button>
-
-        <button
-          onClick={handleUploadClick}
-          className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all text-cyan-400"
-        >
-          <div className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center shadow-[0_0_16px_rgba(6,182,212,0.4)] -mt-5">
-            <Eye className="w-5 h-5 text-cyan-300" />
-          </div>
-          <span className="text-[9px] font-mono uppercase tracking-wider">Studio</span>
-        </button>
-
-        <button
-          onClick={() => scrollTo("habits")}
-          className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-            activeSection === "habits" ? "text-emerald-400" : "text-slate-400"
-          }`}
-        >
-          <Activity className="w-5 h-5" />
-          <span className="text-[9px] font-mono uppercase tracking-wider">Habits</span>
-        </button>
-
-        <button
-          onClick={() => scrollTo("habits")}
-          className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-            pomodoro.isRunning ? "text-purple-300" : "text-slate-400"
-          }`}
-        >
-          <div className="relative">
-            <Timer className="w-5 h-5" />
-            {pomodoro.isRunning && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-            )}
-          </div>
-          <span className="text-[9px] font-mono uppercase tracking-wider">Focus</span>
-        </button>
-      </div>
-    </nav>
-    </>
   );
 };

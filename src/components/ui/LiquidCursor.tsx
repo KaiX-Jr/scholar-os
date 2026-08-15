@@ -173,7 +173,7 @@ export const LiquidCursor: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-50 transition-opacity duration-300"
+      className="pointer-events-none fixed inset-0 z-50 transition-opacity duration-300 hidden md:block"
       style={{ mixBlendMode: "screen" }}
     />
   );

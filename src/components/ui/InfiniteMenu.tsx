@@ -87,8 +87,7 @@ export const InfiniteMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStartX, setDragStartX] = useState(0);
-  const [scrollOffset, setScrollOffset] = useState(0);
+  const [touchStartX, setTouchStartX] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const totalItems = MENU_ITEMS.length;
@@ -136,6 +135,22 @@ export const InfiniteMenu: React.FC = () => {
         }
       }
     }, 150);
+  };
+
+  // Touch swipe interaction for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diffX = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(diffX) > 40) {
+      if (diffX < 0) {
+        setActiveIndex((prev) => (prev + 1) % totalItems);
+      } else {
+        setActiveIndex((prev) => (prev - 1 + totalItems) % totalItems);
+      }
+    }
   };
 
   // Wheel scroll interaction
@@ -231,9 +246,11 @@ export const InfiniteMenu: React.FC = () => {
             {/* Center: 3D Cylindrical Infinite Menu Track */}
             <div
               ref={containerRef}
-              className="relative w-full max-w-6xl flex items-center justify-center my-auto py-8 overflow-visible perspective-[1200px]"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              className="relative w-full max-w-6xl flex items-center justify-center my-auto py-4 sm:py-8 overflow-visible"
             >
-              <div className="relative flex items-center justify-center w-full h-[360px] sm:h-[400px]">
+              <div className="relative flex items-center justify-center w-full h-[320px] sm:h-[400px]">
                 {MENU_ITEMS.map((item, idx) => {
                   const Icon = item.icon;
                   // Calculate distance from activeIndex with continuous wrapping
@@ -246,12 +263,10 @@ export const InfiniteMenu: React.FC = () => {
 
                   if (!isVisible) return null;
 
-                  // 3D Infinite perspective positioning
-                  const translateX = distance * 280;
-                  const translateZ = Math.abs(distance) * -120;
-                  const rotateY = distance * -18;
-                  const scale = isActive ? 1.05 : 0.88 - Math.abs(distance) * 0.08;
-                  const opacity = isActive ? 1 : 0.5 - Math.abs(distance) * 0.15;
+                  // Infinite positioning (flatter on mobile for 60fps performance)
+                  const translateX = distance * (typeof window !== "undefined" && window.innerWidth < 640 ? 220 : 280);
+                  const scale = isActive ? 1 : 0.84 - Math.abs(distance) * 0.08;
+                  const opacity = isActive ? 1 : 0.4 - Math.abs(distance) * 0.15;
 
                   return (
                     <motion.div
@@ -259,16 +274,14 @@ export const InfiniteMenu: React.FC = () => {
                       onClick={() => (isActive ? handleSelect(item) : setActiveIndex(idx))}
                       animate={{
                         x: translateX,
-                        z: translateZ,
-                        rotateY: rotateY,
                         scale: scale,
                         opacity: opacity,
                       }}
-                      transition={{ type: "spring", stiffness: 260, damping: 24 }}
-                      className={`absolute w-72 sm:w-80 h-[340px] sm:h-[380px] rounded-3xl p-6 sm:p-7 backdrop-blur-3xl border transition-colors duration-300 cursor-pointer flex flex-col justify-between overflow-hidden ${
+                      transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                      className={`absolute w-[82vw] sm:w-80 h-[310px] sm:h-[380px] rounded-3xl p-5 sm:p-7 backdrop-blur-xl border transition-colors duration-200 cursor-pointer flex flex-col justify-between overflow-hidden ${
                         isActive
-                          ? "bg-[#0a0b16]/95 border-cyan-400/50 shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_30px_rgba(6,182,212,0.25)] z-30 ring-1 ring-cyan-400/40"
-                          : "bg-[#0a0b16]/75 border-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.6)] z-10 hover:border-white/20"
+                          ? "bg-[#0a0b16]/95 border-cyan-400/50 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(6,182,212,0.2)] z-30 ring-1 ring-cyan-400/40"
+                          : "bg-[#0a0b16]/80 border-white/[0.08] shadow-[0_8px_24px_rgba(0,0,0,0.5)] z-10 hover:border-white/20"
                       }`}
                     >
                       {/* Top Specular Line */}

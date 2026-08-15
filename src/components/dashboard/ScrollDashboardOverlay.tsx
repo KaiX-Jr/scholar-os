@@ -268,7 +268,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
       {/* =========================================================================
           SECTION 5: CLEAN FOOTER
       ========================================================================== */}
-      <footer className="relative py-10 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono pb-28 sm:pb-12">
+      <footer className="relative py-10 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-cyan-400" />
           <span className="font-bold text-white">SCHOLAR.OS</span>
