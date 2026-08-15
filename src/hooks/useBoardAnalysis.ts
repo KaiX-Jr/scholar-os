@@ -62,6 +62,44 @@ export function useBoardAnalysis() {
     setImageFilters((prev) => ({ ...prev, ...updates }));
   }, []);
 
+  // Client-side image optimizer for fast, lightweight transmission and high vision fidelity
+  const compressImage = async (file: File, maxDimension = 1600, quality = 0.85): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawResult = e.target?.result as string;
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            resolve(rawResult);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+          resolve(compressedDataUrl);
+        };
+        img.onerror = () => resolve(rawResult);
+        img.src = rawResult;
+      };
+      reader.onerror = () => resolve("");
+      reader.readAsDataURL(file);
+    });
+  };
+
   // Process file upload (drag & drop or input)
   const processImageFile = useCallback(
     async (file: File, course?: { courseCode?: string; courseName?: string }) => {
@@ -69,13 +107,10 @@ export function useBoardAnalysis() {
       setErrorMessage(null);
 
       try {
-        const reader = new FileReader();
-        const base64Promise = new Promise<string>((resolve, reject) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-        });
-        reader.readAsDataURL(file);
-        const dataUrl = await base64Promise;
+        const dataUrl = await compressImage(file, 1600, 0.85);
+        if (!dataUrl) {
+          throw new Error("Unable to read image file.");
+        }
 
         setActiveImageUri(dataUrl);
 
@@ -85,7 +120,7 @@ export function useBoardAnalysis() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             imageBase64: dataUrl,
-            mimeType: file.type || "image/jpeg",
+            mimeType: "image/jpeg",
             courseCode: course?.courseCode || "",
             courseName: course?.courseName || "",
           }),
@@ -108,7 +143,7 @@ export function useBoardAnalysis() {
           {
             id: `msg-${Date.now()}`,
             role: "assistant",
-            content: `I've analyzed your board on **${data.topicTitle}**${courseTag}! You can explore the structured LaTeX notes, step-by-step derivations, or ask me any question below.`,
+            content: `I've analyzed your document on **${data.topicTitle}**${courseTag}! You can explore the structured solutions, step-by-step logic, active recall cards, or ask me any question below.`,
             timestamp: "Just now",
           },
         ]);

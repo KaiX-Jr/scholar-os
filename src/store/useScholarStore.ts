@@ -265,13 +265,18 @@ export const useScholarStore = create<ScholarStore>()(
           });
           const { cloudData } = await res.json();
           if (cloudData) {
+            const cloudBoards = cloudData.boardHistory ?? [];
+            const activeBoard = cloudBoards.length > 0 ? cloudBoards[0] : null;
             set({
               user: cloudData.user ?? get().user,
               courses: cloudData.courses ?? [],
               assignments: cloudData.assignments ?? [],
               habitStreaks: cloudData.habitStreaks ?? get().habitStreaks,
               pomodoro: cloudData.pomodoro ? { ...cloudData.pomodoro, isRunning: false } : get().pomodoro,
-              boardHistory: cloudData.boardHistory ?? get().boardHistory,
+              boardHistory: cloudBoards,
+              activeBoardResult: activeBoard ? activeBoard : get().activeBoardResult,
+              activeImageUri: activeBoard?.imageUri ?? get().activeImageUri,
+              flashcards: activeBoard?.flashcards ?? get().flashcards,
             });
           }
         } catch {
@@ -834,6 +839,8 @@ export const useScholarStore = create<ScholarStore>()(
             flashcards: result.flashcards || [],
           };
         });
+        get().scheduleSyncToCloud();
+        setTimeout(() => get().syncToCloud(), 200);
       },
 
       deleteBoardFromHistory: (id) => {
@@ -841,6 +848,7 @@ export const useScholarStore = create<ScholarStore>()(
           const filtered = state.boardHistory.filter((b) => b.id !== id);
           return { boardHistory: filtered };
         });
+        get().scheduleSyncToCloud();
       },
 
       loadBoardFromHistory: (id) => {
@@ -856,6 +864,7 @@ export const useScholarStore = create<ScholarStore>()(
 
       clearBoardHistory: () => {
         set({ boardHistory: [] });
+        get().scheduleSyncToCloud();
       },
 
       // Record Daily Oral Check-In & Update Habits + CGPA Mastery
@@ -957,6 +966,13 @@ export const useScholarStore = create<ScholarStore>()(
     {
       name: "scholar_os_storage_v3",
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state?.jwtToken) {
+          setTimeout(() => {
+            useScholarStore.getState().pullFromCloud();
+          }, 150);
+        }
+      },
       partialize: (state) => ({
         user: state.user,
         jwtToken: state.jwtToken,
