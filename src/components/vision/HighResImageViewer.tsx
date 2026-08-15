@@ -389,7 +389,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
               PARSING OPTICAL BOARD DATA...
             </h4>
             <p className="text-xs text-slate-400 mt-1 max-w-xs">
-              AI Neural Vision is extracting handwritten derivations, KaTeX symbols, and active recall cards.
+              AI Vision is extracting structured notes, solution steps, and active recall cards.
             </p>
           </div>
         )}

@@ -55,7 +55,7 @@ const MENU_ITEMS: InfiniteMenuItem[] = [
     id: "vision",
     title: "Board-to-Study Optical Studio",
     category: "03 / OCR STUDIO",
-    description: "Real-time blackboard theorem extraction, KaTeX derivations & recall cards.",
+    description: "Real-time blackboard note extraction, step solutions & recall cards.",
     icon: Eye,
     color: "#38bdf8",
     gradient: "from-sky-500/20 via-cyan-500/20 to-teal-500/20",

@@ -57,8 +57,8 @@ export const DerivationBreakdown: React.FC<DerivationBreakdownProps> = ({ steps 
       {/* Header */}
       <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/[0.06]">
         <div>
-          <h3 className="text-sm font-semibold text-white">Step-by-Step Mathematical Derivation</h3>
-          <p className="text-xs text-slate-400">Sequential deductive proofs extracted from blackboard</p>
+          <h3 className="text-sm font-semibold text-white">Step-by-Step Problem & Solution Breakdown</h3>
+          <p className="text-xs text-slate-400">Sequential steps, key commands, and conceptual solutions extracted from your board</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -117,7 +117,7 @@ export const DerivationBreakdown: React.FC<DerivationBreakdownProps> = ({ steps 
               {/* Step Body */}
               {isExpanded && (
                 <div className="p-4 pt-2 border-t border-white/[0.04] space-y-3 animate-in fade-in duration-200">
-                  {/* Formula Container */}
+                  {/* Formula / Command Container */}
                   {step.formula && (
                     <div className="p-3 rounded-lg bg-black/40 border border-cyan-500/20 text-cyan-200 flex justify-center shadow-inner overflow-x-auto">
                       {renderKatexFormula(step.formula)}
@@ -135,7 +135,7 @@ export const DerivationBreakdown: React.FC<DerivationBreakdownProps> = ({ steps 
                       <Lightbulb className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
                       <div>
                         <span className="font-semibold text-indigo-300 block mb-0.5">
-                          Physical & Geometric Intuition
+                          Key Insight & Practical Tip
                         </span>
                         <p className="text-slate-300">{step.intuition}</p>
                       </div>

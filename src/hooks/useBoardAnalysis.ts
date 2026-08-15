@@ -33,7 +33,7 @@ export function useBoardAnalysis() {
     {
       id: "welcome-msg",
       role: "assistant",
-      content: "Hello! I am your Lecture & Research Assistant. Upload or select any blackboard photo to extract structured notes, LaTeX derivations, flashcards, or ask any question about the board.",
+      content: "Hello! I am your Lecture & Study Assistant. Upload or select any blackboard or homework photo to extract structured notes, solution steps, flashcards, or ask any question about the topic.",
       timestamp: "Just now",
     },
   ]);

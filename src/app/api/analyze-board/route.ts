@@ -41,7 +41,7 @@ function normalizeAnalysisResult(raw: any, courseCode?: string, courseName?: str
         s.explanation ||
         s.notes ||
         s.description ||
-        "Execute the specified operation or derivation step.";
+        "Execute the specified operation or problem step.";
       
       let formula = s.formula || "";
       if (!formula && Array.isArray(s.commands) && s.commands.length > 0) {
@@ -281,7 +281,7 @@ This study material has been loaded into your Scholar OS studio.
         },
         {
           stepNumber: 2,
-          title: "Execution & Solution Derivation",
+          title: "Execution & Solution Steps",
           explanation: "Apply core algorithms, command syntax, or mathematical transforms to solve the problem.",
           formula: courseCode === "DBMS" ? "chmod 755 file && cat file" : "\\int f(x) dx = F(x) + C",
           intuition: "Performs the primary computational or theoretical transformation."

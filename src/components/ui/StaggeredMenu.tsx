@@ -84,7 +84,7 @@ export const StaggeredMenu: React.FC = () => {
     {
       icon: Eye,
       label: "Board-to-Study Optical Studio",
-      sublabel: "LaTeX chalkboard extractor & step derivations",
+      sublabel: "Chalkboard extractor & step solutions",
       tag: "OCR Studio",
       action: () => scrollTo("vision"),
       color: "from-cyan-400 to-indigo-400",

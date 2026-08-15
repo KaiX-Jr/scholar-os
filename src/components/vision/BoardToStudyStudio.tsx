@@ -75,7 +75,7 @@ export const BoardToStudyStudio: React.FC = () => {
             Classroom Blackboard Intelligence
           </h2>
           <p className="text-sm text-slate-300 mt-2 max-w-2xl">
-            Upload a classroom chalkboard photo to generate structured notes, step-by-step derivations, and active recall flashcards.
+            Upload a classroom chalkboard or assignment photo to generate structured notes, step-by-step solutions, and active recall flashcards.
           </p>
         </div>
 

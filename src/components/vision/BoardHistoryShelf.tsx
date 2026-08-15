@@ -229,7 +229,7 @@ export const BoardHistoryShelf: React.FC<BoardHistoryShelfProps> = ({
                         {board.topicTitle}
                       </h4>
                       <p className="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">
-                        {board.summary || "Structured theoretical lecture breakdown with derivations & active recall cards."}
+                        {board.summary || "Structured lecture and problem breakdown with solution steps & active recall cards."}
                       </p>
                     </div>
 
