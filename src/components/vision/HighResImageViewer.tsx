@@ -45,6 +45,11 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [showFiltersMenu, setShowFiltersMenu] = useState(false);
+  const [imageLoadError, setImageLoadError] = useState(false);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [imageUri]);
 
   // Subject / Course tagging modal state
   const [pendingUpload, setPendingUpload] = useState<{
@@ -364,19 +369,19 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             <div className="flex items-center gap-4 mt-4">
               <button
                 onClick={captureSnapshot}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all cursor-pointer"
               >
-                📸 Snap & Analyze
+                📸 Snap & Tag Course
               </button>
               <button
                 onClick={stopCamera}
-                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 text-xs"
+                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 text-xs cursor-pointer"
               >
                 Cancel
               </button>
             </div>
           </div>
-        ) : imageUri ? (
+        ) : imageUri && !imageLoadError ? (
           /* Rendered Board Image with Zoom/Pan/Filters */
           <div
             style={{
@@ -392,6 +397,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             <img
               src={imageUri}
               alt="Classroom Blackboard"
+              onError={() => setImageLoadError(true)}
               className="max-h-[460px] w-auto object-contain rounded-xl"
             />
           </div>
@@ -407,8 +413,8 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             <h4 className="text-sm font-semibold text-white">
               Drop Blackboard or Whiteboard Photo
             </h4>
-            <p className="text-xs text-slate-400 mt-1">
-              Supports JPEG, PNG, WEBP or classroom camera snapshot. Or choose a preset sample below.
+            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+              Supports JPEG, PNG, WEBP or snap directly with your classroom device camera.
             </p>
           </div>
         )}

@@ -33,7 +33,6 @@ export const BoardToStudyStudio: React.FC = () => {
     isChatStreaming,
     imageFilters,
     processImageFile,
-    loadSampleBoard,
     selectBoardHistoryItem,
     deleteBoardFromHistory,
     clearBoardHistory,
@@ -91,7 +90,6 @@ export const BoardToStudyStudio: React.FC = () => {
           onSelectBoard={selectBoardHistoryItem}
           onDeleteBoard={deleteBoardFromHistory}
           onClearHistory={clearBoardHistory}
-          onLoadSample={loadSampleBoard}
         />
 
         {/* Split Screen Workspace Grid */}
@@ -111,9 +109,9 @@ export const BoardToStudyStudio: React.FC = () => {
           {/* Right Pane: Analysis Workspace with Tabbed Views (7 cols on lg) */}
           <div className="lg:col-span-7 h-[540px] lg:h-[640px] flex flex-col">
             <GlassCard glowColor="cyan" className="p-3.5 sm:p-6 h-full flex flex-col">
-              {/* Tab Header Bar */}
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 sm:pb-3 mb-3 sm:mb-4 shrink-0 overflow-x-auto custom-scrollbar gap-2">
-                <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-black/40 border border-white/[0.08] shrink-0">
+              {/* Tab Header Bar - Aligned to Middle */}
+              <div className="flex items-center justify-center border-b border-white/[0.08] pb-2.5 sm:pb-3 mb-3 sm:mb-4 shrink-0 overflow-x-auto custom-scrollbar">
+                <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-black/40 border border-white/[0.08] shrink-0 mx-auto">
                   {tabs.map((t) => {
                     const Icon = t.icon;
                     const isActive = activeTab === t.id;
@@ -121,7 +119,7 @@ export const BoardToStudyStudio: React.FC = () => {
                       <button
                         key={t.id}
                         onClick={() => setActiveTab(t.id)}
-                        className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-medium transition-all shrink-0 cursor-pointer ${
+                        className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 cursor-pointer ${
                           isActive
                             ? "bg-[#08080f]/95 text-cyan-300 border border-cyan-400/40 shadow-md shadow-cyan-500/20"
                             : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -138,17 +136,6 @@ export const BoardToStudyStudio: React.FC = () => {
                     );
                   })}
                 </div>
-
-                {activeBoardResult?.courseCode && (
-                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono shrink-0">
-                    <span className="font-bold">[{activeBoardResult.courseCode}]</span>
-                    {activeBoardResult.courseName && (
-                      <span className="max-w-[140px] truncate text-slate-300 text-[10px]">
-                        {activeBoardResult.courseName}
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Tab Contents */}

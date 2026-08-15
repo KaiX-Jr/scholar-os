@@ -3,20 +3,14 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SavedBoardAnalysis } from "@/types/scholar";
-import { SampleBoard, SAMPLE_BOARDS } from "@/components/vision/SampleBoardsLibrary";
 import {
   Clock,
-  Sparkles,
   BookOpen,
   Trash2,
   CheckCircle2,
-  CloudCheck,
   ChevronRight,
-  PlusCircle,
-  FileText,
   ListOrdered,
   Brain,
-  AlertCircle,
 } from "lucide-react";
 import { BorderBeam } from "@/components/ui/BorderBeam";
 
@@ -26,7 +20,6 @@ interface BoardHistoryShelfProps {
   onSelectBoard: (id: string) => void;
   onDeleteBoard: (id: string) => void;
   onClearHistory: () => void;
-  onLoadSample: (sample: SampleBoard) => void;
 }
 
 export const BoardHistoryShelf: React.FC<BoardHistoryShelfProps> = ({
@@ -35,7 +28,6 @@ export const BoardHistoryShelf: React.FC<BoardHistoryShelfProps> = ({
   onSelectBoard,
   onDeleteBoard,
   onClearHistory,
-  onLoadSample,
 }) => {
   const [selectedCourseFilter, setSelectedCourseFilter] = useState<string>("all");
 
@@ -274,36 +266,20 @@ export const BoardHistoryShelf: React.FC<BoardHistoryShelfProps> = ({
           </AnimatePresence>
         </div>
       ) : (
-        /* Empty State with Sample Preset Launchers */
-        <div className="p-4 sm:p-6 rounded-2xl bg-[#0a0b16]/70 border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-left">
+        /* Clean Zero-State: No Dummy Sample Data */
+        <div className="p-5 sm:p-6 rounded-2xl bg-[#0a0b16]/70 border border-white/[0.08] flex items-center justify-center">
+          <div className="flex items-center gap-3.5 text-left max-w-lg">
             <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
-              <Sparkles className="w-5 h-5" />
+              <Clock className="w-5 h-5" />
             </div>
             <div>
               <h4 className="text-xs sm:text-sm font-semibold text-white">
                 No Lecture Boards Saved Yet
               </h4>
-              <p className="text-[11px] text-slate-400 mt-0.5">
-                Upload your classroom whiteboard photo or load one of our high-yield university lecture presets below:
+              <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                Upload or capture a classroom chalkboard photo below to extract structured notes, proofs, and active recall cards.
               </p>
             </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            {SAMPLE_BOARDS.map((sample) => (
-              <button
-                key={sample.id}
-                onClick={() => onLoadSample(sample)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-cyan-500/15 border border-white/10 hover:border-cyan-500/30 text-slate-300 hover:text-cyan-300 text-xs font-medium transition-all cursor-pointer"
-              >
-                <PlusCircle className="w-3.5 h-3.5 text-cyan-400" />
-                <span>
-                  {sample.presetAnalysis.courseCode ? `[${sample.presetAnalysis.courseCode}] ` : ""}
-                  {sample.title}
-                </span>
-              </button>
-            ))}
           </div>
         </div>
       )}
