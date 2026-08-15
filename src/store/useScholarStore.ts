@@ -111,6 +111,14 @@ interface ScholarStore {
   resetAllData: () => void;
 }
 
+// Generate local date string YYYY-MM-DD
+export const getLocalDateStr = (d: Date = new Date()): string => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // Generate clean 112 days (16 weeks x 7 days) of zero-intensity habit history
 const generateZeroHabitHistory = (): HabitDay[] => {
   const history: HabitDay[] = [];
@@ -118,9 +126,8 @@ const generateZeroHabitHistory = (): HabitDay[] => {
   for (let i = 111; i >= 0; i--) {
     const d = new Date();
     d.setDate(today.getDate() - i);
-    const dateStr = d.toISOString().split("T")[0];
     history.push({
-      date: dateStr,
+      date: getLocalDateStr(d),
       count: 0,
       hoursOrUnits: 0,
     });
@@ -565,14 +572,36 @@ export const useScholarStore = create<ScholarStore>()(
       // Habit Tracking
       logHabit: (category, date, intensity, units) => {
         set((state) => {
-          const streakObj = state.habitStreaks[category];
-          const updatedHistory = streakObj.history.map((day) =>
-            day.date === date
-              ? { ...day, count: intensity, hoursOrUnits: units }
-              : day
-          );
+          const streakObj = state.habitStreaks[category] || {
+            category,
+            name: category,
+            targetUnit: "hours",
+            currentStreak: 0,
+            longestStreak: 0,
+            history: generateZeroHabitHistory(),
+          };
 
-          // Calculate current streak
+          let found = false;
+          let updatedHistory = (streakObj.history || []).map((day) => {
+            if (day.date === date) {
+              found = true;
+              return { ...day, count: intensity, hoursOrUnits: units };
+            }
+            return day;
+          });
+
+          if (!found) {
+            updatedHistory = [
+              ...updatedHistory,
+              { date, count: intensity, hoursOrUnits: units },
+            ];
+            // Keep up to 112 days
+            if (updatedHistory.length > 112) {
+              updatedHistory = updatedHistory.slice(updatedHistory.length - 112);
+            }
+          }
+
+          // Calculate current streak from the end
           let currentStreak = 0;
           for (let i = updatedHistory.length - 1; i >= 0; i--) {
             if (updatedHistory[i].count > 0) {
@@ -582,7 +611,7 @@ export const useScholarStore = create<ScholarStore>()(
             }
           }
 
-          const longestStreak = Math.max(streakObj.longestStreak, currentStreak);
+          const longestStreak = Math.max(streakObj.longestStreak || 0, currentStreak);
 
           return {
             habitStreaks: {
@@ -596,20 +625,25 @@ export const useScholarStore = create<ScholarStore>()(
             },
           };
         });
+        get().scheduleSyncToCloud();
       },
 
       toggleHabitToday: (category) => {
-        const todayStr = new Date().toISOString().split("T")[0];
+        const todayStr = getLocalDateStr();
         const state = get();
         const streakObj = state.habitStreaks[category];
-        const todayDay = streakObj.history.find((d) => d.date === todayStr);
-        const currentCount = todayDay?.count || 0;
-        const nextIntensity = (currentCount + 1) % 5;
-        const unitMultiplier =
-          category === "hydration" ? 750 : category === "study" ? 1.5 : 1;
-        const nextUnits = nextIntensity * unitMultiplier;
+        const todayDay = streakObj?.history?.find((d) => d.date === todayStr);
+        const isLogged = (todayDay?.count || 0) > 0;
 
-        get().logHabit(category, todayStr, nextIntensity, nextUnits);
+        if (isLogged) {
+          // Toggle OFF
+          get().logHabit(category, todayStr, 0, 0);
+        } else {
+          // Toggle ON
+          const unitMultiplier =
+            category === "hydration" ? 1500 : category === "study" ? 2.5 : category === "coding" ? 2.0 : 2;
+          get().logHabit(category, todayStr, 2, unitMultiplier);
+        }
       },
 
       // Pomodoro Operations

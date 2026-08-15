@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useScholarStore } from "@/store/useScholarStore";
+import { useScholarStore, getLocalDateStr } from "@/store/useScholarStore";
 import { HabitCategory, HabitDay } from "@/types/scholar";
 import {
   Flame,
@@ -88,7 +88,7 @@ export const HabitStreakHeatmap: React.FC = () => {
     weeks.push(days.slice(i, i + 7));
   }
 
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = getLocalDateStr();
   const todayEntry = days.find((d) => d.date === todayStr);
   const isLoggedToday = (todayEntry?.count || 0) > 0;
 
