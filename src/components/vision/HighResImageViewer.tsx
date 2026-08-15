@@ -40,6 +40,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
   const { courses } = useScholarStore();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -138,21 +139,42 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
 
   const handleMouseUp = () => setIsDragging(false);
 
-  // Camera Snapshot capture
-  const startCamera = async () => {
+  // Camera trigger: on mobile/touch devices, use native camera input for full clarity and easy OK buttons
+  const handleCameraClick = () => {
+    // Check if on mobile device
+    const isMobile = typeof window !== "undefined" && (
+      /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      window.innerWidth < 768 ||
+      "ontouchstart" in window
+    );
+
+    if (isMobile && cameraInputRef.current) {
+      cameraInputRef.current.click();
+    } else {
+      startLiveCamera();
+    }
+  };
+
+  // Live Camera WebRTC Stream (Desktop & in-app fallback)
+  const startLiveCamera = async () => {
     try {
       setIsCameraActive(true);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+        audio: false,
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        videoRef.current.muted = true;
+        await videoRef.current.play();
       }
     } catch (err) {
       console.error("Camera access failed:", err);
+      // Fallback to camera input ref if getUserMedia fails
+      if (cameraInputRef.current) {
+        cameraInputRef.current.click();
+      }
       setIsCameraActive(false);
-      alert("Could not access camera. Please check browser permissions.");
     }
   };
 
@@ -172,7 +194,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
           handleFileSelected(file);
           stopCamera();
         }
-      }, "image/jpeg");
+      }, "image/jpeg", 0.92);
     }
   };
 
@@ -256,7 +278,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
           </button>
 
           <button
-            onClick={startCamera}
+            onClick={handleCameraClick}
             className="p-1.5 px-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/20 text-xs flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
             title="Capture camera photo"
           >
@@ -264,17 +286,32 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             <span className="hidden sm:inline">Camera</span>
           </button>
 
+          {/* Standard File Upload Input */}
           <input
             type="file"
             ref={fileInputRef}
             onChange={(e) => {
               if (e.target.files && e.target.files[0]) {
                 handleFileSelected(e.target.files[0]);
-                // reset input so user can pick the same file again if needed
                 e.target.value = "";
               }
             }}
             accept="image/*"
+            className="hidden"
+          />
+
+          {/* Native Mobile Camera Input with instant tap-to-focus and checkmark OK */}
+          <input
+            type="file"
+            ref={cameraInputRef}
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                handleFileSelected(e.target.files[0]);
+                e.target.value = "";
+              }
+            }}
+            accept="image/*"
+            capture="environment"
             className="hidden"
           />
         </div>
@@ -359,23 +396,29 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
 
         {/* Live Camera Viewport Modal */}
         {isCameraActive ? (
-          <div className="absolute inset-0 z-20 bg-black flex flex-col items-center justify-center p-4">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full max-h-[380px] rounded-xl object-cover border border-cyan-400/40"
-            />
-            <div className="flex items-center gap-4 mt-4">
+          <div className="absolute inset-0 z-30 bg-black flex flex-col items-center justify-between p-3 sm:p-4">
+            <div className="relative w-full flex-1 flex items-center justify-center overflow-hidden rounded-xl bg-black border border-cyan-400/40 min-h-0">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex items-center justify-center gap-3 w-full pt-3 shrink-0">
               <button
+                type="button"
                 onClick={captureSnapshot}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all cursor-pointer"
+                className="flex-1 max-w-xs py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
               >
-                📸 Snap & Tag Course
+                <Camera className="w-4 h-4" />
+                <span>Snap Photo</span>
               </button>
               <button
+                type="button"
                 onClick={stopCamera}
-                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 text-xs cursor-pointer"
+                className="py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 text-xs sm:text-sm font-medium transition-colors cursor-pointer active:scale-95"
               >
                 Cancel
               </button>
@@ -429,16 +472,16 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
 
       {/* Course / Subject Tagging Modal Dialog */}
       {pendingUpload && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-[#0e101f] border border-cyan-500/30 rounded-3xl p-5 sm:p-6 shadow-2xl shadow-cyan-500/10 overflow-hidden text-left">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto">
+          <div className="relative w-full max-w-md my-auto bg-[#0e101f] border border-cyan-500/30 rounded-3xl p-4 sm:p-6 shadow-2xl shadow-cyan-500/10 text-left max-h-[92vh] flex flex-col">
             {/* Decorative glow */}
             <div className="absolute -top-12 -right-12 w-36 h-36 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3 shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
                   <BookOpen className="w-4 h-4" />
                 </div>
                 <div>
@@ -459,12 +502,12 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             </div>
 
             {/* Image Preview Thumbnail */}
-            <div className="relative h-32 w-full rounded-2xl overflow-hidden mb-4 border border-white/10 bg-black/50 flex items-center justify-center">
+            <div className="relative h-28 sm:h-32 w-full rounded-2xl overflow-hidden mb-3 border border-white/10 bg-black/50 flex items-center justify-center shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={pendingUpload.previewUrl}
                 alt="Preview"
-                className="w-full h-full object-cover opacity-80"
+                className="w-full h-full object-cover opacity-85"
               />
               <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/80 backdrop-blur-sm text-[10px] font-mono text-slate-300 border border-white/10">
                 {(pendingUpload.file.size / 1024).toFixed(0)} KB • {pendingUpload.file.type || "image/jpeg"}
@@ -472,7 +515,7 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             </div>
 
             {/* Subject Dropdown Selector */}
-            <div className="space-y-3 mb-6">
+            <div className="space-y-3 mb-4 overflow-y-auto flex-1 min-h-0 pr-1">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5 font-mono">
                   SELECT SUBJECT / COURSE:
@@ -517,18 +560,20 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 pt-2 border-t border-white/10 shrink-0">
               <button
+                type="button"
                 onClick={handleCancelUpload}
-                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-medium transition-all cursor-pointer"
+                className="flex-1 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs sm:text-sm font-medium transition-all cursor-pointer text-center active:scale-95"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleConfirmUpload}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-4 h-4" />
                 <span>Start AI Analysis</span>
               </button>
             </div>

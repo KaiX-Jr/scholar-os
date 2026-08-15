@@ -44,20 +44,20 @@ export const BoardToStudyStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState<StudioTab>("notes");
 
   const tabs = [
-    { id: "notes" as StudioTab, label: "Structured Notes", icon: FileText },
+    { id: "notes" as StudioTab, label: "Notes", icon: FileText },
     {
       id: "steps" as StudioTab,
-      label: "Step Derivations",
+      label: "Steps",
       icon: ListOrdered,
       count: activeBoardResult?.steps?.length,
     },
     {
       id: "flashcards" as StudioTab,
-      label: "Active Recall",
+      label: "Cards",
       icon: Brain,
       count: activeBoardResult?.flashcards?.length,
     },
-    { id: "chat" as StudioTab, label: "Lecture Q&A", icon: MessageSquare },
+    { id: "chat" as StudioTab, label: "Ask AI", icon: MessageSquare },
   ];
 
   return (
