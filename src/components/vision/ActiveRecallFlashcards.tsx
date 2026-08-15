@@ -10,11 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Brain,
-  CheckCircle2,
-  AlertCircle,
   Sparkles,
-  Layers,
-  Keyboard,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 
@@ -142,30 +138,28 @@ export const ActiveRecallFlashcards: React.FC<ActiveRecallFlashcardsProps> = ({ 
 
   const masteredCount = cards.filter((c) => c.masteryLevel === "mastered").length;
 
-  const tiltX = (mousePos.y / 200) * -12;
-  const tiltY = (mousePos.x / 300) * 12;
+  const tiltX = (mousePos.y / 200) * -10;
+  const tiltY = (mousePos.x / 300) * 10;
 
   return (
     <div className="flex flex-col h-full justify-between select-none">
       {/* Header Info */}
-      <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/[0.06]">
+      <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-white/[0.06]">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
             <Brain className="w-4 h-4 text-cyan-400" />
           </div>
           <div>
             <h3 className="text-xs sm:text-sm font-semibold text-white">Active Recall Deck</h3>
-            <span className="text-[11px] text-slate-400 font-mono">
+            <span className="text-[10px] sm:text-[11px] text-slate-400 font-mono">
               Mastery: {masteredCount}/{cards.length} cards
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Badge variant="cyan" size="sm">
-            Card {currentIndex + 1} / {cards.length}
-          </Badge>
-        </div>
+        <Badge variant="cyan" size="sm">
+          Card {currentIndex + 1} / {cards.length}
+        </Badge>
       </div>
 
       {/* 3D Flip Card Container */}
@@ -173,7 +167,7 @@ export const ActiveRecallFlashcards: React.FC<ActiveRecallFlashcardsProps> = ({ 
         ref={cardRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative w-full min-h-[270px] sm:min-h-[300px] [perspective:1200px] my-2"
+        className="relative w-full min-h-[290px] sm:min-h-[320px] [perspective:1200px] my-1"
       >
         <div
           onClick={() => setIsFlipped(!isFlipped)}
@@ -182,36 +176,41 @@ export const ActiveRecallFlashcards: React.FC<ActiveRecallFlashcardsProps> = ({ 
               ? `rotateY(180deg) rotateX(${tiltX}deg)`
               : `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
           }}
-          className={`relative w-full h-full min-h-[270px] sm:min-h-[300px] rounded-2xl border transition-transform duration-500 ease-out cursor-pointer [transform-style:preserve-3d] shadow-[0_15px_35px_rgba(0,0,0,0.6)] ${
+          className={`relative w-full h-full min-h-[290px] sm:min-h-[320px] rounded-2xl border transition-transform duration-500 ease-out cursor-pointer [transform-style:preserve-3d] shadow-[0_15px_35px_rgba(0,0,0,0.6)] ${
             isFlipped
-              ? "border-indigo-500/40 bg-gradient-to-br from-[#0e0e18] via-[#121224] to-[#080810]"
-              : "border-white/[0.08] bg-white/[0.035] hover:border-cyan-400/40"
+              ? "border-indigo-500/40 bg-gradient-to-br from-[#0a0a14] via-[#101020] to-[#080810]"
+              : "border-white/[0.08] bg-[#0a0b16]/90 hover:border-cyan-400/40"
           }`}
         >
-          {/* Specular Inner Rim Highlight */}
+          {/* Specular Top Line */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-          {/* Front Face: Question */}
-          <div className="absolute inset-0 p-6 flex flex-col justify-between [backface-visibility:hidden]">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-cyan-300 uppercase tracking-wider bg-cyan-500/10 px-2.5 py-1 rounded-md border border-cyan-500/30">
+          {/* =================================================================
+              FRONT FACE: QUESTION
+          ================================================================== */}
+          <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between [backface-visibility:hidden]">
+            {/* Top Bar */}
+            <div className="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.05]">
+              <span className="text-[10px] font-mono text-cyan-300 uppercase tracking-wider bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/30 truncate max-w-[150px]">
                 {currentCard.topic || "Core Concept"}
               </span>
-              <span className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
-                <RotateCw className="w-3 h-3 text-cyan-400 animate-spin-slow" /> Space / Click to reveal
+              <span className="text-[10px] sm:text-[11px] text-slate-400 flex items-center gap-1 font-mono shrink-0">
+                <RotateCw className="w-3 h-3 text-cyan-400 animate-spin-slow" /> Tap to flip
               </span>
             </div>
 
-            <div className="py-4">
-              <span className="text-[10px] text-slate-400 block mb-2 font-mono uppercase tracking-widest">
+            {/* Question Text Body */}
+            <div className="py-3 flex-1 flex flex-col justify-center overflow-y-auto">
+              <span className="text-[10px] text-slate-400 block mb-1.5 font-mono uppercase tracking-widest font-semibold">
                 Question
               </span>
-              <h4 className="text-sm sm:text-base font-semibold text-white leading-relaxed">
+              <h4 className="text-xs sm:text-sm md:text-base font-semibold text-white leading-relaxed">
                 {renderTextWithMath(currentCard.question)}
               </h4>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-white/[0.04] pt-2">
+            {/* Bottom Status */}
+            <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-white/[0.06] pt-2.5">
               <span className="font-mono text-[10px]">
                 Recall Level:{" "}
                 <strong className={
@@ -224,76 +223,89 @@ export const ActiveRecallFlashcards: React.FC<ActiveRecallFlashcardsProps> = ({ 
                   {currentCard.masteryLevel || "Unreviewed"}
                 </strong>
               </span>
-              <span className="text-cyan-300 font-medium flex items-center gap-1 text-xs">
-                Flip to solution <RotateCw className="w-3 h-3" />
+              <span className="text-cyan-300 font-medium flex items-center gap-1 text-[11px] font-mono">
+                See Solution <ChevronRight className="w-3.5 h-3.5" />
               </span>
             </div>
           </div>
 
-          {/* Back Face: Answer */}
-          <div className="absolute inset-0 p-6 flex flex-col justify-between [transform:rotateY(180deg)] [backface-visibility:hidden]">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-indigo-300 uppercase tracking-wider bg-indigo-500/20 px-2.5 py-1 rounded-md border border-indigo-500/30">
+          {/* =================================================================
+              BACK FACE: ANSWER & SPACED REPETITION RATING
+          ================================================================== */}
+          <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between [transform:rotateY(180deg)] [backface-visibility:hidden]">
+            {/* Top Bar */}
+            <div className="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.05]">
+              <span className="text-[10px] font-mono text-indigo-300 uppercase tracking-wider bg-indigo-500/20 px-2 py-0.5 rounded-md border border-indigo-500/30">
                 Solution &amp; Proof
               </span>
-              <span className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
-                <RotateCw className="w-3 h-3 text-indigo-400" /> Space / Click to flip
+              <span className="text-[10px] sm:text-[11px] text-slate-400 flex items-center gap-1 font-mono shrink-0">
+                <RotateCw className="w-3 h-3 text-indigo-400" /> Tap to flip back
               </span>
             </div>
 
-            <div className="py-2">
-              <span className="text-[10px] text-slate-400 block mb-1 font-mono uppercase tracking-widest">
+            {/* Answer Text Body */}
+            <div className="py-2.5 flex-1 flex flex-col justify-center overflow-y-auto">
+              <span className="text-[10px] text-slate-400 block mb-1 font-mono uppercase tracking-widest font-semibold">
                 Key Answer
               </span>
-              <p className="text-xs sm:text-sm text-slate-100 leading-relaxed">
+              <div className="text-xs sm:text-sm text-slate-100 font-mono leading-relaxed bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.05]">
                 {renderTextWithMath(currentCard.answer)}
-              </p>
+              </div>
             </div>
 
             {/* Spaced Repetition Rating Action Bar */}
             <div
               onClick={(e) => e.stopPropagation()}
-              className="pt-2 border-t border-white/[0.08] flex items-center justify-between gap-2"
+              className="pt-2.5 border-t border-white/[0.08] space-y-1.5"
             >
-              <span className="text-[10px] text-slate-400 font-mono">Rate (Keys 1-3):</span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">
+                  How well did you know this?
+                </span>
+              </div>
+
+              {/* 3-Column Responsive Rating Grid */}
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 <button
+                  type="button"
                   onClick={() => setMastery("review")}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 border transition-all ${
+                  className={`py-1.5 px-2 rounded-xl text-[11px] font-medium font-mono flex items-center justify-center gap-1 border transition-all cursor-pointer ${
                     currentCard.masteryLevel === "review"
                       ? "bg-rose-500/25 text-rose-300 border-rose-500/50 shadow-[0_0_10px_rgba(244,63,94,0.3)]"
                       : "bg-white/5 hover:bg-rose-500/15 text-rose-300 border-white/10"
                   }`}
-                  title="Press '1' on keyboard"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-                  Hard [1]
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
+                  <span>Hard</span>
+                  <span className="hidden sm:inline opacity-60">[1]</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setMastery("learning")}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 border transition-all ${
+                  className={`py-1.5 px-2 rounded-xl text-[11px] font-medium font-mono flex items-center justify-center gap-1 border transition-all cursor-pointer ${
                     currentCard.masteryLevel === "learning"
                       ? "bg-amber-500/25 text-amber-300 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.3)]"
                       : "bg-white/5 hover:bg-amber-500/15 text-amber-300 border-white/10"
                   }`}
-                  title="Press '2' on keyboard"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  Good [2]
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                  <span>Good</span>
+                  <span className="hidden sm:inline opacity-60">[2]</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setMastery("mastered")}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 border transition-all ${
+                  className={`py-1.5 px-2 rounded-xl text-[11px] font-medium font-mono flex items-center justify-center gap-1 border transition-all cursor-pointer ${
                     currentCard.masteryLevel === "mastered"
                       ? "bg-emerald-500/25 text-emerald-300 border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
                       : "bg-white/5 hover:bg-emerald-500/15 text-emerald-300 border-white/10"
                   }`}
-                  title="Press '3' on keyboard"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  Mastered [3]
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span>Mastered</span>
+                  <span className="hidden sm:inline opacity-60">[3]</span>
                 </button>
               </div>
             </div>
@@ -304,8 +316,9 @@ export const ActiveRecallFlashcards: React.FC<ActiveRecallFlashcardsProps> = ({ 
       {/* Navigation Controls */}
       <div className="flex items-center justify-between pt-2">
         <button
+          type="button"
           onClick={handlePrev}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs border border-white/10 transition-all font-mono"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs border border-white/10 transition-all font-mono cursor-pointer"
         >
           <ChevronLeft className="w-3.5 h-3.5" /> Prev
         </button>
@@ -315,13 +328,14 @@ export const ActiveRecallFlashcards: React.FC<ActiveRecallFlashcardsProps> = ({ 
           {cards.map((c, i) => (
             <button
               key={c.id || i}
+              type="button"
               onClick={() => {
                 setIsFlipped(false);
                 setCurrentIndex(i);
               }}
-              className={`h-2 rounded-full transition-all duration-300 ${
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                 i === currentIndex
-                  ? "w-6 bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"
+                  ? "w-5 sm:w-6 bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"
                   : c.masteryLevel === "mastered"
                   ? "w-2 bg-emerald-400/80"
                   : c.masteryLevel === "review"
@@ -334,8 +348,9 @@ export const ActiveRecallFlashcards: React.FC<ActiveRecallFlashcardsProps> = ({ 
         </div>
 
         <button
+          type="button"
           onClick={handleNext}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs border border-white/10 transition-all font-mono"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs border border-white/10 transition-all font-mono cursor-pointer"
         >
           Next <ChevronRight className="w-3.5 h-3.5" />
         </button>
