@@ -9,7 +9,7 @@ import { useScholarStore } from "@/store/useScholarStore";
 
 export const HabitProductivityMatrix: React.FC = () => {
   return (
-    <section id="habits" className="py-14 sm:py-20 scroll-mt-24 pb-6">
+    <section id="habits" className="py-14 sm:py-20 scroll-mt-24 pb-6 optimize-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">

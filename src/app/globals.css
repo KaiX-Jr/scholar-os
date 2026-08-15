@@ -141,3 +141,15 @@ html, body {
 canvas, video {
   max-width: 100%;
 }
+
+/* Mobile Touch & Rendering Optimizations */
+button, a, input, select, textarea, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Off-screen rendering optimizations to eliminate mobile scroll jank */
+.optimize-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
+}

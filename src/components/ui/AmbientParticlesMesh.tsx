@@ -23,8 +23,10 @@ export const AmbientParticlesMesh: React.FC = () => {
     };
     window.addEventListener("resize", handleResize);
 
-    // Particle nodes for interconnected network
-    const numParticles = Math.min(Math.floor((width * height) / 18000), 70);
+    const isMobile = window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches;
+
+    // Lightweight particle count on mobile; skip complex line meshes on small devices
+    const numParticles = isMobile ? 12 : Math.min(Math.floor((width * height) / 18000), 60);
     const particles: {
       x: number;
       y: number;
@@ -41,8 +43,8 @@ export const AmbientParticlesMesh: React.FC = () => {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
+        vx: (Math.random() - 0.5) * (isMobile ? 0.2 : 0.4),
+        vy: (Math.random() - 0.5) * (isMobile ? 0.2 : 0.4),
         size: Math.random() * 2 + 1,
         color: colors[Math.floor(Math.random() * colors.length)],
         baseAlpha: Math.random() * 0.5 + 0.2,
@@ -54,12 +56,19 @@ export const AmbientParticlesMesh: React.FC = () => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     };
-    window.addEventListener("mousemove", handleMouseMove);
+    if (!isMobile) {
+      window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    }
 
     const render = () => {
+      if (document.hidden) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
-      // Render connected neural constellation lines
+      // Render connected neural constellation lines (Desktop only for max 60fps performance)
       for (let i = 0; i < particles.length; i++) {
         const p1 = particles[i];
         p1.x += p1.vx;
@@ -69,38 +78,42 @@ export const AmbientParticlesMesh: React.FC = () => {
         if (p1.x < 0 || p1.x > width) p1.vx *= -1;
         if (p1.y < 0 || p1.y > height) p1.vy *= -1;
 
-        // Mouse gentle repulsion
-        const dxMouse = p1.x - mouse.x;
-        const dyMouse = p1.y - mouse.y;
-        const distMouse = Math.hypot(dxMouse, dyMouse);
-        if (distMouse < 120) {
-          p1.x += (dxMouse / distMouse) * 1.2;
-          p1.y += (dyMouse / distMouse) * 1.2;
-        }
+        // Mouse gentle repulsion (desktop only)
+        if (!isMobile) {
+          const dxMouse = p1.x - mouse.x;
+          const dyMouse = p1.y - mouse.y;
+          const distMouse = Math.hypot(dxMouse, dyMouse);
+          if (distMouse < 100) {
+            p1.x += (dxMouse / distMouse) * 1.0;
+            p1.y += (dyMouse / distMouse) * 1.0;
+          }
 
-        // Draw connections
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-          const maxDist = 130;
+          // Draw connections
+          for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+            const maxDist = 120;
 
-          if (dist < maxDist) {
-            const alpha = (1 - dist / maxDist) * 0.22;
-            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
-            ctx.lineWidth = 0.75;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
+            if (dist < maxDist) {
+              const alpha = (1 - dist / maxDist) * 0.2;
+              ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+              ctx.lineWidth = 0.75;
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
           }
         }
 
-        // Draw particle point with glow
+        // Draw particle point
         ctx.save();
         ctx.fillStyle = p1.color;
         ctx.globalAlpha = p1.baseAlpha;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = p1.color;
+        if (!isMobile) {
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = p1.color;
+        }
         ctx.beginPath();
         ctx.arc(p1.x, p1.y, p1.size, 0, Math.PI * 2);
         ctx.fill();
@@ -114,7 +127,9 @@ export const AmbientParticlesMesh: React.FC = () => {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
+      if (!isMobile) {
+        window.removeEventListener("mousemove", handleMouseMove);
+      }
       if (animId) cancelAnimationFrame(animId);
     };
   }, []);

@@ -61,7 +61,7 @@ export const BoardToStudyStudio: React.FC = () => {
   ];
 
   return (
-    <section id="vision" className="py-20 scroll-mt-24">
+    <section id="vision" className="py-20 scroll-mt-24 optimize-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mb-8">

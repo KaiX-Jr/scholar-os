@@ -71,29 +71,36 @@ export const ScrollCanvasSequence: React.FC = () => {
     renderFrame(currentFrameRef.current);
   };
 
-  // Preload all frames on mount in background
+  // Adaptive frame loading: downsample preloads on mobile to save bandwidth & memory
   useEffect(() => {
+    const isMobile =
+      window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches;
+    const step = isMobile ? 4 : 1; // Load every 4th frame on mobile (approx 62 frames instead of 250)
+
     const preloadedImages: HTMLImageElement[] = [];
 
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = getFramePath(i);
+    // Always load first frame immediately
+    const firstImg = new Image();
+    firstImg.src = getFramePath(1);
+    firstImg.onload = () => {
+      resizeCanvas();
+      renderFrame(1);
+    };
+    preloadedImages[0] = firstImg;
 
-      img.onload = () => {
-        // Render first frame as soon as it's ready
-        if (i === 1) {
-          resizeCanvas();
-          renderFrame(1);
-        }
-      };
-
-      preloadedImages.push(img);
+    // Load remaining frames with prioritization
+    for (let i = 2; i <= TOTAL_FRAMES; i++) {
+      if (i % step === 0 || i === TOTAL_FRAMES) {
+        const img = new Image();
+        img.src = getFramePath(i);
+        preloadedImages[i - 1] = img;
+      }
     }
 
     imagesRef.current = preloadedImages;
 
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", resizeCanvas, { passive: true });
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
@@ -103,8 +110,40 @@ export const ScrollCanvasSequence: React.FC = () => {
     };
   }, []);
 
-  // Update target frame based on scroll
+  // Update target frame based on scroll and trigger rendering
   useEffect(() => {
+    let isTicking = false;
+
+    const startAnimation = () => {
+      if (isTicking) return;
+      isTicking = true;
+
+      const tick = () => {
+        if (document.hidden) {
+          isTicking = false;
+          return;
+        }
+
+        const diff = targetFrameRef.current - currentFrameRef.current;
+
+        if (Math.abs(diff) > 0.05) {
+          currentFrameRef.current += diff * 0.15;
+          renderFrame(currentFrameRef.current);
+          animationFrameId.current = requestAnimationFrame(tick);
+        } else {
+          currentFrameRef.current = targetFrameRef.current;
+          renderFrame(currentFrameRef.current);
+          isTicking = false;
+          if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+            animationFrameId.current = null;
+          }
+        }
+      };
+
+      animationFrameId.current = requestAnimationFrame(tick);
+    };
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -112,6 +151,7 @@ export const ScrollCanvasSequence: React.FC = () => {
 
       const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
       targetFrameRef.current = 1 + progress * (TOTAL_FRAMES - 1);
+      startAnimation();
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -119,30 +159,6 @@ export const ScrollCanvasSequence: React.FC = () => {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  // Animation Loop (Smooth Lerp)
-  useEffect(() => {
-    // Initial draw
-    resizeCanvas();
-    renderFrame(1);
-
-    const tick = () => {
-      const diff = targetFrameRef.current - currentFrameRef.current;
-
-      // Lerp smoothing factor
-      if (Math.abs(diff) > 0.01) {
-        currentFrameRef.current += diff * 0.12;
-        renderFrame(currentFrameRef.current);
-      }
-
-      animationFrameId.current = requestAnimationFrame(tick);
-    };
-
-    animationFrameId.current = requestAnimationFrame(tick);
-
-    return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }

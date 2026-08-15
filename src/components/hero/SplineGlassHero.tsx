@@ -8,12 +8,17 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rotationRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
 
+  const mousePosRef = useRef(mousePos);
+  mousePosRef.current = mousePos;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    const isMobile = window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches;
 
     let width = (canvas.width = canvas.parentElement?.clientWidth || 450);
     let height = (canvas.height = canvas.parentElement?.clientHeight || 450);
@@ -24,7 +29,7 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
         height = canvas.height = canvas.parentElement.clientHeight;
       }
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
     // 3D Polyhedron vertices (Icosahedron / Truncated Octahedron Glass Artifact)
     const t = (1 + Math.sqrt(5)) / 2;
@@ -56,7 +61,8 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
 
     // Ambient floating orbital rings
     const orbitalParticles: { angle: number; speed: number; radius: number; z: number; color: string }[] = [];
-    for (let i = 0; i < 40; i++) {
+    const orbitalCount = isMobile ? 16 : 36;
+    for (let i = 0; i < orbitalCount; i++) {
       orbitalParticles.push({
         angle: Math.random() * Math.PI * 2,
         speed: (Math.random() * 0.01 + 0.005) * (Math.random() > 0.5 ? 1 : -1),
@@ -70,6 +76,11 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
     let time = 0;
 
     const render = () => {
+      if (document.hidden) {
+        animationFrame = requestAnimationFrame(render);
+        return;
+      }
+
       time += 0.015;
       ctx.clearRect(0, 0, width, height);
 
@@ -77,8 +88,9 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
       const centerY = height / 2;
 
       // Mouse-driven rotation target with smooth inertia
-      rotationRef.current.targetX = (mousePos.y / height - 0.5) * 1.2;
-      rotationRef.current.targetY = (mousePos.x / width - 0.5) * 1.5;
+      const currentMouse = mousePosRef.current;
+      rotationRef.current.targetX = (currentMouse.y / height - 0.5) * 1.2;
+      rotationRef.current.targetY = (currentMouse.x / width - 0.5) * 1.5;
 
       rotationRef.current.x += (rotationRef.current.targetX - rotationRef.current.x) * 0.05;
       rotationRef.current.y += (rotationRef.current.targetY - rotationRef.current.y) * 0.05;
@@ -147,15 +159,19 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
         ctx.beginPath();
         ctx.arc(screenX, screenY, Math.max(1, 2.5 * scale), 0, Math.PI * 2);
         ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 10;
+        if (!isMobile) {
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 8;
+        }
         ctx.globalAlpha = Math.min(1, Math.max(0.2, (z2 + radius) / (2 * radius)));
         ctx.fill();
       });
 
       // Draw 3D Glass Facet wireframe & luminous nodes
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = "#38bdf8";
+      if (!isMobile) {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#38bdf8";
+      }
 
       edges.forEach(([i1, i2]) => {
         const p1 = projected[i1];
@@ -177,8 +193,10 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
         ctx.beginPath();
         ctx.arc(p.x, p.y, 4 * p.scale, 0, Math.PI * 2);
         ctx.fillStyle = idx % 2 === 0 ? "#00f2fe" : "#c084fc";
-        ctx.shadowColor = "#ffffff";
-        ctx.shadowBlur = 12;
+        if (!isMobile) {
+          ctx.shadowColor = "#ffffff";
+          ctx.shadowBlur = 8;
+        }
         ctx.globalAlpha = alpha;
         ctx.fill();
 
@@ -199,7 +217,7 @@ export const SplineGlassHero: React.FC<{ mousePos: { x: number; y: number } }> =
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrame);
     };
-  }, [mousePos]);
+  }, []);
 
   return (
     <div className="relative w-full h-full flex items-center justify-center">

@@ -25,6 +25,11 @@ export const LiquidCursor: React.FC = () => {
   const animFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Completely disable and do not spawn animation loops on mobile/touch devices
+    const isMobileTouch =
+      window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
+    if (isMobileTouch) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 

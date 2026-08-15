@@ -31,7 +31,16 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
     let animationId: number;
     let phase = 0;
 
+    const isMobile = window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches;
+
     const render = () => {
+      if (document.hidden) {
+        if (isPlaying) {
+          animationId = requestAnimationFrame(render);
+        }
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       phase += 0.04;
@@ -40,7 +49,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
         analyser.getByteFrequencyData(dataArray);
       }
 
-      const numBars = 28;
+      const numBars = isMobile ? 18 : 28;
       const barWidth = width / numBars - 2.5;
       const step = Math.floor(bufferLength / numBars) || 1;
 
@@ -56,7 +65,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
 
       for (let i = 0; i < numBars; i++) {
         const rawValue = isPlaying && analyser ? dataArray[i * step] || 0 : 0;
-        
+
         let barHeight = isPlaying
           ? (rawValue / 255) * (height - 12) + 4
           : (Math.sin(phase + i * 0.28) * 0.5 + 0.5) * 8 + 4;
@@ -85,8 +94,8 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
         ctx.save();
         ctx.fillStyle = grad;
 
-        if (isPlaying) {
-          ctx.shadowBlur = 10;
+        if (isPlaying && !isMobile) {
+          ctx.shadowBlur = 8;
           ctx.shadowColor = colorPreset === "violet" ? "#c084fc" : "#00f2fe";
         }
 
@@ -100,8 +109,10 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
         if (isPlaying && barHeight > 10) {
           ctx.save();
           ctx.fillStyle = "#ffffff";
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = "#ffffff";
+          if (!isMobile) {
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = "#ffffff";
+          }
           ctx.beginPath();
           ctx.arc(x + barWidth / 2, y - 2, 1.2, 0, Math.PI * 2);
           ctx.fill();
@@ -109,12 +120,16 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
         }
       }
 
-      animationId = requestAnimationFrame(render);
+      if (isPlaying) {
+        animationId = requestAnimationFrame(render);
+      }
     };
 
     render();
 
-    return () => cancelAnimationFrame(animationId);
+    return () => {
+      if (animationId) cancelAnimationFrame(animationId);
+    };
   }, [analyser, isPlaying, colorPreset]);
 
   return (
