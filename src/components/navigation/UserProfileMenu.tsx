@@ -9,7 +9,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  User,
   GraduationCap,
   LogOut,
   RotateCcw,
@@ -54,12 +53,12 @@ export const UserProfileMenu: React.FC = () => {
     return (
       <button
         onClick={openAuthModal}
-        className="group px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 border border-white/[0.1] hover:border-white/25 text-slate-200 hover:text-white text-xs font-mono font-medium shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:scale-105 transition-all flex items-center gap-2"
+        className="group px-3 sm:px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 border border-white/[0.1] hover:border-white/25 text-slate-200 hover:text-white text-xs font-mono font-medium shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:scale-105 transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0"
       >
-        <div className="w-6 h-6 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-cyan-300 group-hover:bg-white/[0.08]">
+        <div className="w-6 h-6 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-cyan-300 group-hover:bg-white/[0.08] shrink-0">
           <Sparkles className="w-3 h-3" />
         </div>
-        <span className="pr-1">Sign In</span>
+        <span className="pr-1 text-xs">Sign In</span>
       </button>
     );
   }
@@ -108,18 +107,20 @@ export const UserProfileMenu: React.FC = () => {
   ];
 
   return (
-    <div ref={menuRef} className="relative">
+    <div ref={menuRef} className="relative shrink-0">
       <div className="group relative">
-        {/* Kokonut UI Trigger Button */}
+        {/* Kokonut UI Trigger Button (Compact circle on mobile, expanded card on desktop) */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
+          aria-label="User Profile"
           className={cn(
-            "flex items-center gap-3.5 sm:gap-5 rounded-2xl border border-white/[0.1] bg-[#090a15]/95 p-2 sm:p-2.5 transition-all duration-200 hover:border-white/25 hover:bg-[#0e0f1f] hover:shadow-[0_8px_30px_rgba(0,0,0,0.6)] focus:outline-none",
+            "flex items-center gap-2 sm:gap-4 rounded-full sm:rounded-2xl border border-white/[0.1] bg-[#090a15]/95 p-1 sm:p-2 sm:pl-3 transition-all duration-200 hover:border-white/25 hover:bg-[#0e0f1f] hover:shadow-[0_8px_30px_rgba(0,0,0,0.6)] focus:outline-none cursor-pointer select-none",
             isOpen && "border-cyan-400/40 bg-[#0e0f1f] shadow-[0_0_20px_rgba(6,182,212,0.15)]"
           )}
         >
-          <div className="text-left min-w-0 max-w-[110px] sm:max-w-[140px] pl-1">
+          {/* User Details (Visible on sm+ screens to preserve mobile header space) */}
+          <div className="hidden sm:block text-left min-w-0 max-w-[130px]">
             <div className="font-semibold text-xs text-white leading-tight tracking-tight truncate">
               {user.name}
             </div>
@@ -130,9 +131,9 @@ export const UserProfileMenu: React.FC = () => {
 
           {/* Avatar with Kokonut UI Gradient Ring */}
           <div className="relative shrink-0">
-            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 p-[1.5px] shadow-[0_0_12px_rgba(236,72,153,0.3)]">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 p-[1.5px] shadow-[0_0_12px_rgba(236,72,153,0.3)]">
               <div className="h-full w-full overflow-hidden rounded-full bg-[#08080f] flex items-center justify-center">
-                <AvatarDisplay avatarId={user.avatarId || 1} size={32} />
+                <AvatarDisplay avatarId={user.avatarId || 1} size={30} />
               </div>
             </div>
           </div>
@@ -141,7 +142,7 @@ export const UserProfileMenu: React.FC = () => {
         {/* Kokonut UI Bending Line Indicator */}
         <div
           className={cn(
-            "absolute top-1/2 -right-2.5 -translate-y-1/2 transition-all duration-200 pointer-events-none hidden sm:block",
+            "absolute top-1/2 -right-2.5 -translate-y-1/2 transition-all duration-200 pointer-events-none hidden md:block",
             isOpen ? "opacity-100" : "opacity-40 group-hover:opacity-80"
           )}
         >
@@ -177,10 +178,23 @@ export const UserProfileMenu: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="absolute right-0 top-14 z-50 w-72 origin-top-right rounded-2xl border border-white/[0.12] bg-[#0a0b16]/98 p-2.5 shadow-[0_20px_60px_rgba(0,0,0,0.9)] backdrop-blur-2xl"
+            className="absolute right-0 top-12 sm:top-14 z-50 w-72 origin-top-right rounded-2xl border border-white/[0.12] bg-[#0a0b16]/98 p-3 shadow-[0_20px_60px_rgba(0,0,0,0.95)] backdrop-blur-3xl"
           >
-            {/* Specular line */}
+            {/* Top Specular Line */}
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+
+            {/* Mobile-Friendly Profile Header inside Dropdown */}
+            <div className="flex items-center gap-3 pb-3 mb-2.5 border-b border-white/[0.08]">
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 p-[1.5px] shrink-0">
+                <div className="h-full w-full overflow-hidden rounded-full bg-[#08080f] flex items-center justify-center">
+                  <AvatarDisplay avatarId={user.avatarId || 1} size={34} />
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-bold text-xs text-white truncate">{user.name}</div>
+                <div className="text-[10px] text-slate-400 font-mono truncate">{user.email}</div>
+              </div>
+            </div>
 
             <div className="space-y-1">
               {menuItems.map((item) => (
