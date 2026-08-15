@@ -16,14 +16,14 @@ export const AcademicCommandCenter: React.FC = () => {
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="indigo" size="sm">
                 <CheckSquare className="w-3 h-3 text-indigo-400" />
-                ACADEMIC PIPELINE
+                ACADEMIC DASHBOARD
               </Badge>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-              Milestone & Attendance Command Center
+              Assignments & Attendance
             </h2>
             <p className="text-sm text-slate-300 mt-2 max-w-2xl">
-              Agile assignment Kanban pipeline combined with real-time class attendance analytics and hall ticket threshold monitors.
+              Track your coursework deadlines, tasks, and class attendance all in one place.
             </p>
           </div>
         </div>
