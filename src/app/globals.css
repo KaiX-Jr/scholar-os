@@ -110,3 +110,34 @@
 .animate-spin-slow {
   animation: spinSlow 12s linear infinite;
 }
+
+/* Mobile Safe Area & Touch Optimization */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+  }
+}
+
+/* Touch scrolling optimization */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent horizontal overflow globally */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Mobile: tighter scrollbar for horizontal overflow areas */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    height: 3px;
+    width: 3px;
+  }
+}
+
+/* Responsive video/canvas elements */
+canvas, video {
+  max-width: 100%;
+}

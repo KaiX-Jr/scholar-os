@@ -91,27 +91,27 @@ export const AssignmentKanban: React.FC = () => {
       className="col-span-1 lg:col-span-2"
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shadow-inner">
-            <CheckSquare className="w-5 h-5 text-purple-400" />
+      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shadow-inner shrink-0">
+            <CheckSquare className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-white tracking-wide">
-              Assignment & Milestone Sprint Board
+          <div className="min-w-0">
+            <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide truncate">
+              Assignment &amp; Milestone Sprint Board
             </h3>
-            <p className="text-xs text-slate-400">Deadlines, proofs & problem set pipeline</p>
+            <p className="text-[11px] text-slate-400 hidden sm:block">Deadlines, proofs &amp; problem set pipeline</p>
           </div>
         </div>
 
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 hover:bg-white/[0.08] text-purple-300 border border-white/[0.1] hover:border-purple-400/40 text-xs font-mono font-semibold shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:scale-105 transition-all"
+          className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-full backdrop-blur-3xl bg-[#08080f]/92 hover:bg-white/[0.08] text-purple-300 border border-white/[0.1] hover:border-purple-400/40 text-xs font-mono font-semibold shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:scale-105 transition-all shrink-0"
         >
           <div className="w-5 h-5 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300">
             <Plus className="w-3.5 h-3.5" />
           </div>
-          <span>Add Milestone</span>
+          <span className="hidden sm:inline">Add Milestone</span>
         </button>
       </div>
 
@@ -177,8 +177,9 @@ export const AssignmentKanban: React.FC = () => {
         </form>
       )}
 
-      {/* Kanban Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* Kanban Grid — horizontal scroll on mobile, 3-col on md+ */}
+      <div className="-mx-1 overflow-x-auto pb-2">
+      <div className="grid grid-cols-3 md:grid-cols-3 gap-3 sm:gap-5 min-w-[540px] sm:min-w-0">
         {columns.map((col) => {
           const colAssignments = assignments.filter((a) => a.status === col.id);
 
@@ -276,6 +277,7 @@ export const AssignmentKanban: React.FC = () => {
             </div>
           );
         })}
+      </div>
       </div>
     </MagicCard>
   );

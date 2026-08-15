@@ -65,7 +65,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
       ========================================================================== */}
       <section
         id="hero"
-        className="relative min-h-screen flex flex-col justify-between pt-36 pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto z-10 text-center"
+        className="relative min-h-screen flex flex-col justify-between pt-28 sm:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto z-10 text-center"
       >
         <div className="flex-1 flex flex-col items-center justify-center my-auto">
           {/* Top Pill Badge */}
@@ -86,7 +86,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] max-w-4xl"
+            className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] max-w-4xl"
           >
             <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
               The Cognitive Operating System for
@@ -101,7 +101,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="mt-6 text-base sm:text-lg text-slate-200 max-w-2xl leading-relaxed"
+            className="mt-4 sm:mt-6 text-sm sm:text-lg text-slate-200 max-w-2xl leading-relaxed px-2 sm:px-0"
           >
             Transform complex lecture chalkboards into structured LaTeX derivations, track milestone pipelines, and cultivate deep work focus with precision optical OCR.
           </motion.p>
@@ -111,11 +111,11 @@ export const ScrollDashboardOverlay: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-10 flex flex-wrap items-center justify-center gap-4"
+            className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full px-4 sm:px-0"
           >
             <PulsatingButton
               onClick={() => scrollTo("academic")}
-              className="py-4 px-8 text-sm font-bold"
+              className="py-3.5 sm:py-4 px-7 sm:px-8 text-sm font-bold w-full sm:w-auto"
             >
               <span>Explore Milestones</span>
               <ArrowRight className="w-4 h-4" />
@@ -123,7 +123,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
 
             <InteractiveHoverButton
               onClick={handleOpticalClick}
-              className="py-3.5 px-7"
+              className="py-3 sm:py-3.5 px-6 sm:px-7 w-full sm:w-auto"
             >
               {user ? "Open Optical Studio" : "Try Optical Studio"}
             </InteractiveHoverButton>
@@ -135,7 +135,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full mt-14 text-left"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto w-full mt-10 sm:mt-14 text-left"
         >
           {/* Card 1: Target CGPA Goal & Academic Benchmark */}
           <MagicCard
@@ -268,7 +268,7 @@ export const ScrollDashboardOverlay: React.FC = () => {
       {/* =========================================================================
           SECTION 5: CLEAN FOOTER
       ========================================================================== */}
-      <footer className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono">
+      <footer className="relative py-10 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono pb-28 sm:pb-12">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-cyan-400" />
           <span className="font-bold text-white">SCHOLAR.OS</span>

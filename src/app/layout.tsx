@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   description: "High-performance scroll-driven canvas studio with optical blackboard LaTeX synthesis, active recall flashcards, and deep work neuro-acoustics.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

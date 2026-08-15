@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 
 export const HabitProductivityMatrix: React.FC = () => {
   return (
-    <section id="habits" className="py-20 scroll-mt-24">
+    <section id="habits" className="py-14 sm:py-20 scroll-mt-24 pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
@@ -35,8 +35,8 @@ export const HabitProductivityMatrix: React.FC = () => {
           </div>
         </div>
 
-        {/* 3-Column Grid: 2 Cols Habit Matrix + 1 Col Deep Work Synthesizer */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Grid: Habit heatmap spans full on mobile, 2-of-3 on large */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
           <HabitStreakHeatmap />
           <PomodoroTimer />
         </div>
