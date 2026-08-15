@@ -187,6 +187,7 @@ export const DailyProfessorOralCheckin: React.FC = () => {
   }, [isDailyProfessorOpen, dailyOralQuestion, todayStr, fetchDailyQuestion]);
 
   // Submit Answer
+  // Submit Answer
   const handleSubmitAnswer = async () => {
     if (!dailyOralQuestion) return;
 
@@ -214,21 +215,47 @@ export const DailyProfessorOralCheckin: React.FC = () => {
           question: dailyOralQuestion.question,
           userAnswer: answerToSubmit,
           expectedAnswer: dailyOralQuestion.sampleAnswer || dailyOralQuestion.explanation,
+          explanation: dailyOralQuestion.explanation,
+          formula: dailyOralQuestion.formula,
+          isChoiceMode: inputMode === "choice",
+          selectedIndex: selectedOption,
+          correctIndex: dailyOralQuestion.correctOptionIndex,
+          options: dailyOralQuestion.options,
         }),
       });
 
       const data = await res.json();
-      const evaluation = data.evaluation || {
-        isCorrect: inputMode === "choice" ? isChoiceCorrect : true,
-        masteryScore: inputMode === "choice" ? (isChoiceCorrect ? 100 : 60) : 92,
-        letterGrade: inputMode === "choice" ? (isChoiceCorrect ? "A+" : "B") : "A",
-        feedback:
-          inputMode === "choice" && !isChoiceCorrect
-            ? `Incorrect. ${dailyOralQuestion.explanation}`
-            : dailyOralQuestion.explanation,
-        keyTakeaway: "Daily active recall builds strong concept retention.",
-        recommendedAction: "Recorded into your daily habit streak (+3.0 hrs momentum).",
-      };
+      let evaluation = data.evaluation;
+
+      // Ensure choice mode is 100% deterministic even if network fails
+      if (inputMode === "choice") {
+        const correctIdx = dailyOralQuestion.correctOptionIndex ?? 0;
+        const correctLetter = String.fromCharCode(65 + correctIdx);
+        const selectedLetter = String.fromCharCode(65 + (selectedOption ?? 0));
+        const correctText = dailyOralQuestion.options?.[correctIdx] || dailyOralQuestion.explanation;
+        const selectedText = dailyOralQuestion.options?.[selectedOption ?? 0] || answerToSubmit;
+
+        if (isChoiceCorrect) {
+          evaluation = {
+            isCorrect: true,
+            masteryScore: 100,
+            letterGrade: "A+",
+            feedback: `✅ Correct! You selected [${selectedLetter}]: ${selectedText}. ${dailyOralQuestion.explanation}`,
+            keyTakeaway: dailyOralQuestion.explanation,
+            recommendedAction: "Concept mastered! Recorded into your daily habit streak.",
+          };
+        } else {
+          evaluation = {
+            isCorrect: false,
+            masteryScore: 0,
+            letterGrade: "F",
+            feedback: `❌ Incorrect. You selected [${selectedLetter}]: "${selectedText}". The correct answer is [${correctLetter}]: "${correctText}". ${dailyOralQuestion.explanation}`,
+            keyTakeaway: `Key Concept: ${correctText} — ${dailyOralQuestion.explanation}`,
+            recommendedAction: "Review the active recall flashcard below to master this concept.",
+          };
+          setIsFlipped(true);
+        }
+      }
 
       setEvalResult(evaluation);
 
@@ -249,17 +276,25 @@ export const DailyProfessorOralCheckin: React.FC = () => {
       }
     } catch (err) {
       console.error("Evaluation failed:", err);
-      const isOk = inputMode === "choice" ? isChoiceCorrect : true;
+      const isOk = inputMode === "choice" ? isChoiceCorrect : false;
+      const correctIdx = dailyOralQuestion.correctOptionIndex ?? 0;
+      const correctLetter = String.fromCharCode(65 + correctIdx);
+      const selectedLetter = String.fromCharCode(65 + (selectedOption ?? 0));
+      const correctText = dailyOralQuestion.options?.[correctIdx] || dailyOralQuestion.explanation;
+
       const fallbackEval = {
         isCorrect: isOk,
-        masteryScore: isOk ? 100 : 60,
-        letterGrade: isOk ? "A" : "B",
-        feedback: dailyOralQuestion.explanation,
-        keyTakeaway: "Reinforce key concepts with daily active recall.",
-        recommendedAction: "Recorded to today's habit matrix.",
+        masteryScore: isOk ? 100 : 0,
+        letterGrade: isOk ? "A+" : "F",
+        feedback: isOk
+          ? `✅ Correct! ${dailyOralQuestion.explanation}`
+          : `❌ Incorrect. Selected [${selectedLetter}]. Correct answer is [${correctLetter}]: "${correctText}". ${dailyOralQuestion.explanation}`,
+        keyTakeaway: dailyOralQuestion.explanation,
+        recommendedAction: isOk ? "Concept mastered!" : "Study the active recall card below.",
       };
+      if (!isOk) setIsFlipped(true);
       setEvalResult(fallbackEval);
-      recordDailyOralAnswer(isOk, dailyOralQuestion.explanation, answerToSubmit, isOk ? 100 : 60);
+      recordDailyOralAnswer(isOk, fallbackEval.feedback, answerToSubmit, isOk ? 100 : 0);
     } finally {
       setSubmitting(false);
     }
@@ -512,35 +547,49 @@ export const DailyProfessorOralCheckin: React.FC = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-indigo-950/60 via-slate-900/80 to-slate-950 border border-indigo-500/30 space-y-4"
+                    className={`p-4 sm:p-6 rounded-2xl border space-y-4 ${
+                      evalResult.isCorrect
+                        ? "bg-gradient-to-br from-emerald-950/30 via-slate-900/90 to-slate-950 border-emerald-500/40"
+                        : "bg-gradient-to-br from-rose-950/40 via-slate-900/90 to-slate-950 border-rose-500/40 shadow-[0_0_30px_rgba(244,63,94,0.15)]"
+                    }`}
                   >
                     {/* Header Score */}
                     <div className="flex items-center justify-between border-b border-white/10 pb-3 gap-2">
                       <div className="flex items-center gap-3 min-w-0">
                         {evalResult.isCorrect ? (
-                          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
                             <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                           </div>
                         ) : (
-                          <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
-                            <XCircle className="w-5 h-5 text-amber-400" />
+                          <div className="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center shrink-0">
+                            <XCircle className="w-5 h-5 text-rose-400" />
                           </div>
                         )}
                         <div className="min-w-0">
                           <h4 className="text-sm sm:text-base font-bold text-white truncate">
                             {evalResult.isCorrect
-                              ? "Quiz Passed (Mastered)"
-                              : "Needs Review — Concept Flashcard Ready"}
+                              ? "✅ Quiz Passed (Mastered)"
+                              : "❌ Answer Incorrect — Review Required"}
                           </h4>
-                          <span className="text-xs text-slate-400 font-mono">
+                          <span
+                            className={`text-xs font-mono font-semibold ${
+                              evalResult.isCorrect ? "text-emerald-300" : "text-rose-300"
+                            }`}
+                          >
                             Mastery Score: {evalResult.masteryScore}% ({evalResult.letterGrade})
                           </span>
                         </div>
                       </div>
 
-                      <div className="px-3 py-1 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-mono text-xs font-bold flex items-center gap-1 shrink-0">
+                      <div
+                        className={`px-3 py-1 rounded-xl border font-mono text-xs font-bold flex items-center gap-1 shrink-0 ${
+                          evalResult.isCorrect
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                            : "bg-rose-500/10 border-rose-500/30 text-rose-300"
+                        }`}
+                      >
                         <Flame className="w-4 h-4 text-amber-400" />
-                        <span>Streak +1</span>
+                        <span>{evalResult.isCorrect ? "Streak +1" : "Review Logged"}</span>
                       </div>
                     </div>
 
@@ -548,7 +597,13 @@ export const DailyProfessorOralCheckin: React.FC = () => {
                     <div className="text-xs sm:text-sm text-slate-200 leading-relaxed space-y-2.5 break-words">
                       <p>{renderMath(evalResult.feedback)}</p>
                       {evalResult.keyTakeaway && (
-                        <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-indigo-300 font-mono">
+                        <div
+                          className={`p-3 rounded-xl border text-xs font-mono ${
+                            evalResult.isCorrect
+                              ? "bg-white/[0.04] border-white/10 text-indigo-300"
+                              : "bg-rose-950/20 border-rose-500/20 text-rose-200"
+                          }`}
+                        >
                           💡 <strong>Key Takeaway:</strong> {evalResult.keyTakeaway}
                         </div>
                       )}
@@ -559,20 +614,24 @@ export const DailyProfessorOralCheckin: React.FC = () => {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-mono text-slate-300 flex items-center gap-1.5">
                           <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>Active Recall Flashcard</span>
+                          <span>Active Recall Flashcard ({isFlipped ? "Solution & Formulas" : "Question"})</span>
                         </span>
                         <button
                           onClick={() => setIsFlipped(!isFlipped)}
-                          className="text-xs font-mono text-cyan-300 hover:text-cyan-200 flex items-center gap-1 transition-colors px-2 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20"
+                          className="text-xs font-mono text-cyan-300 hover:text-cyan-200 flex items-center gap-1 transition-colors px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 cursor-pointer"
                         >
-                          <RotateCw className="w-3 h-3" />
-                          <span>Flip Card</span>
+                          <RotateCw className="w-3.5 h-3.5" />
+                          <span>{isFlipped ? "Show Question" : "Show Solution"}</span>
                         </button>
                       </div>
 
                       <div
                         onClick={() => setIsFlipped(!isFlipped)}
-                        className="cursor-pointer p-4 rounded-2xl bg-black/60 border border-cyan-500/30 hover:border-cyan-400/60 transition-all text-xs sm:text-sm shadow-inner min-h-[100px] flex flex-col justify-center"
+                        className={`cursor-pointer p-4 rounded-2xl border transition-all text-xs sm:text-sm shadow-inner min-h-[100px] flex flex-col justify-center ${
+                          isFlipped
+                            ? "bg-emerald-950/30 border-emerald-500/40 hover:border-emerald-400"
+                            : "bg-black/60 border-cyan-500/30 hover:border-cyan-400"
+                        }`}
                       >
                         {!isFlipped ? (
                           <div className="space-y-1.5">
@@ -583,21 +642,21 @@ export const DailyProfessorOralCheckin: React.FC = () => {
                               {renderMath(dailyOralQuestion.question)}
                             </p>
                             <p className="text-[10px] text-cyan-400/80 font-mono pt-1">
-                              (Click to flip for answer & key formulas)
+                              (Click card to flip for full solution & formulas)
                             </p>
                           </div>
                         ) : (
                           <div className="space-y-1.5">
-                            <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
-                              Back • Solution & Takeaway
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
+                              <span>Back • Solution & Correct Takeaway</span>
                             </span>
-                            <p className="text-slate-200">
+                            <p className="text-slate-100 font-medium">
                               {renderMath(
                                 dailyOralQuestion.sampleAnswer || dailyOralQuestion.explanation
                               )}
                             </p>
                             {dailyOralQuestion.formula && (
-                              <div className="pt-1 text-cyan-300 font-mono text-xs">
+                              <div className="pt-2 p-2.5 rounded-xl bg-black/60 border border-emerald-500/20 text-cyan-300 font-mono text-xs overflow-x-auto">
                                 {renderBlockMath(dailyOralQuestion.formula)}
                               </div>
                             )}
@@ -608,13 +667,41 @@ export const DailyProfessorOralCheckin: React.FC = () => {
 
                     {/* Automatic Synchronization Badges */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-mono text-xs">
-                      <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2 text-emerald-300">
-                        <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
-                        <span>Daily Habit Streak Logged</span>
+                      <div
+                        className={`p-3 rounded-xl border flex items-center gap-2 ${
+                          evalResult.isCorrect
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300"
+                            : "bg-amber-500/10 border-amber-500/20 text-amber-300"
+                        }`}
+                      >
+                        <ShieldCheck
+                          className={`w-4 h-4 shrink-0 ${
+                            evalResult.isCorrect ? "text-emerald-400" : "text-amber-400"
+                          }`}
+                        />
+                        <span>
+                          {evalResult.isCorrect
+                            ? "Daily Habit Streak Logged"
+                            : "Study Habit Logged (Review Recorded)"}
+                        </span>
                       </div>
-                      <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center gap-2 text-indigo-300">
-                        <TrendingUp className="w-4 h-4 shrink-0 text-indigo-400" />
-                        <span>Honors CGPA Boosted (+0.03)</span>
+                      <div
+                        className={`p-3 rounded-xl border flex items-center gap-2 ${
+                          evalResult.isCorrect
+                            ? "bg-indigo-500/10 border-indigo-500/20 text-indigo-300"
+                            : "bg-slate-800/40 border-white/10 text-slate-400"
+                        }`}
+                      >
+                        <TrendingUp
+                          className={`w-4 h-4 shrink-0 ${
+                            evalResult.isCorrect ? "text-indigo-400" : "text-slate-400"
+                          }`}
+                        />
+                        <span>
+                          {evalResult.isCorrect
+                            ? "Honors CGPA Boosted (+0.03)"
+                            : "No CGPA Boost (Review Required)"}
+                        </span>
                       </div>
                     </div>
 

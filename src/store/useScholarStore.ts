@@ -890,18 +890,18 @@ export const useScholarStore = create<ScholarStore>()(
           });
         }
 
-        // Auto-log today's Deep Study Habit Matrix
-        get().logHabit("study", todayStr, isCorrect ? 4 : 3, 3.0);
+        // Auto-log today's Deep Study Habit Matrix (Level 4 for mastered, Level 2 for review attempt)
+        get().logHabit("study", todayStr, isCorrect ? 4 : 2, isCorrect ? 3.0 : 1.5);
 
-        // Adjust academic momentum towards Target CGPA on 10.0 scale
+        // Adjust academic momentum towards Target CGPA on 10.0 scale (Only on correct answers)
         const currentUser = get().user;
-        if (currentUser) {
+        if (currentUser && isCorrect) {
           const rawCurrent = currentUser.currentCgpa || 8.5;
           const current = rawCurrent <= 4.0 ? rawCurrent * 2.5 : rawCurrent;
           const rawTarget = currentUser.targetCgpa || 9.2;
           const target = rawTarget <= 4.0 ? rawTarget * 2.5 : rawTarget;
 
-          const boost = isCorrect ? 0.03 : 0.01;
+          const boost = 0.03;
           const newCurrent = Math.min(target, Number((current + boost).toFixed(2)));
 
           set({

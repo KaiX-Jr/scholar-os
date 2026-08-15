@@ -170,31 +170,109 @@ Return STRICTLY a JSON object with this exact schema (no markdown fences, no tex
     }
 
     if (action === "evaluate_answer") {
+      const {
+        question = "",
+        topic = "",
+        userAnswer = "",
+        expectedAnswer = "",
+        formula = "",
+        explanation = "",
+        isChoiceMode = false,
+        selectedIndex = null,
+        correctIndex = null,
+        options = [],
+      } = body as {
+        question?: string;
+        topic?: string;
+        userAnswer?: string;
+        expectedAnswer?: string;
+        formula?: string;
+        explanation?: string;
+        isChoiceMode?: boolean;
+        selectedIndex?: number | null;
+        correctIndex?: number | null;
+        options?: string[];
+      };
+
+      // 1. Instant deterministic evaluation for multiple-choice questions
+      if (isChoiceMode && correctIndex !== null && selectedIndex !== null) {
+        const isCorrect = selectedIndex === correctIndex;
+        const correctLetter = String.fromCharCode(65 + correctIndex);
+        const selectedLetter = String.fromCharCode(65 + selectedIndex);
+        const correctText = options[correctIndex] || expectedAnswer || "";
+        const selectedText = options[selectedIndex] || userAnswer || "";
+
+        if (isCorrect) {
+          return NextResponse.json({
+            success: true,
+            evaluation: {
+              isCorrect: true,
+              masteryScore: 100,
+              letterGrade: "A+",
+              feedback: `✅ Correct! You selected [${selectedLetter}]: ${selectedText}. ${explanation || expectedAnswer}`,
+              keyTakeaway: explanation || `Core concept for ${topic}`,
+              recommendedAction: "Concept mastered! Recorded into your daily habit streak.",
+            },
+          });
+        } else {
+          return NextResponse.json({
+            success: true,
+            evaluation: {
+              isCorrect: false,
+              masteryScore: 0,
+              letterGrade: "F",
+              feedback: `❌ Incorrect. You selected [${selectedLetter}]: "${selectedText}". The correct answer is [${correctLetter}]: "${correctText}". ${explanation || expectedAnswer}`,
+              keyTakeaway: `Correction: ${correctText} — ${explanation || expectedAnswer}`,
+              recommendedAction: "Review the active recall flashcard below to master this concept.",
+            },
+          });
+        }
+      }
+
+      // 2. AI-powered evaluation for written/typed answers
       if (apiKey) {
         try {
           const ai = new GoogleGenAI({ apiKey });
 
-          const prompt = `You are Professor Gemini, grading a student's answer in a university daily oral concept check-in.
+          const prompt = `You are Professor Gemini, rigorously grading a student's answer in a university daily oral concept check-in.
 
-=== QUESTION ===
+=== QUESTION & GROUND TRUTH ===
 Topic: ${topic}
 Question: ${question}
-Student's Answer: "${userAnswer}"
-================
+Expected Answer / Concept: ${expectedAnswer || explanation}
+Key Formula / Command: ${formula || "N/A"}
+Explanation: ${explanation}
 
-EVALUATION CRITERIA:
-1. Is the student's core reasoning accurate?
-2. Award a score between 0 and 100.
-3. Provide constructive, encouraging feedback with a concise explanation.
+=== STUDENT SUBMITTED ANSWER ===
+"${userAnswer}"
+===============================
 
-Return STRICTLY a JSON object with this exact schema:
+STRICT GRADING INSTRUCTIONS:
+1. Compare the student's answer directly with the Expected Answer / Concept.
+2. If the student's answer is wrong, factually inaccurate, irrelevant, nonsensical, or contradicts the core concept:
+   - Set "isCorrect": false
+   - Set "masteryScore": between 0 and 30
+   - Set "letterGrade": "F" or "D"
+   - In "feedback", explicitly state that the answer is incorrect, explain why, and provide the correct concept.
+3. If the student's answer is partially correct but incomplete:
+   - Set "isCorrect": false
+   - Set "masteryScore": between 40 and 65
+   - Set "letterGrade": "C"
+   - In "feedback", point out what was missing and how to complete it.
+4. Only if the student's answer demonstrates accurate conceptual understanding:
+   - Set "isCorrect": true
+   - Set "masteryScore": between 85 and 100
+   - Set "letterGrade": "A" or "A+"
+   - In "feedback", confirm why their answer is accurate.
+
+Return STRICTLY a JSON object with this exact schema (no markdown fences, no text outside JSON):
 {
-  "isCorrect": true,
-  "masteryScore": 95,
-  "letterGrade": "A+",
-  "feedback": "Encouraging professor evaluation highlighting what was strong and what to remember",
-  "keyTakeaway": "1 concise takeaway for long-term memory",
-  "recommendedAction": "e.g. Ready for next deep focus block!"
+  "isCorrect": boolean,
+  "masteryScore": number,
+  "letterGrade": string,
+  "feedback": string,
+  "keyTakeaway": string,
+  "recommendedAction": string
 }`;
 
           let rawEval = "";
@@ -230,21 +308,42 @@ Return STRICTLY a JSON object with this exact schema:
         }
       }
 
-      // Contextual evaluator fallback
-      const isGood = Boolean(userAnswer && userAnswer.trim().length > 1);
-      return NextResponse.json({
-        success: true,
-        evaluation: {
-          isCorrect: true,
-          masteryScore: isGood ? 94 : 70,
-          letterGrade: isGood ? "A" : "B-",
-          feedback: isGood
-            ? "Accurate understanding demonstrated! Your explanation hits the core concept correctly."
-            : "Review the key command and syntax notes.",
-          keyTakeaway: "Daily active recall builds lasting neural concept retention.",
-          recommendedAction: "Recorded into today's cognitive habit heatmap (+3.0 hrs study momentum)."
-        }
-      });
+      // 3. Fallback semantic evaluation for written answers when API is unreachable
+      const cleanUser = (userAnswer || "").toLowerCase().trim();
+      const cleanExpected = (expectedAnswer || explanation || "").toLowerCase();
+      const keywords = cleanExpected
+        .replace(/[^a-z0-9\s]/g, " ")
+        .split(/\s+/)
+        .filter((w) => w.length > 3);
+
+      const matchedCount = keywords.filter((kw) => cleanUser.includes(kw)).length;
+      const isSemanticallyAccurate = keywords.length > 0 && matchedCount >= Math.min(2, Math.ceil(keywords.length * 0.3));
+
+      if (isSemanticallyAccurate) {
+        return NextResponse.json({
+          success: true,
+          evaluation: {
+            isCorrect: true,
+            masteryScore: 90,
+            letterGrade: "A",
+            feedback: `Accurate understanding demonstrated! ${explanation || expectedAnswer}`,
+            keyTakeaway: explanation || `Core concept for ${topic}`,
+            recommendedAction: "Recorded into your daily habit matrix.",
+          },
+        });
+      } else {
+        return NextResponse.json({
+          success: true,
+          evaluation: {
+            isCorrect: false,
+            masteryScore: 20,
+            letterGrade: "F",
+            feedback: `❌ Incorrect or incomplete. The expected concept is: ${expectedAnswer || explanation}`,
+            keyTakeaway: `Key Takeaway: ${explanation || expectedAnswer}`,
+            recommendedAction: "Flip the active recall flashcard below to study the correct concept.",
+          },
+        });
+      }
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
