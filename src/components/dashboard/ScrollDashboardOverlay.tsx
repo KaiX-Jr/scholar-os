@@ -83,19 +83,19 @@ export const ScrollDashboardOverlay: React.FC = () => {
             </span>
           </motion.div>
 
-          {/* Main Headline with Magic UI Text Shimmer */}
+          {/* Main Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] max-w-4xl"
+            className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.15] max-w-4xl"
           >
-            <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+            <span className="text-white drop-shadow-[0_2px_14px_rgba(255,255,255,0.2)]">
               The Cognitive Operating System for
             </span>{" "}
-            <AnimatedShinyText className="bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent" shimmerWidth={180}>
+            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 font-extrabold drop-shadow-[0_0_24px_rgba(6,182,212,0.5)]">
               Scholars.
-            </AnimatedShinyText>
+            </span>
           </motion.h1>
 
           {/* Subtitle */}

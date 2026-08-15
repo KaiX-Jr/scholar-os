@@ -80,15 +80,17 @@ export const HeroSection: React.FC = () => {
           <SplineGlassHero mousePos={mousePos} />
         </div>
 
-        {/* Hero Title with Chromatic Shimmer Gradient */}
+        {/* Hero Title */}
         <motion.h1
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400 max-w-4xl"
+          className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl"
         >
-          The Cognitive Operating System{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
+          <span className="text-white drop-shadow-[0_2px_12px_rgba(255,255,255,0.2)]">
+            The Cognitive Operating System{" "}
+          </span>
+          <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 drop-shadow-[0_0_24px_rgba(6,182,212,0.4)]">
             for Scholars.
           </span>
         </motion.h1>
