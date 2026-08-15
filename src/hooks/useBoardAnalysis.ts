@@ -222,7 +222,25 @@ export function useBoardAnalysis() {
 
       try {
         const boardContext = activeBoardResult
-          ? `TOPIC: ${activeBoardResult.topicTitle}\nSUMMARY: ${activeBoardResult.summary}\nNOTES:\n${activeBoardResult.structuredNotes}\nKEY FORMULAS:\n${activeBoardResult.keyFormulas?.join("\n")}`
+          ? [
+              `TOPIC: ${activeBoardResult.topicTitle}`,
+              activeBoardResult.courseCode ? `COURSE: [${activeBoardResult.courseCode}] ${activeBoardResult.courseName || ""}` : "",
+              `SUMMARY: ${activeBoardResult.summary}`,
+              activeBoardResult.steps && activeBoardResult.steps.length > 0
+                ? `DETAILED STEPS / PROBLEMS:\n${activeBoardResult.steps
+                    .map(
+                      (s) =>
+                        `Step/Question ${s.stepNumber}: ${s.title}\n- Explanation: ${s.explanation}\n${s.formula ? `- Formula/Command: ${s.formula}` : ""}\n${s.intuition ? `- Note: ${s.intuition}` : ""}`
+                    )
+                    .join("\n\n")}`
+                : "",
+              activeBoardResult.keyFormulas && activeBoardResult.keyFormulas.length > 0
+                ? `KEY FORMULAS / COMMANDS:\n${activeBoardResult.keyFormulas.join("\n")}`
+                : "",
+              `STRUCTURED NOTES:\n${activeBoardResult.structuredNotes}`,
+            ]
+              .filter(Boolean)
+              .join("\n\n")
           : "No specific whiteboard uploaded yet.";
 
         const response = await fetch("/api/chat", {

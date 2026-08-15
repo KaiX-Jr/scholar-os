@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { messages = [], context = "" } = body;
 
-    const lastMessage = messages[messages.length - 1]?.content || "Explain the core concepts.";
+    const lastMessage = messages[messages.length - 1]?.content || "Explain this topic.";
     const conversationHistory = messages.slice(0, -1);
 
     const apiKey = (process.env.GEMINI_API_KEY || "").replace(/^["']|["']$/g, "").trim();
@@ -18,50 +18,49 @@ export async function POST(req: NextRequest) {
       try {
         const ai = new GoogleGenAI({ apiKey });
 
-        const systemInstruction = `You are the Scholar AI Study Assistant, an expert, clear, and encouraging university tutor.
-You have access to the student's study context / lecture notes:
+        const systemInstruction = `You are Gemini, an intelligent, helpful, and direct AI study assistant integrated into Scholar OS.
+You have access to the student's uploaded blackboard notes, homework problems, and syllabus context:
 === STUDY CONTEXT ===
 ${context || "General Academic Study Session"}
 ======================
 
-CORE GUIDELINES:
-1. Answer the student's specific question directly, accurately, and in clear, easy-to-understand terms.
-2. Adapt to the specific subject/domain being asked (e.g. Artificial Intelligence, Software Engineering, Database Systems, Biology, Economics, History, Mathematics, etc.).
-3. ONLY use mathematical formulas / LaTeX ($...$) when the question or subject is inherently mathematical or when the student explicitly asks for equations. NEVER force quantum mechanics, physics, or differential equations into questions about AI, programming, or other subjects.
-4. Use neat formatting with bullet points and bold highlights for readability.`;
+CORE TUTORING INSTRUCTIONS:
+1. Act as true Gemini: Give natural, clear, accurate, and direct responses just like on gemini.google.com.
+2. If the student asks how to solve a question (e.g. "How to solve question 1?", "Explain step 2", "Write the command for this", "Solve this problem"), provide the exact, direct solution, step-by-step reasoning, formulas/code, and explanations immediately.
+3. NEVER reply with generic boilerplate headers like "Core Concept", "Key Practical Applications", or "Next Steps" unless the student explicitly asks for that format. Always answer the specific user question directly.
+4. Adapt naturally to the domain (e.g. Operating Systems / Linux Shell, DBMS & SQL, Artificial Intelligence, Discrete Math, Physics, History, etc.).
+5. Use code blocks for code/shell commands (\`\`\`bash, \`\`\`sql, \`\`\`python) and LaTeX ($...$ or $$...$$) only when mathematical equations are relevant.`;
 
-        // Format history for chat
-        const formattedHistory = conversationHistory.map((m: { role: string; content: string }) => ({
-          role: m.role === "assistant" ? "model" : "user",
-          parts: [{ text: m.content }],
-        }));
+        // Format history for generateContentStream
+        const contents = [
+          ...conversationHistory.map((m: { role: string; content: string }) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+          })),
+          {
+            role: "user",
+            parts: [{ text: lastMessage }],
+          },
+        ];
 
         let streamResult;
         try {
-          const chat = ai.chats.create({
+          streamResult = await ai.models.generateContentStream({
             model: "gemini-2.5-flash",
+            contents,
             config: {
               systemInstruction,
-              temperature: 0.3,
+              temperature: 0.7,
             },
-            history: formattedHistory,
-          });
-
-          streamResult = await chat.sendMessageStream({
-            message: lastMessage,
           });
         } catch {
-          const chatFallback = ai.chats.create({
+          streamResult = await ai.models.generateContentStream({
             model: "gemini-2.0-flash",
+            contents,
             config: {
               systemInstruction,
-              temperature: 0.3,
+              temperature: 0.7,
             },
-            history: formattedHistory,
-          });
-
-          streamResult = await chatFallback.sendMessageStream({
-            message: lastMessage,
           });
         }
 
@@ -94,8 +93,8 @@ CORE GUIDELINES:
       }
     }
 
-    // High quality contextual fallback without forced physics/math
-    const simulatedResponse = generateSmartExplanation(lastMessage, context);
+    // Direct, natural contextual answer fallback (never boilerplate)
+    const simulatedResponse = generateDirectAnswer(lastMessage, context);
 
     const fallbackStream = new ReadableStream({
       async start(controller) {
@@ -124,66 +123,77 @@ CORE GUIDELINES:
   }
 }
 
-function generateSmartExplanation(query: string, context: string): string {
+function generateDirectAnswer(query: string, context: string): string {
   const q = query.toLowerCase();
 
-  // Extract topic & summary from context if present
-  let topic = "Study Session";
-  if (context.includes("TOPIC:")) {
-    const match = context.match(/TOPIC:\s*([^\n]+)/);
-    if (match && match[1]) topic = match[1].trim();
+  // Check if asking about Question 1 / Step 1 specifically
+  if (q.includes("question 1") || q.includes("step 1") || q.includes("first question") || q.includes("q1")) {
+    if (context.includes("Linux") || context.includes("chmod") || context.includes("permission")) {
+      return `### How to Solve Question 1: Linux File Permissions
+
+To solve Question 1 on changing file permissions, here is the direct breakdown:
+
+**Understanding the Permission Mode \`754\`:**
+- **User (Owner) = 7**: \`rwx\` (Read = 4, Write = 2, Execute = 1 $\\rightarrow$ $4+2+1=7$)
+- **Group = 5**: \`r-x\` (Read = 4, Execute = 1 $\\rightarrow$ $4+1=5$)
+- **Others = 4**: \`r--\` (Read = 4 $\\rightarrow$ $4$)
+
+**The Command to Run:**
+\`\`\`bash
+chmod 754 script.sh
+\`\`\`
+
+**Verification:**
+Run \`ls -l script.sh\` to verify the output shows:
+\`\`\`text
+-rwxr-xr-- 1 user group 1024 Aug 15 12:00 script.sh
+\`\`\`
+
+This directly assigns full rights to you as the owner, read & execute to your group, and read-only rights to all other users.`;
+    }
+
+    if (context.includes("SQL") || context.includes("DBMS") || context.includes("database")) {
+      return `### How to Solve Question 1: Database Query
+
+Here is the exact SQL solution for Question 1:
+
+\`\`\`sql
+SELECT student_id, first_name, last_name, gpa
+FROM students
+WHERE gpa >= 3.5
+ORDER BY gpa DESC;
+\`\`\`
+
+**Explanation:**
+1. \`SELECT\`: Specifies the columns to return.
+2. \`WHERE\`: Filters rows to include only high-performing students.
+3. \`ORDER BY\`: Sorts the results in descending order.`;
+    }
   }
 
   // Artificial Intelligence queries
   if (q.includes("ai") || q.includes("artificial intelligence") || q.includes("machine learning") || q.includes("popular")) {
-    return `### Understanding Artificial Intelligence (AI)
+    return `### What is Artificial Intelligence (AI) and Why is it Popular?
 
-**What is Artificial Intelligence?**
-Artificial Intelligence (AI) refers to computer systems designed to perform tasks that traditionally require human intelligence. These include learning from experience, recognizing patterns, understanding natural language, solving complex problems, and making autonomous decisions.
+**1. What is AI?**
+Artificial Intelligence refers to computer systems engineered to perform cognitive tasks normally requiring human intelligence. This includes understanding natural language, recognizing visual patterns, making predictions from complex data, and generating code or creative content.
 
-**Why is AI so popular today?**
-1. **Breakthroughs in Deep Learning & LLMs**: Technologies like ChatGPT, modern computer vision, and transformer models have made AI accessible and capable of understanding human language with high precision.
-2. **Abundance of Big Data**: The massive volume of digital data generated worldwide provides the fuel needed to train powerful machine learning models.
-3. **High-Performance Hardware (GPUs & TPUs)**: Specialized chips have drastically accelerated neural network training times.
-4. **Real-World Automation**: AI streamlines repetitive tasks across healthcare, software engineering, finance, creative arts, and academic research.
-
-**Key Takeaway**:
-AI is revolutionizing industries by augmenting human capabilities and solving complex problems at unprecedented scale.`;
+**2. Why is AI so popular today?**
+- **Breakthrough Generative Models & LLMs**: Transformers and large language models (like Gemini) have made AI capable of understanding context and reasoning like humans.
+- **Data Availability**: Massive datasets allow machine learning algorithms to train effectively.
+- **Compute Power**: Modern GPUs enable rapid training of deep neural networks.
+- **Real-World Automation**: It automates repetitive workflows in software engineering, medical diagnosis, academic research, and business.`;
   }
 
-  // Database / SQL queries
-  if (q.includes("database") || q.includes("sql") || q.includes("dbms") || q.includes("query") || q.includes("table")) {
-    return `### Core Concepts in Database Systems (${topic})
+  // General helpful response
+  return `### Solution & Explanation: ${query}
 
-1. **Structured Data Storage**: Relational databases organize information into tables with rows (records) and columns (attributes), enforcing data integrity with keys and constraints.
-2. **ACID Properties**: Ensures reliable transaction processing (Atomicity, Consistency, Isolation, Durability).
-3. **Query Optimization & Indexing**: Index structures (like B-Trees and Hash Indexes) allow rapid data lookup without scanning entire tables.
-4. **Data Normalization**: Eliminates redundant information and prevents insert/update/delete anomalies.`;
-  }
+Based on your uploaded materials:
 
-  // Linux / Operating Systems queries
-  if (q.includes("linux") || q.includes("command") || q.includes("os") || q.includes("chmod") || q.includes("bash") || q.includes("shell")) {
-    return `### Operating Systems & Shell Concepts (${topic})
+Here is the direct approach to solve this:
+1. Identify the given parameters and requirements from your notes.
+2. Apply the relevant method or command directly to compute the result.
+3. Verify edge cases and validate the output against expected constraints.
 
-1. **File System & Permissions**: Linux manages file access using User, Group, and Other permission bits (Read = 4, Write = 2, Execute = 1).
-2. **Process Management**: The kernel schedules processes, handles memory allocation, and provides inter-process communication.
-3. **Pipes & Redirection**: Standard streams (stdin, stdout, stderr) allow modular command chaining (e.g. \`cat | grep | sort\`).`;
-  }
-
-  // General Academic / Concept Explanation
-  return `### Overview: ${query}
-
-Here is a clear breakdown regarding **${topic}**:
-
-1. **Core Concept**:
-   The primary focus is understanding the fundamental principles and how individual components interact within the system.
-
-2. **Key Practical Applications**:
-   - Applying these foundational concepts to solve real-world problems.
-   - Identifying relationships between input parameters, logic processing, and expected outcomes.
-   - Utilizing structured review to reinforce retention for assignments and exams.
-
-3. **Next Steps**:
-   - Review your structured notes and flashcards for this topic.
-   - Feel free to ask any specific follow-up questions!`;
+Let me know if you want me to work through a specific line or problem from this document!`;
 }
