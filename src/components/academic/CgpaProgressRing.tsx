@@ -91,10 +91,28 @@ export const CgpaProgressRing: React.FC = () => {
 
         {activeTab === "overview" ? (
           <div className="flex flex-col sm:flex-row items-center gap-6 py-2">
-            {/* SVG Circular Progress Gauge */}
-            <div className="relative flex items-center justify-center">
-              <svg height={radius * 2} width={radius * 2} className="-rotate-90">
-                {/* Background Ring */}
+            {/* Immersive Holographic Circular Progress Gauge */}
+            <div className="relative flex items-center justify-center shrink-0">
+              {/* Ambient Circular Glow */}
+              <div className="pointer-events-none absolute inset-0 rounded-full blur-xl opacity-30 bg-gradient-to-br from-indigo-500 to-purple-600" />
+
+              {/* Frosted Circular Lens */}
+              <div className="absolute inset-1 rounded-full bg-[#0a0b16]/70 backdrop-blur-md border border-white/[0.08]" />
+
+              <svg height={radius * 2} width={radius * 2} className="-rotate-90 relative z-10 overflow-visible">
+                <defs>
+                  <linearGradient id="cgpaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="50%" stopColor="#8b5cf6" />
+                    <stop offset="100%" stopColor="#a855f7" />
+                  </linearGradient>
+                  <filter id="cgpa-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+
+                {/* Background Track */}
                 <circle
                   stroke="rgba(255, 255, 255, 0.08)"
                   fill="transparent"
@@ -103,6 +121,7 @@ export const CgpaProgressRing: React.FC = () => {
                   cx={radius}
                   cy={radius}
                 />
+
                 {/* Target Marker Ring (Dashed) */}
                 <circle
                   stroke="rgba(168, 85, 247, 0.4)"
@@ -115,6 +134,22 @@ export const CgpaProgressRing: React.FC = () => {
                   cx={radius}
                   cy={radius}
                 />
+
+                {/* Current CGPA Glow Ring */}
+                <circle
+                  stroke="url(#cgpaGradient)"
+                  fill="transparent"
+                  strokeWidth={stroke + 2}
+                  strokeDasharray={`${circumference} ${circumference}`}
+                  style={{ strokeDashoffset }}
+                  strokeLinecap="round"
+                  r={normalizedRadius}
+                  cx={radius}
+                  cy={radius}
+                  opacity={0.4}
+                  filter="url(#cgpa-glow)"
+                />
+
                 {/* Current CGPA Active Arc */}
                 <circle
                   stroke="url(#cgpaGradient)"
@@ -126,23 +161,16 @@ export const CgpaProgressRing: React.FC = () => {
                   r={normalizedRadius}
                   cx={radius}
                   cy={radius}
-                  className="transition-all duration-1000 ease-out drop-shadow-[0_0_12px_rgba(99,102,241,0.6)]"
+                  className="transition-all duration-1000 ease-out"
                 />
-                <defs>
-                  <linearGradient id="cgpaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#6366f1" />
-                    <stop offset="50%" stopColor="#8b5cf6" />
-                    <stop offset="100%" stopColor="#a855f7" />
-                  </linearGradient>
-                </defs>
               </svg>
 
               {/* Center Text Metrics */}
-              <div className="absolute flex flex-col items-center justify-center text-center select-none">
-                <span className="text-2xl font-mono font-extrabold text-white tracking-tight leading-none">
+              <div className="absolute z-20 flex flex-col items-center justify-center text-center select-none">
+                <span className="text-2xl font-mono font-extrabold text-white tracking-tight leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                   {currentCgpa.toFixed(2)}
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono mt-1 uppercase tracking-widest">
+                <span className="text-[10px] text-slate-400 font-mono mt-1 uppercase tracking-widest font-semibold">
                   / {maxGpa.toFixed(1)} CGPA
                 </span>
               </div>
