@@ -75,7 +75,7 @@ export const AuthModal: React.FC = () => {
           window.google.accounts.id.renderButton(btnContainer, {
             theme: "filled_black",
             size: "large",
-            width: "100%",
+            width: 380,
             shape: "pill",
             text: "continue_with",
             logo_alignment: "left",
