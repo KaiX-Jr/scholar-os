@@ -421,9 +421,10 @@ export const HighResImageViewer: React.FC<HighResImageViewerProps> = ({
       </div>
 
       {/* Bottom Info Bar */}
-      <div className="p-2.5 px-4 bg-white/[0.02] border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400">
-        <span className="font-mono">Zoom: {(filters.zoom * 100).toFixed(0)}%</span>
-        <span>Drag to pan when zoomed • Double click to reset</span>
+      <div className="p-2 sm:p-2.5 px-3 sm:px-4 bg-white/[0.02] border-t border-white/[0.06] flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400">
+        <span className="font-mono text-cyan-300">Zoom: {(filters.zoom * 100).toFixed(0)}%</span>
+        <span className="hidden sm:inline">Drag to pan when zoomed • Double click to reset</span>
+        <span className="sm:hidden text-slate-500 font-mono text-[9px]">Pinch & Drag to Pan</span>
       </div>
 
       {/* Course / Subject Tagging Modal Dialog */}
