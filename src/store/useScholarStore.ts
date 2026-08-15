@@ -338,17 +338,26 @@ export const useScholarStore = create<ScholarStore>()(
 
       completeOnboarding: (data: OnboardingData) => {
         const currentUser = get().user;
-        const newCourses: CourseAttendance[] = data.courses.map((c, idx) => ({
-          id: `course-${Date.now()}-${idx}`,
-          courseCode: c.courseCode.toUpperCase().trim(),
-          courseName: c.courseName.trim(),
-          attended: 0,
-          total: 0,
-          minThreshold: 75,
-          credits: c.credits || 4,
-          schedule: c.schedule || ["Mon", "Wed", "Fri"],
-          color: c.color || COURSE_COLORS[idx % COURSE_COLORS.length],
-        }));
+        const existingCourses = get().courses;
+
+        const newCourses: CourseAttendance[] = data.courses.map((c, idx) => {
+          const code = c.courseCode.toUpperCase().trim();
+          const existing = existingCourses.find(
+            (ec) => ec.courseCode.toUpperCase() === code
+          );
+
+          return {
+            id: existing?.id || `course-${Date.now()}-${idx}`,
+            courseCode: code,
+            courseName: c.courseName.trim(),
+            attended: existing?.attended ?? 0,
+            total: existing?.total ?? 0,
+            minThreshold: existing?.minThreshold ?? 75,
+            credits: c.credits || existing?.credits || 4,
+            schedule: c.schedule || existing?.schedule || ["Mon", "Wed", "Fri"],
+            color: existing?.color || COURSE_COLORS[idx % COURSE_COLORS.length],
+          };
+        });
 
         const updatedUser: UserProfile = {
           id: currentUser?.id || "user-" + Date.now(),
