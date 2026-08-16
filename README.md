@@ -12,194 +12,376 @@
 [![Google OAuth](https://img.shields.io/badge/Google_OAuth-Sign_In-EA4335?style=flat-square&logo=google)](https://developers.google.com/identity)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
-**A unified, cloud-synced academic operating system built for students and scholars: digitize classroom blackboards and assignment sheets into structured notes, take syllabus-grounded daily AI concept quizzes with active recall flashcards, simulate attendance thresholds (75% rule), track 10.0 CGPA benchmarks, and cultivate 120-day cognitive study streaks.**
+**A unified, cloud-synced academic intelligence operating system built for university students, researchers, and engineers: digitize live classroom blackboards into structured notes, take syllabus-grounded daily AI concept quizzes with active recall flashcards, simulate 75% attendance thresholds, plan 10.0 CGPA trajectories, and cultivate 120-day cognitive study streaks.**
 
-[🚀 Open Live App](https://scholardashboard.vercel.app) · [✨ Core Features](#-core-features) · [🎯 Design Philosophy](#-design-philosophy) · [🛠️ Technical Stack](#-technical-stack) · [📱 Mobile Experience](#-mobile--cross-device-experience) · [👨‍💻 Author](#-author--maintainer)
+[🚀 Open Live App](https://scholardashboard.vercel.app) · [🧭 Dashboard Component Map](#-dashboard-component-map--which-part-does-what) · [📖 Step-by-Step Usage Guide](#-detailed-step-by-step-usage-guide) · [🔄 Daily Workflow](#-end-to-end-workflow-a-day-with-scholar-os) · [🛠️ Tech Stack & Setup](#-technical-stack--local-setup)
 
 </div>
 
 ---
 
-## 🌟 Overview
+## 🌟 Overview & Problem Statement
 
-**Scholar OS** is an all-in-one academic intelligence suite designed to eliminate fragmented student workflows. Instead of juggling separate note-taking apps, attendance calculators, flashcard tools, habit trackers, and focus timers, Scholar OS unifies the entire undergraduate and research journey into a responsive, high-performance dashboard.
+University students and researchers often juggle 5 to 7 fragmented tools every day: one for note-taking, another for attendance calculation, third-party flashcard apps, habit trackers, Pomodoro timers, and assignment sheets. This causes cognitive overload, lost lecture context, and missed academic deadlines.
 
-### Why Scholar OS?
-- **Unified Academic Hub**: Consolidates coursework, attendance, assignments, study streaks, and lecture notes into a single cohesive interface.
-- **Physical-to-Digital Classroom Vision**: Ingests lecture blackboard photos, handwritten worksheets, and lab assignment PDFs with Gemini 2.5 Flash, generating structured notes, solution steps, and flashcard decks.
-- **Strict 75% Attendance Analytics**: Built-in Bunk Simulator calculating exact safe skips and deficit recovery class requirements.
-- **Standardized 10.0 CGPA Engine**: Honors trajectory tracker with dynamic semester GPA requirements.
-- **Daily AI Oral Check-In & Active Recall**: Daily concept assessment grounded in your enrolled subjects with strict grading and automatic flashcard reinforcement.
-- **Zero Dummy Data**: Fresh accounts start with a true Day 0 clean slate tailored to your real university semester.
+**Scholar OS** solves this by unifying your entire academic workflow into a single, high-performance, real-time operating system. Every module is purpose-built and interconnected: your classroom whiteboard snapshots automatically generate flashcards, flashcards feed into your daily professor check-in, and quiz completions reinforce your 120-day cognitive habit streak.
 
 ---
 
-## 🚀 Core Features
+## 🧭 Dashboard Component Map — Which Part Does What?
+
+To help new users navigate Scholar OS effortlessly, here is the complete breakdown of every section, its exact role, and which component to use for your specific academic goals:
+
+| Module / Component | Primary Purpose | When & Why to Use It | Key Output / Benefit |
+| :--- | :--- | :--- | :--- |
+| 📸 **Vision Studio & Blackboard AI**<br>`src/components/vision/` | Physical-to-digital classroom digitization | During/after lectures to snap blackboard photos, lab sheets, and assignment PDFs | Structured Markdown notes, step-by-step derivations, SM-2 flashcards, and AI doubt tutor |
+| 🎯 **Daily AI Concept Quiz**<br>`src/components/tutor/` | Syllabus-grounded daily oral & written testing | Every morning or study session to test retention and avoid cramming | Strict deterministic grading, speech synthesis, remediation flashcards, and habit attribution |
+| 🎓 **Attendance Tracker & Bunk Simulator**<br>`src/components/academic/AttendanceTracker` | Enforce 75% attendance threshold | Daily before/after lectures to log classes and avoid exam disqualification | Exact safe skips counter, consecutive deficit recovery calculation, and status badges |
+| 📈 **10.0 CGPA Benchmark Engine**<br>`src/components/academic/CgpaProgressRing` | Academic trajectory & honors planning | Semester planning to project required grades for target honors CGPA | Required future SGPA calculator, visual progress dial, and semester history tracker |
+| 📋 **Assignment Kanban Board**<br>`src/components/academic/AssignmentKanban` | Milestone & deliverable management | Managing homework, lab assignments, project deliverables, and exams | 4-stage Kanban (`Backlog` ➔ `In Progress` ➔ `Review` ➔ `Done`) with priority badges |
+| 🌿 **120-Day Habit Heatmap**<br>`src/components/habits/` | Long-term consistency & discipline | Daily 1-tap check-in across Deep Study, Coding, Attendance, and Health | GitHub-style 120-day heatmap, consecutive streak records, and discipline tracking |
+| ⏱️ **Focus Studio & Binaural Synthesizer**<br>`src/components/audio/` | Deep work sprints without distraction | During intense study sessions to block external noise and enter flow | Pomodoro timer (25/5/15m) + Web Audio synth (Alpha 10Hz, Brown Noise, Rain, Flow Tones) |
+| ☁️ **Cloud Sync & Identity Hub**<br>`src/components/auth/` | Cross-device real-time sync & profile | Automatic sync between mobile in class and laptop at desk | Instant data parity, Google OAuth login, zero mock-data clean slate |
+
+---
+
+## 📖 Detailed Step-by-Step Usage Guide
+
+Below is an in-depth walkthrough of each module with step-by-step instructions for getting maximum value out of Scholar OS.
+
+```
++-----------------------------------------------------------------------------------+
+|                                 SCHOLAR OS HUD                                    |
++-----------------------------------------------------------------------------------+
+|  [📸 Blackboard Vision]  |  [🎯 Daily AI Quiz]  |  [🎓 75% Attendance & Bunk Sim] |
+|  - Snap lecture board    |  - Oral / MCQ check  |  - Log Present / Absent         |
+|  - AI Notes & Derivation |  - Strict evaluation |  - Safe Skips / Recovery calc   |
+|  - Flashcard Decks       |  - Voice synthesizer |  - Prevent debarment            |
++--------------------------+----------------------+---------------------------------+
+|  [📈 10.0 CGPA Engine]   |  [📋 Kanban Sprint]  |  [🌿 120-Day Habit Matrix]      |
+|  - Honors Target Dial    |  - Backlog to Done   |  - Deep Study (4h)              |
+|  - Required SGPA Calc    |  - Course-linked     |  - Coding & Problem Solving     |
+|  - Historical Trends     |  - Priority alerts   |  - Attendance & Hydration       |
++-----------------------------------------------------------------------------------+
+|                     [⏱️ Deep Work Studio & Ambient Audio Engine]                  |
+|                 Pomodoro Sprints (25m/5m) + Alpha Waves (10 Hz)                   |
++-----------------------------------------------------------------------------------+
+```
+
+---
 
 ### 📸 1. Classroom Blackboard & Assignment Vision Studio
-*Transform lecture blackboards, whiteboards, lab assignments, and handwritten sheets into structured digital study materials.*
+> **File Location**: `src/components/vision/`  
+> **Target Need**: Digitizing messy chalkboard formulas, complex lecture derivations, lab worksheets, and handwritten notes into high-yield digital study materials.
 
-- **Native Mobile Camera & File Upload**: Snap photos directly during live lectures with your mobile browser or upload high-resolution image files.
-- **Course & Syllabus Grounding**: Tag snapshots to enrolled subjects (`[CS301] Data Structures`, `[DBMS] Database Systems`, `[MATH201] Linear Algebra`, `[OS] Operating Systems`, etc.) to ground AI reasoning in your syllabus.
-- **Structured Lecture Notes**: Produces clean hierarchical markdown summaries with code blocks, key definitions, and takeaways.
-- **Step-by-Step Problem & Solution Breakdowns**: Converts complex derivations, algorithm traces, and lab assignments (Linux shell scripts, SQL queries, proofs) into sequential, step-by-step solutions.
-- **Active Recall Flashcard Generation**: Automatically generates spaced repetition flashcards with SM-2 difficulty ratings (`Again`, `Hard`, `Good`, `Easy`).
-- **Real-Time Streaming AI Tutor**: Integrated chat assistant that directly answers homework questions, resolves doubts, and provides code solutions without boilerplate templates.
-- **Saved Lecture History Shelf**: Instant access, search, and filtering for all previously analyzed lecture boards by course.
+#### ✨ What it does:
+- **Optical & Vision AI Analysis**: Leverages Google Gemini 2.5 Flash to inspect handwritten or photographed lecture boards.
+- **Hierarchical Structured Notes**: Extracts main concepts, definitions, formulas, and code snippets into clean formatted markdown.
+- **Step-by-Step Derivation Breakdown**: Deconstructs multi-step mathematical proofs, algorithm traces, and circuit diagrams into logical phases.
+- **Automated Spaced-Repetition Flashcards**: Creates interactive SM-2 flashcard decks directly from the lecture material.
+- **Contextual AI Chat Drawer**: A dedicated tutor that answers specific questions about that exact board snapshot with zero hallucination.
+- **Lecture History Shelf**: Saves every analyzed board with course tags, search, and date filters for rapid exam revision.
+
+#### 📝 Step-by-Step Instructions:
+1. **Open Vision Studio**: Click on the **Classroom Blackboard Vision** card or tap the camera icon in the mobile navigation.
+2. **Capture or Upload**:
+   - *On Mobile*: Tap **"Capture Live Board"** to open your native camera and snap the lecture board.
+   - *On Desktop*: Click **"Upload Lecture Snapshot"** or drag-and-drop an image (`PNG`, `JPG`, `WEBP`) or select one of the pre-loaded academic samples.
+3. **Select Course Tag**: Assign the image to your course code (e.g., `[CS301] Data Structures`, `[MATH201] Linear Algebra`, `[DBMS] Database Systems`).
+4. **Click "Analyze Blackboard"**: The AI processes the image in ~2-3 seconds.
+5. **Study the Generated Artifacts**:
+   - **Notes Tab**: Read structured summaries and copy code blocks or LaTeX formulas.
+   - **Derivations Tab**: Follow numbered step-by-step logic chains for complex proofs.
+   - **Flashcards Tab**: Flip cards to test your recall and rate difficulty (`Again`, `Hard`, `Good`, `Easy`).
+   - **Chat Tab**: Ask follow-up questions like *"Explain line 3 in simpler terms"* or *"Write a Python script for this algorithm"*.
+6. **Save to History Shelf**: The board is automatically archived in your **Board History Shelf** for quick search before midterms or finals.
 
 ---
 
 ### 🎯 2. Daily AI Concept Quiz & Active Recall Studio
-*Reinforce conceptual mastery every single day with personalized questions grounded in your coursework.*
+> **File Location**: `src/components/tutor/DailyProfessorOralCheckin.tsx`  
+> **Target Need**: Daily cognitive retention testing to ensure deep understanding of coursework without last-minute cramming.
 
-- **Syllabus & Lecture Grounding**: Synthesizes daily concept questions from your active enrolled courses and recently uploaded notes.
-- **Speech Synthesis (Voice Assistant)**: Audio voice toggle (`Voice ON/OFF`) to read questions and feedback aloud.
-- **Dual Response Modes**: Answer via **Multiple Choice** or write a **Detailed Explanation** to test deeper recall.
-- **Strict Deterministic Grading**: Instantly grades choices and evaluates written answers against ground-truth keys. If an answer is incorrect:
-  - Clearly shows the student's selected option alongside the correct answer.
-  - Automatically flips the interactive **Active Recall Flashcard** to display the complete solution, formulas, and memory tips.
-  - Awards `Mastery Score: 0%` (`Grade: F`) without false score inflation.
-- **Habit & Honors Attribution**: Logs daily deep study habit entries and awards honors CGPA trajectory points only on mastered responses.
-- **Deep Work Flow Sprint**: One-tap launch into an automated 25-minute Pomodoro study block directly from the quiz.
+#### ✨ What it does:
+- **Coursework-Grounded Synthesis**: Generates targeted concept questions directly from your active enrolled subjects and uploaded lecture boards.
+- **Audio Voice Recitation**: Web Speech API integration reads out questions, choices, and explanations for an authentic oral check-in experience.
+- **Dual Response Modes**: Supports rapid **Multiple-Choice Assessment** as well as in-depth **Written Explanation Recall**.
+- **Strict Deterministic Grading**: Eliminates score inflation. Wrong answers receive a strict `Grade: F` (`Mastery Score: 0%`) and automatically flip open an Active Recall Flashcard with the full ground-truth solution and memory hints.
+- **Streak & Focus Integration**: Correct answers contribute to your Honors CGPA trajectory and offer a 1-tap launch into a 25-minute Pomodoro study sprint.
+
+#### 📝 Step-by-Step Instructions:
+1. **Launch Daily Check-In**: Open the **Daily AI Oral Check-In** panel from your dashboard.
+2. **Select Target Subject**: Choose which subject to test (e.g., *Operating Systems*, *Discrete Math*, *Machine Learning*).
+3. **Configure Settings**:
+   - Toggle **Audio Voice** on/off based on your environment.
+   - Select **Multiple Choice** for quick evaluation or **Written Recall** for deeper active recall.
+4. **Answer the Question**:
+   - For MCQ: Select the most accurate option.
+   - For Written: Type your conceptual breakdown into the response box.
+5. **Submit & Review**:
+   - View your deterministic grade and feedback breakdown.
+   - If incorrect, study the **Remediation Flashcard** displaying memory anchors, formulas, and why the mistake occurred.
+6. **Trigger Flow Sprint**: Click **"Launch 25m Focus Block"** to immediately begin studying related weak areas.
 
 ---
 
 ### 🎓 3. Course Attendance & 75% Bunk Simulator
-*Stay safely above mandatory university attendance thresholds (75% rule).*
+> **File Location**: `src/components/academic/AttendanceTracker.tsx`  
+> **Target Need**: Keeping attendance safely above mandatory university thresholds (e.g. 75% minimum) and avoiding semester debarment.
 
-- **True Zero-State Accuracy**: Fresh courses initialize at `0%` / `0 Classes Logged` without misleading mock numbers.
-- **Multi-Course Management**: Track attendance individually for all subjects with course codes, credits, and weekly class schedules.
-- **One-Tap Class Logging**: Record daily class outcomes with single-tap actions for `Present`, `Absent`, or `Cancelled`.
-- **Safe Bunk Calculator**: Calculates the exact number of upcoming classes you can safely miss while remaining at or above 75%.
-- **Deficit Recovery Calculator**: Computes the exact streak of consecutive classes you must attend to recover from an attendance deficit.
-- **Visual Status Badges**: High-contrast indicators indicating good standing or urgent deficit warnings.
+#### ✨ What it does:
+- **Subject-Wise Tracking**: Keeps separate tallies for attended, missed, and cancelled lectures across all enrolled courses.
+- **Real-Time Percentage Dial**: Displays precise current attendance percentages with high-contrast color indicators (Green ≥ 75%, Amber 70-74%, Red < 70%).
+- **Safe Bunk Calculator**: Calculates the exact number of future lectures you can safely miss while keeping your percentage at or above 75.0%.
+- **Deficit Recovery Calculator**: If attendance drops below 75%, instantly computes the exact streak of consecutive upcoming classes you must attend to recover.
+- **Zero False Defaults**: Starts clean at `0/0 (0%)` for new courses without deceptive placeholder statistics.
+
+#### 📝 Step-by-Step Instructions:
+1. **Add Your Courses**: Click **"+ Add Course"** and enter Course Name, Code (e.g., `CS302`), Total Credits, and Target Threshold (default: `75%`).
+2. **Log Daily Classes**: After every lecture, tap one of three buttons:
+   - `+ Present`: Increments attended and total classes (+1 attended, +1 total).
+   - `+ Absent`: Increments missed and total classes (+0 attended, +1 total).
+   - `+ Cancelled`: Records class cancellation without penalizing your percentage.
+3. **Check the Bunk Simulator**:
+   - If you see `Safe to Miss: 4 classes`, you have attendance buffer.
+   - If you see `Deficit Alert: Attend next 6 classes consecutively`, prioritize attending every session until the warning clears.
 
 ---
 
 ### 📈 4. 10.0 CGPA Benchmark & Academic Trajectory
-*Standardized on the universal 10.0 Honors CGPA scale.*
+> **File Location**: `src/components/academic/CgpaProgressRing.tsx`  
+> **Target Need**: Setting semester GPA targets and calculating the exact grades needed to achieve your dream honors graduation tier.
 
-- **Target Benchmark Progress Ring**: Visual progress dial displaying current cumulative CGPA against your target honors threshold (e.g. `9.20 / 10.00`).
-- **Required Semester GPA Projection**: Dynamically calculates the average semester GPA needed across remaining semesters to graduate in your target honors tier.
-- **Semester History Log**: Track your historical semester-by-semester GPA and academic momentum over time.
+#### ✨ What it does:
+- **10.0 Scale Honors Progress**: Holographic visual dial tracking current cumulative CGPA against your goal (e.g. `9.25 / 10.00`).
+- **Dynamic Required SGPA Projection**: Automatically calculates the average semester GPA required across all remaining semesters to hit your graduation benchmark.
+- **Historical Semester Log**: Visualizes your semester-by-semester GPA trajectory to spot upward and downward momentum trends.
+
+#### 📝 Step-by-Step Instructions:
+1. **Set Benchmark**: Set your **Target CGPA** (e.g., `9.00` for First Class with Distinction).
+2. **Log Completed Semesters**: Enter completed semester GPAs with their corresponding credit weights.
+3. **Inspect the Projection**:
+   - Review **"Required Average SGPA"** for your remaining semesters.
+   - If the required SGPA exceeds `10.0`, the system alerts you to recalibrate your target to a realistic tier.
+4. **Update End of Semester**: After semester grade cards are published, enter your SGPA to recalculate cumulative metrics.
 
 ---
 
-### 📋 5. Assignment Sprint & Milestone Board
-*Track lab reports, deliverables, and exam deadlines.*
+### 📋 5. Assignment Sprint & Milestone Kanban
+> **File Location**: `src/components/academic/AssignmentKanban.tsx`  
+> **Target Need**: Tracking lab reports, term papers, weekly homework, coding assignments, and exam prep in one clear Kanban board.
 
-- **4-Column Visual Kanban**: Organize tasks through `Backlog`, `In Progress`, `Under Review`, and `Completed`.
-- **Priority & Urgency Badges**: Color-coded indicators (`Urgent`, `High`, `Medium`, `Low`) for optimal daily prioritization.
-- **Course Linking**: Associate each assignment with its respective enrolled course code.
+#### ✨ What it does:
+- **4-Stage Workflow**: Move tasks through `Backlog`, `In Progress`, `Under Review`, and `Completed`.
+- **Urgency & Priority Indicators**: Visual badges (`Urgent`, `High`, `Medium`, `Low`) to guide daily focus.
+- **Course Linking & Due Dates**: Connect each assignment directly to its respective course code with countdown timers for looming deadlines.
+
+#### 📝 Step-by-Step Instructions:
+1. **Create an Assignment**: Click **"+ New Assignment"** in the Kanban header.
+2. **Fill Details**: Enter title, description, select the associated course tag, set priority level, and pick the due date.
+3. **Update Progress**: Drag or click action buttons to advance cards from **Backlog** to **In Progress** as you start working, and into **Completed** once submitted.
+4. **Filter View**: Filter by course code to see assignments for a specific upcoming lab or exam.
 
 ---
 
 ### 🌿 6. 120-Day Habit Consistency Heatmap
-*Build sustainable daily study habits and track consistency streaks.*
+> **File Location**: `src/components/habits/`  
+> **Target Need**: Building disciplined, sustainable daily academic habits over a full 120-day semester cycle.
 
-- **4 Key Habit Tracks**:
-  - 📚 **Deep Study** (Target: 4h / day)
-  - 💻 **Coding & Problem Solving** (Target: 2h / day)
-  - 🏫 **Classroom Attendance** (Target: 100% daily)
-  - 💧 **Hydration & Health** (Target: 2.5L water & exercise)
-- **120-Day Contribution Heatmap**: Visual grid tracking daily dedication and study streaks.
-- **One-Tap Check-In**: Quick toggle to log daily completion across all categories.
-- **Streak Records**: Displays active consecutive streaks and all-time consistency milestones.
+#### ✨ What it does:
+- **4 Core Discipline Tracks**:
+  - 📚 **Deep Study** (Target: 4 hours of focused coursework / research)
+  - 💻 **Coding & Problem Solving** (Target: 2 hours of algorithmic implementation / lab work)
+  - 🏫 **Classroom Attendance** (Target: 100% attendance on scheduled days)
+  - 💧 **Hydration & Health** (Target: 2.5L water & exercise for mental stamina)
+- **120-Day Contribution Heatmap**: Visual GitHub-style grid showing daily consistency intensity.
+- **Streak Records**: Computes active continuous streaks, personal bests, and total lifetime completions.
+
+#### 📝 Step-by-Step Instructions:
+1. **Daily Check-In**: At the end of each day (or after each session), tap the checkmark icon for completed habit tracks.
+2. **Observe Grid Intensity**: Days with all 4 habits completed illuminate with bright cyan/emerald cells.
+3. **Maintain the Streak**: Keep your active streak counter growing to build unbreakable academic momentum.
 
 ---
 
 ### ⏱️ 7. Deep Work Focus Studio & Ambient Audio Synthesizer
-*Distraction-free environment for intense study sprints.*
+> **File Location**: `src/components/audio/`  
+> **Target Need**: Creating an immediate distraction-free flow state for intense study, problem solving, and writing.
 
-- **Pomodoro Timer**: Structured intervals for `Focus (25m)`, `Short Break (5m)`, and `Long Break (15m)` with automated phase transitions.
-- **Native Web Audio Synthesizer**: Web-native ambient audio generator for deep focus:
-  - **Alpha Waves (10 Hz)** for memory retention and calm focus.
-  - **Brown Noise** for deep concentration and blocking background noise.
-  - **Rain Ambience** for relaxing study sessions.
-  - **Coding Flow Tones** for analytical problem solving.
-- **Live Soundwave Visualizer**: Responsive visualizer animating in real-time with ambient frequencies.
+#### ✨ What it does:
+- **Customizable Pomodoro Timer**: Switch between `Focus (25m)`, `Short Break (5m)`, and `Long Break (15m)` with automatic interval switching.
+- **Web Audio Binaural Synthesizer**: Generates client-side, zero-latency ambient soundscapes:
+  - **Alpha Waves (10 Hz)**: Promotes calm focus and enhanced information retention.
+  - **Brown Noise**: Deep low-frequency audio to drown out noisy dorms or coffee shops.
+  - **Rain Ambience**: Calming natural rain generator for relaxed reading.
+  - **Coding Flow Tones**: Rhythmic frequency synthesis for analytical problem solving.
+- **Live Soundwave Visualizer**: Canvas-based real-time frequency visualizer.
 
----
-
-### ☁️ 8. Real-Time Cloud Sync & Authentication
-*Seamless continuity across all your devices.*
-
-- **Instant Cross-Device Parity**: Snap a chalkboard photo on your phone in class; view your structured notes, flashcards, and attendance on your laptop immediately.
-- **Google OAuth & Academic Sign-In**: Quick login with Google OAuth or academic email credentials.
-- **Custom Scholar Profiles**: Select custom avatar badges, department titles, and semester details.
-- **Offline Resilience**: Automatically caches data locally and synchronizes updates once connection resumes.
-
----
-
-## 📱 Mobile & Cross-Device Experience
-
-Scholar OS is engineered with a mobile-first responsive architecture:
-- 📱 **Smartphones**: Floating bottom navigation bar, native camera capture triggers, touch-optimized modal dialogs with fixed close buttons, and zero horizontal overflow.
-- 💻 **Laptops & Desktops**: Multi-column HUD layout with holographic benchmark rings and fast navigation menus.
-- 📱 **Tablets**: Split-pane views for simultaneous lecture note review, step solutions, and habit tracking.
+#### 📝 Step-by-Step Instructions:
+1. **Open Focus Studio**: Click the **Focus & Ambient Audio** widget on your dashboard.
+2. **Select Audio Soundscape**: Choose your preferred sound profile (e.g., *Alpha Waves 10 Hz*).
+3. **Adjust Volume**: Set comfortable audio level with the volume slider.
+4. **Start Timer**: Press **Play** to start the 25-minute study sprint.
+5. **Take Break**: When the chime sounds, take your 5-minute break before the next sprint.
 
 ---
 
-## 🎯 Design Philosophy
+### ☁️ 8. Real-Time Cloud Sync & Identity Hub
+> **File Location**: `src/components/auth/`  
+> **Target Need**: Effortless cross-device continuity between mobile in lecture halls and laptops at your study desk.
 
-1. **Zero Dummy Data**: Scholar OS never pre-populates fake courses or mock attendance. You start with a clean slate tailored to your real university semester.
-2. **Speed & Clarity**: High-contrast, dark-mode visual hierarchy with clear typography and minimal friction.
-3. **Privacy & Ownership**: Your coursework, attendance records, and lecture notes remain secure and private to your account.
+#### ✨ What it does:
+- **Instant Device Parity**: Take a photo of the whiteboard on your smartphone in class; open your laptop at home and your notes, flashcards, and attendance are already synced.
+- **Google OAuth Sign-In**: 1-click authentication with your university or personal Google account.
+- **Zero Dummy Data Guarantee**: New accounts initialize with clean state—no fake courses, mock grades, or bogus statistics.
+- **Offline Resilient Storage**: Local-first caching ensures the app works even with poor classroom Wi-Fi, syncing to the cloud as soon as connection is restored.
 
----
-
-## 🛠️ Technical Stack
-
-- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **AI Vision & Chat**: [Google Gemini 2.5 Flash (`@google/genai`)](https://deepmind.google/technologies/gemini/)
-- **State Management**: [Zustand](https://zustand.docs.pmnd.rs/) with Local & Cloud Persistence
-- **Database & Sync**: [Upstash Redis](https://upstash.com/)
-- **Typesetting**: [KaTeX](https://katex.org/) for mathematical and scientific notations
-- **Audio Engine**: Web Audio API binaural frequency synthesis
-- **Authentication**: Google OAuth 2.0 & Token-based Session Management
-- **Deployment**: [Vercel](https://scholardashboard.vercel.app)
+#### 📝 Step-by-Step Instructions:
+1. **Sign In**: Tap **"Sign In with Google"** in the top navigation bar.
+2. **Set Profile**: Choose your avatar badge, enter your major/department, and select your current semester.
+3. **Work Seamlessly**: Any changes made on any device sync in real-time to your Upstash Redis cloud instance.
 
 ---
 
-## 🚀 Getting Started Locally
+## 🔄 End-to-End Workflow: A Day with Scholar OS
 
-### Prerequisites
-- Node.js 18+ installed
-- npm, pnpm, or yarn
+Here is how a top-performing student uses Scholar OS throughout a typical university day:
 
-### Installation
+```mermaid
+flowchart TD
+    A[08:00 AM — Morning Check-In] --> B[Complete Daily AI Concept Quiz]
+    B --> C[Check 120-Day Habit Matrix & Streak]
+    C --> D[09:30 AM — In Lecture Hall]
+    D --> E[Snap Blackboard / Whiteboard in Vision Studio]
+    E --> F[Log Attendance: Present / Absent / Cancelled]
+    F --> G[02:00 PM — Study Lab & Review]
+    G --> H[Read AI-Generated Structured Notes & Proofs]
+    H --> I[Practice Active Recall Flashcards SM-2]
+    I --> J[Ask Doubts in Contextual AI Chat]
+    J --> K[06:00 PM — Evening Sprint]
+    K --> L[Update Assignment Kanban Board]
+    L --> M[Start 25m Pomodoro with 10 Hz Alpha Waves]
+    M --> N[10:00 PM — Academic Retrospective]
+    N --> O[Verify 75% Bunk Simulator & 10.0 CGPA Dial]
+    O --> P[Check off 4 Daily Habits for 120-Day Streak]
+```
+
+1. **Morning (08:00 AM)**: Launch Scholar OS, complete the **Daily AI Concept Quiz** for 5 minutes of active recall, and review your daily priorities.
+2. **Classroom Lectures (09:30 AM – 01:00 PM)**:
+   - Snap lecture whiteboards directly via mobile browser.
+   - Tap **`+ Present`** in the **Attendance Tracker** to update your 75% threshold stats.
+3. **Afternoon Study Session (02:00 PM – 05:00 PM)**:
+   - Open Scholar OS on your laptop.
+   - Review AI-generated **Structured Notes** and step-by-step **Derivation Breakdowns**.
+   - Practice the newly generated **Active Recall Flashcards**.
+   - Resolve homework questions using the **Contextual AI Chat Drawer**.
+4. **Evening Deep Work (06:00 PM – 09:00 PM)**:
+   - Check the **Assignment Kanban** for upcoming lab deadlines.
+   - Activate **Alpha Waves (10 Hz)** in the **Focus Studio** and complete two 25-minute Pomodoro sprints.
+5. **Night Retrospective (10:00 PM)**:
+   - Verify your **10.0 CGPA projection** and **75% Bunk Simulator** numbers.
+   - Check off your 4 habits on the **120-Day Consistency Heatmap** to preserve your streak.
+
+---
+
+## 🛠️ Technical Stack & Local Setup
+
+### Architecture Overview
+- **Frontend & Framework**: [Next.js 16 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/)
+- **Language**: [TypeScript 5](https://www.typescriptlang.org/) (Strict Type-Safety)
+- **Styling & UI**: [Tailwind CSS](https://tailwindcss.com/) with Lucide Icons and Custom Glassmorphic HUD
+- **AI Vision & Tutor Engine**: [Google Gemini 2.5 Flash (`@google/genai`)](https://deepmind.google/technologies/gemini/)
+- **State Management & Persistence**: [Zustand](https://zustand.docs.pmnd.rs/) with LocalStorage & Cloud Sync
+- **Cloud Database**: [Upstash Redis](https://upstash.com/) for instant low-latency JSON storage
+- **Math & Scientific Rendering**: [KaTeX](https://katex.org/) for LaTeX formula typesetting
+- **Audio Engine**: Web Audio API (real-time frequency synthesis) + Web Speech API (voice recitation)
+- **Authentication**: Google OAuth 2.0 Client & Token-based Sessions
+- **Deployment Platform**: [Vercel](https://vercel.com/)
+
+---
+
+### 💻 Local Development Setup
+
+#### 1. Prerequisites
+Ensure you have the following installed on your machine:
+- **Node.js**: `v18.17.0` or higher
+- **Package Manager**: `npm`, `pnpm`, or `yarn`
+- **Google Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
+
+#### 2. Clone & Install
 ```bash
 # Clone the repository
 git clone https://github.com/KaiX-Jr/scholar-os.git
 
-# Navigate to the project directory
+# Navigate into the project folder
 cd scholar-os
 
-# Install dependencies
+# Install all required dependencies
 npm install
+```
 
-# Set up environment variables (.env.local)
-# GEMINI_API_KEY="your_api_key_here"
-# UPSTASH_REDIS_REST_URL="your_redis_url"
-# UPSTASH_REDIS_REST_TOKEN="your_redis_token"
-# NEXT_PUBLIC_GOOGLE_CLIENT_ID="your_google_client_id"
+#### 3. Configure Environment Variables
+Create a `.env.local` file in the root directory and add the following keys:
+```env
+# Google Gemini 2.5 Flash API Key (Required for Blackboard Vision & AI Quiz)
+GEMINI_API_KEY="your_gemini_api_key_here"
 
-# Run development server
+# Upstash Redis Cloud Database (Required for Cross-Device Cloud Sync)
+UPSTASH_REDIS_REST_URL="https://your-database.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="your_upstash_redis_rest_token"
+
+# Google OAuth Client ID (Required for Google Sign-In)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID="your_google_client_id.apps.googleusercontent.com"
+```
+
+#### 4. Run Development Server
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser to start using Scholar OS locally.
+
+#### 5. Build for Production
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## ❓ Frequently Asked Questions (FAQ)
+
+<details>
+<summary><b>1. Can I use Scholar OS on my smartphone during live lectures?</b></summary>
+Yes! Scholar OS is built with a responsive mobile-first interface including a floating bottom navigation bar, native camera triggers to snap blackboard photos directly in class, and zero horizontal scrolling.
+</details>
+
+<details>
+<summary><b>2. How does the 75% Bunk Simulator calculate safe skips?</b></summary>
+It uses the formula:
+$$\text{Safe Skips} = \left\lfloor \frac{\text{Attended} - 0.75 \times \text{Total}}{0.75} \right\rfloor$$
+If your attendance is below 75%, it calculates the deficit recovery streak:
+$$\text{Required Consecutive Classes} = \left\lceil \frac{0.75 \times \text{Total} - \text{Attended}}{0.25} \right\rceil$$
+</details>
+
+<details>
+<summary><b>3. What image formats does Blackboard Vision support?</b></summary>
+Vision Studio supports JPG, PNG, WEBP, and direct mobile camera capture. It works on both high-contrast green/black chalkboards and modern whiteboards.
+</details>
+
+<details>
+<summary><b>4. Are my lecture notes and attendance data private?</b></summary>
+Yes. All data is scoped to your personal user account and stored securely in your private cloud session via Upstash Redis and local browser persistence.
+</details>
 
 ---
 
 ## 👨‍💻 Author & Maintainer
 
 **Swapnoneel Mondal** ([@KaiX-Jr](https://github.com/KaiX-Jr))
-- GitHub: [https://github.com/KaiX-Jr](https://github.com/KaiX-Jr)
-- Repository: [https://github.com/KaiX-Jr/scholar-os](https://github.com/KaiX-Jr/scholar-os)
-- Live Platform: [https://scholardashboard.vercel.app](https://scholardashboard.vercel.app)
+- **GitHub**: [https://github.com/KaiX-Jr](https://github.com/KaiX-Jr)
+- **Repository**: [https://github.com/KaiX-Jr/scholar-os](https://github.com/KaiX-Jr/scholar-os)
+- **Live Platform**: [https://scholardashboard.vercel.app](https://scholardashboard.vercel.app)
 
 ---
 
@@ -209,8 +391,8 @@ This project is open-source and licensed under the [MIT License](LICENSE).
 
 <div align="center">
 
-**Empowering students and researchers with a modern academic operating system.**
+**Empowering students, scholars, and researchers worldwide with an intelligent academic operating system.**
 
-[⭐ Star on GitHub](https://github.com/KaiX-Jr/scholar-os) · [🚀 Launch Scholar OS](https://scholardashboard.vercel.app)
+[⭐ Star on GitHub](https://github.com/KaiX-Jr/scholar-os) · [🚀 Launch Scholar OS Live](https://scholardashboard.vercel.app)
 
 </div>
